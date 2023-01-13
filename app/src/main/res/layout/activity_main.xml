@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/init_sdk"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="初始化"
+        android:textSize="30sp" />
+
+    <Button
+        android:id="@+id/btnRec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开始录音"
+        android:textSize="30sp"/>
+
+    <Button
+        android:id="@+id/btnStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="停止录音"
+        android:textSize="30sp"/>
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="保存音频"
+        android:visibility="visible"
+        android:textSize="30sp"/>
+    <Button
+        android:id="@+id/writeTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="写音频测试"
+        android:textSize="30sp"/>
+    <Button
+        android:id="@+id/btnTTS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="语音合成TTS"
+        android:textSize="30sp"/>
+
+    <Button
+        android:id="@+id/AudioStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="start"
+        android:textSize="30sp"/>
+    <Button
+        android:id="@+id/AudioStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="stop"
+        android:textSize="30sp"/>
+
+    <Button
+        android:id="@+id/AudioPause"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="pause"
+        android:textSize="30sp"/>
+    <Button
+        android:id="@+id/getState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="getState"
+        android:textSize="30sp"/>
+
+    <Button
+        android:id="@+id/silent_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="静默升级"
+        android:textSize="30sp"/>
+
+
+
+</LinearLayout>
