@@ -54,6 +54,9 @@ public class WebsocketOperator {
             public void onClose(int code, String reason, boolean remote) {
                LogUtil.iTag(TAG, "onClose: code:" + code + " reason:" + reason + " remote:" + remote);
                // TODO: 2023/1/13 断开连接后 是否控制不往aiui写数据 如何保证websocket的超时和AIUI的超时保持一致?
+               if (iWebsocketListener != null){
+                  iWebsocketListener.onClose();
+               }
             }
 
             @Override
@@ -156,10 +159,15 @@ public class WebsocketOperator {
    public void sendMessage(String message) {
       if (mClient != null && mClient.isOpen()) {
          LogUtil.iTag("JWebSocketClient", "sendMessage:" + message);
+
          mClient.send(message);
       } else {
          // TODO: 2023/1/13 此时如果是唤醒后超时没有交互,是否不做任何播报?
       }
+   }
+
+   public boolean isOpen(){
+      return mClient != null && mClient.isOpen();
    }
 
    public interface IWebsocketListener{
@@ -167,5 +175,6 @@ public class WebsocketOperator {
       void OnNlpData(String nlpString);
       void onOpen();
       void onError();
+      void onClose();
    }
 }

@@ -7,41 +7,48 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:background="@drawable/bg">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_chat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:layout_marginTop="15dp"
         android:paddingHorizontal="10dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="80dp"
+        android:layout_marginTop="5dp">
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_voiceball"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/voice_ball"
             android:layout_centerHorizontal="true"/>
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="测试与喜爱"
-            android:padding="10dp"
-            android:textSize="16sp"
-            android:layout_marginLeft="5dp"
-            android:textColor="@color/white"
-            android:background="@drawable/msg_bg_2"/>
+
+<!--        <com.opensource.svgaplayer.SVGAImageView-->
+<!--            android:id="@+id/svgaImage"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="80dp"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            app:autoPlay="true"-->
+<!--            app:loopCount="-1"-->
+<!--            android:visibility="visible"/>-->
+
+        <jaygoo.widget.wlv.WaveLineView
+            android:id="@+id/waveLineView"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            app:wlvBackgroundColor="@color/transparent"
+            app:wlvFineLineWidth="1dp"
+            app:wlvLineColor="#76D1FF"
+            app:wlvMoveSpeed="290"
+            app:wlvSensibility="10"
+            app:wlvThickLineWidth="2dp"
+            android:visibility="invisible"/>
+
     </RelativeLayout>
-    <jaygoo.widget.wlv.WaveLineView
-        android:id="@+id/waveLineView"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        app:wlvBackgroundColor="@color/transparent"
-        app:wlvFineLineWidth="1dp"
-        app:wlvLineColor="@color/design_default_color_secondary"
-        app:wlvMoveSpeed="290"
-        app:wlvSensibility="10"
-        app:wlvThickLineWidth="2dp" />
+
 
 </LinearLayout>

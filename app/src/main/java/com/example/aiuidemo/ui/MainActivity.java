@@ -6,15 +6,18 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 
-import com.example.aiuidemo.audio.AudioTrackOperator;
-import com.example.aiuidemo.utils.InitUtil;
-import com.example.aiuidemo.utils.LogUtil;
 import com.example.aiuidemo.R;
-import com.example.aiuidemo.utils.UIHelper;
+import com.example.aiuidemo.audio.AudioTrackOperator;
 import com.example.aiuidemo.chat.Msg;
 import com.example.aiuidemo.chat.MsgAdapter;
+import com.example.aiuidemo.utils.InitUtil;
+import com.example.aiuidemo.utils.LogUtil;
+import com.example.aiuidemo.utils.UIHelper;
+import com.example.aiuidemo.websocket.WebsocketOperator;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.iflytek.aiui.AIUIAgent;
 import com.iflytek.aiui.AIUIConstant;
 import com.iflytek.aiui.AIUIEvent;
@@ -34,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jaygoo.widget.wlv.WaveLineView;
@@ -46,12 +50,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int mAIUIState = AIUIConstant.STATE_IDLE;
 
     private AudioTrackOperator mAudioTrackOperator;
+    private WebsocketOperator mWebsocketOperator;
 
     private String mIatMessage;//iat有效数据
     private RecyclerView mRvChat;
     private List<Msg> msgList = new ArrayList<>();
     private MsgAdapter mAdapter;
     private WaveLineView mWaveLineView;
+    private AppCompatImageView mIvVoiceball;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,32 +65,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设置无Title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //设置应用全屏,必须写在setContentView方法前面
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main_new);
         UIHelper.hideBottomUIMenu(this);
 
         initView();
 
-        // TODO: 2022/12/5 动态权限申请
-
-        //资源文件拷贝  语音唤醒
-        copyAssetFolder(this, "ivw/vtn", String.format("%s/ivw/vtn", "/sdcard/AIUI"));
-
         InitUtil.init(this);
+        //权限
+        getPermission();
 
-        initSDK();
     }
 
     private void initView() {
         mWaveLineView = findViewById(R.id.waveLineView);
-        mWaveLineView.startAnim();
         mRvChat = findViewById(R.id.recyclerview_chat);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new MsgAdapter(msgList);
 
         mRvChat.setLayoutManager(layoutManager);
         mRvChat.setAdapter(mAdapter);
+
+        mIvVoiceball = findViewById(R.id.iv_voiceball);
+        mIvVoiceball.setOnClickListener(view -> {
+            if (mAIUIAgent != null){
+                AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
+                mAIUIAgent.sendMessage(wakeupMsg);
+            }
+        });
+
+//        SVGAImageView svgaImageView = findViewById(R.id.svgaImage);
+//        SvgaUtils svgaUtils = new SvgaUtils(this, svgaImageView);
+//        svgaUtils.initAnimator();
+//        svgaUtils.startAnimator("svga1");
     }
+
 
     @Override
     public void onClick(View view) {
@@ -96,8 +111,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initSDK() {
         // 初始化AIUI
         createAgent();
+        //初始化AudioTrack
         initAudioTrack();
+        //初始化websocket
+        initWebsocket();
 
+    }
+
+    private void getPermission() {
+        XXPermissions.with(MainActivity.this)
+                // 申请多个权限
+                .permission(Permission.ACCESS_COARSE_LOCATION, Permission.MANAGE_EXTERNAL_STORAGE, Permission.RECORD_AUDIO)
+                // 申请单个权限
+//                .permission(Permission.Group.CALENDAR)
+                // 设置权限请求拦截器（局部设置）
+                //.interceptor(new PermissionInterceptor())
+                // 设置不触发错误检测机制（局部设置）
+                //.unchecked()
+                .request(new OnPermissionCallback() {
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        if (all) {
+                            LogUtil.i("权限获取成功");
+                            //资源文件拷贝  语音唤醒
+                            copyAssetFolder(MainActivity.this, "ivw/vtn", String.format("%s/ivw/vtn", "/sdcard/AIUI"));
+                            initSDK();
+                        } else {
+                            LogUtil.i("部分权限获取成功" + permissions.toString());
+
+                            XXPermissions.startPermissionActivity(MainActivity.this, permissions);
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> permissions, boolean never) {
+                        if (never) {
+                            LogUtil.e("拒绝权限,请手动授予");
+                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                            XXPermissions.startPermissionActivity(MainActivity.this, permissions);
+                        } else {
+                            LogUtil.e("权限获取失败");
+                        }
+                    }
+                });
     }
 
 
@@ -105,9 +161,113 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (mAudioTrackOperator == null){
             mAudioTrackOperator = new AudioTrackOperator();
             mAudioTrackOperator.createStreamModeAudioTrack();
+            mAudioTrackOperator.setStopListener(new AudioTrackOperator.IAudioTrackListener() {
+                @Override
+                public void onStop() {
+                    //播放结束 重新开启录音
+                    controlRecord(AIUIConstant.CMD_START_RECORD);
+                    //展示水波纹 接收录音
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mWaveLineView.getVisibility() != View.VISIBLE && mWebsocketOperator.isOpen()){
+                                mWaveLineView.setVisibility(View.VISIBLE);
+                                mIvVoiceball.setVisibility(View.GONE);
+                                mWaveLineView.startAnim();
+                                mWaveLineView.setMoveSpeed(290);
+                                mWaveLineView.setVolume(15);
+                            }
+                        }
+                    });
+
+                }
+            });
         }
     }
 
+    private void initWebsocket() {
+        if (mWebsocketOperator == null){
+            mWebsocketOperator = new WebsocketOperator();
+            mWebsocketOperator.initWebSocket(new WebsocketOperator.IWebsocketListener() {
+                @Override
+                public void OnTtsData(byte[] audioData, boolean isFinish) {
+                    // TODO: 2023/1/30 每次都调用play?
+                    if (mAudioTrackOperator != null){
+                        mAudioTrackOperator.play();
+                        mAudioTrackOperator.write(audioData,isFinish);
+                    }
+                }
+
+                @Override
+                public void OnNlpData(String nlpString) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            msgList.add(new Msg(nlpString,Msg.TYPE_RECEIVED));
+//                            mAdapter.notifyItemInserted(msgList.size()-1);
+                            mAdapter.notifyDataSetChanged();
+                            mRvChat.scrollToPosition(msgList.size()-1);
+                        }
+                    });
+                }
+
+                @Override
+                public void onOpen() {
+                    if (mAudioTrackOperator != null){
+                        mAudioTrackOperator.play();
+                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaojuan_box_wakeUpReply.pcm");
+                        //播放过程中AIUI不接收录音
+                        controlRecord(AIUIConstant.CMD_STOP_RECORD);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                msgList.add(new Msg("我在呢",Msg.TYPE_RECEIVED));
+                                mAdapter.notifyItemInserted(msgList.size()-1);
+//                    mAdapter.notifyDataSetChanged();
+                                mRvChat.scrollToPosition(msgList.size()-1);
+
+                                //展示水波纹
+                                mIvVoiceball.setVisibility(View.GONE);
+                                mWaveLineView.setVisibility(View.VISIBLE);
+                                mWaveLineView.startAnim();
+                                mWaveLineView.setVolume(15);
+                            }
+                        });
+                    }
+
+
+                }
+
+                @Override
+                public void onError() {
+                    if (mAudioTrackOperator != null){
+                        mAudioTrackOperator.play();
+                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaojuan_box_disconnect.pcm");
+                        //播放过程中AIUI不接收录音
+                        controlRecord(AIUIConstant.CMD_STOP_RECORD);
+                    }
+                }
+
+                @Override
+                public void onClose() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //ws超时后 隐藏水波纹
+                            if (mWaveLineView.getVisibility() == View.VISIBLE){
+                                mWaveLineView.stopAnim();
+                                mWaveLineView.setVisibility(View.INVISIBLE);
+                                mIvVoiceball.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
+
+                }
+
+            });
+        }
+    }
     /**
      * 初始化AIUI
      */
@@ -124,12 +284,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             LogUtil.iTag(TAG,"---------create_AIUI FAIL---------");
         } else {
             LogUtil.iTag(TAG,"---------create_AIUI SUCCESS---------");
-            // 打开AIUI内部录音机，开始录音
-            String params = "sample_rate=16000,data_type=audio";
-            AIUIMessage writeMsg = new AIUIMessage( AIUIConstant.CMD_START_RECORD, 0, 0, params, null );
-            mAIUIAgent.sendMessage(writeMsg);
+            controlRecord(AIUIConstant.CMD_START_RECORD);
         }
 
+    }
+
+    private void controlRecord(int cmdConstant) {
+        if (mAIUIAgent != null){
+            // 打开AIUI内部录音机，开始录音
+            String params = "sample_rate=16000,data_type=audio";
+            AIUIMessage writeMsg = new AIUIMessage(cmdConstant, 0, 0, params, null );
+            mAIUIAgent.sendMessage(writeMsg);
+        }
     }
 
     private String getAIUIParams() {
@@ -164,6 +330,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 case AIUIConstant.EVENT_WAKEUP:
                     LogUtil.iTag(TAG,"AIUI -- WAKEUP 进入识别状态");
+                    //websocket建联 若已连接状态需要先断开
+                    if(mWebsocketOperator != null){
+                        mWebsocketOperator.connectWebSocket();
+                    }
+
+                    //播放本地音频文件 欢迎 需要先停止当前播放且释放队列内数据
+                    if(mAudioTrackOperator != null){
+                        mAudioTrackOperator.shutdownExecutor();
+                        mAudioTrackOperator.stop();
+                        mAudioTrackOperator.flush();
+
+                        mAudioTrackOperator.isPlaying = false;
+                    }
+
                     break;
                 //结果事件（包含听写，语义，离线语法结果）
                 case AIUIConstant.EVENT_RESULT://1
@@ -221,25 +401,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 if (currentIatMessage!= null && currentIatMessage.length()>0){
                                     mIatMessage = currentIatMessage.toString();
 
-//                                    if(sn == 1){
-//                                        msgList.add(new Msg(mIatMessage,Msg.TYPE_SEND));
-//                                    }else{
-//                                        msgList.set(msgList.size()-1,new Msg(mIatMessage,Msg.TYPE_SEND));
-//                                    }
-//
-////                                    mAdapter.notifyItemInserted(msgList.size()-1);
-//                                    mAdapter.notifyDataSetChanged();
-//                                    mRvChat.scrollToPosition(msgList.size()-1);
+                                    if (mWebsocketOperator.isOpen()){
+
+                                        if(sn == 1){
+                                            //刚开始收到音频
+                                            if (mWaveLineView.getVisibility() != View.VISIBLE){
+                                                mWaveLineView.setVisibility(View.VISIBLE);
+                                                mIvVoiceball.setVisibility(View.GONE);
+                                                mWaveLineView.startAnim();
+                                            }
+                                            mWaveLineView.setVolume(70);
+                                            mWaveLineView.setMoveSpeed(150);
+
+                                            msgList.add(new Msg(mIatMessage,Msg.TYPE_SEND));
+                                        }else{
+                                            msgList.set(msgList.size()-1,new Msg(mIatMessage,Msg.TYPE_SEND));
+                                        }
+
+//                                    mAdapter.notifyItemInserted(msgList.size()-1);
+                                        mAdapter.notifyDataSetChanged();
+                                        mRvChat.scrollToPosition(msgList.size()-1);
+                                    }
 
                                 }
 
-//                                if (ls){
-//                                    LogUtil.iTag(TAG, "AIUI EVENT_RESULT --- iat -- final -- " + mIatMessage);
-//
-//                                    mWebsocketOperator.sendMessage(mIatMessage);
-//
-//                                    mAudioTrackOperator.isPlaying = true;
-//                                }
+                                if (ls){
+                                    LogUtil.iTag(TAG, "AIUI EVENT_RESULT --- iat -- final -- " + mIatMessage);
+
+                                    mWebsocketOperator.sendMessage(mIatMessage);
+
+                                    if (mWebsocketOperator.isOpen()){
+
+                                        mWaveLineView.setVisibility(View.INVISIBLE);
+                                        mWaveLineView.setVolume(15);
+                                        mWaveLineView.setMoveSpeed(290);
+                                        mWaveLineView.stopAnim();
+                                        mIvVoiceball.setVisibility(View.VISIBLE);
+
+                                        mAudioTrackOperator.isPlaying = true;
+                                        //播放过程中AIUI不接收录音
+                                        controlRecord(AIUIConstant.CMD_STOP_RECORD);
+                                    }
+
+                                }
 
                             }
                         }
@@ -355,4 +559,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mWaveLineView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mWaveLineView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWaveLineView.release();
+    }
 }
