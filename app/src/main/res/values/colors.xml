@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="color_msg_bg_2">#5642dd</color>
+    <color name="transparent">#00000000</color>
 </resources>

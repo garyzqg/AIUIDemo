@@ -1,4 +1,4 @@
-package com.example.aiuidemo;
+package com.example.aiuidemo.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

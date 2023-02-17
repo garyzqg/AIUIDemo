@@ -1,8 +1,10 @@
-package com.example.aiuidemo;
+package com.example.aiuidemo.other;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.example.aiuidemo.utils.LogUtil;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

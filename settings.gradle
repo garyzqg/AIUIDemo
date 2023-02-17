@@ -12,5 +12,5 @@
 //        mavenCentral()
 //    }
 //}
-rootProject.name = "AiuiDemo"
+rootProject.name = "Aiui_phone"
 include ':app'

@@ -1,4 +1,4 @@
-package com.example.aiuidemo;
+package com.example.aiuidemo.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

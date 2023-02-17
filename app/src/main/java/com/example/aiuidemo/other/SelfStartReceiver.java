@@ -1,4 +1,4 @@
-package com.example.aiuidemo;
+package com.example.aiuidemo.other;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

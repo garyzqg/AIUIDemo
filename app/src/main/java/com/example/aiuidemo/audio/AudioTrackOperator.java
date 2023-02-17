@@ -1,9 +1,11 @@
-package com.example.aiuidemo;
+package com.example.aiuidemo.audio;
 
+import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 
+import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,6 +32,9 @@ public class AudioTrackOperator {
     private AudioTrack mAudioTrack;
     private boolean mBoolean;
     private ExecutorService mExecutor;
+    public boolean isPlaying = false;
+    private int threadCount = 0;
+
 
     /**
      * 构建 AudioTrack 实例对象
@@ -65,15 +70,17 @@ public class AudioTrackOperator {
             }
         }
     }
-
     /**
      * 写入音频流
      * @param buffer
-     * @param dts
+     * @param isFinish
      */
-    public void write(byte[] buffer,int dts) {
-        Thread t = new Thread(new Runnable() {
-            public void run() {
+    public void write(byte[] buffer,boolean isFinish) {
+        if (mExecutor == null){
+                mExecutor = Executors.newSingleThreadExecutor();
+        }
+        if (mExecutor != null){
+            mExecutor.submit(() -> {
                 try{
                     if (buffer.length> 0 && mAudioTrack != null && mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING && mAudioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
                         mAudioTrack.write(buffer, 0, buffer.length);
@@ -82,7 +89,56 @@ public class AudioTrackOperator {
                 }catch (Exception e){
 
                 }finally {
-                    if (mAudioTrack != null && dts == 2){
+                    if (mAudioTrack != null && isFinish){
+                        mAudioTrack.stop();
+                        isPlaying = false;
+//                        mAudioTrack.release();
+                    }
+                }
+                threadCount--;
+            });
+            threadCount++;
+        }
+
+    }
+
+    /**
+     * 关闭线程池
+     */
+    public void shutdownExecutor(){
+        if (mExecutor != null && threadCount>0){
+            mExecutor.shutdownNow();
+            threadCount = 0;
+            mExecutor = null;
+        }
+    }
+
+    /**
+     * 写入音频流 播放本地文件
+     * @param context
+     * @param fileName
+     */
+    public void writeSource(Context context, String fileName) {
+//        if (isPlaying) return;
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                //获取文件输入流 我这里存放在assets中
+                InputStream dis = null;
+                try{
+                    dis = context.getAssets().open(fileName);
+
+                    byte a[] = new byte[2592];
+                    while ((dis.read(a)) != -1) {
+                        if (a.length> 0 && mAudioTrack != null && mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING && mAudioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+                            mAudioTrack.write(a, 0, a.length);
+                        }
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+//                    isPlaying = false;
+                    if (mAudioTrack != null){
                         mAudioTrack.stop();
 //                        mAudioTrack.release();
                     }
@@ -90,18 +146,16 @@ public class AudioTrackOperator {
 
             }
         });
-        if (mExecutor != null){
-            mExecutor.submit(t);
-        }
+        t.start();
+//        isPlaying = true;
 
     }
-
 
     /**
      * 开始播放
      */
     public void play() {
-        if (mAudioTrack != null && mAudioTrack.getState() != AudioTrack.STATE_UNINITIALIZED){
+        if (mAudioTrack != null && mAudioTrack.getState() != AudioTrack.STATE_UNINITIALIZED && mAudioTrack.getPlayState() != AudioTrack.PLAYSTATE_PLAYING){
             mAudioTrack.play();
         }
     }
