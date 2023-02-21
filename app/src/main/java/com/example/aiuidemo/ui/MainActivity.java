@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 
+import com.bumptech.glide.Glide;
 import com.example.aiuidemo.R;
 import com.example.aiuidemo.audio.AudioTrackOperator;
 import com.example.aiuidemo.chat.Msg;
@@ -87,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRvChat.setAdapter(mAdapter);
 
         mIvVoiceball = findViewById(R.id.iv_voiceball);
+        Glide.with(this)
+                .load(R.drawable.gif_voice_ball)
+                .placeholder(R.drawable.voice_ball)
+                .into(mIvVoiceball);
         mIvVoiceball.setOnClickListener(view -> {
             if (mAIUIAgent != null){
                 AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
@@ -215,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onOpen() {
                     if (mAudioTrackOperator != null){
                         mAudioTrackOperator.play();
-                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaojuan_box_wakeUpReply.pcm");
+                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaozhong_box_wakeUpReply.pcm");
                         //播放过程中AIUI不接收录音
                         controlRecord(AIUIConstant.CMD_STOP_RECORD);
 
@@ -243,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onError() {
                     if (mAudioTrackOperator != null){
                         mAudioTrackOperator.play();
-                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaojuan_box_disconnect.pcm");
+                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm");
                         //播放过程中AIUI不接收录音
                         controlRecord(AIUIConstant.CMD_STOP_RECORD);
                     }
