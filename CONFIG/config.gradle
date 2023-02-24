@@ -1,0 +1,152 @@
+/**
+ * 统一处理依赖问题
+ */
+ext {
+    android = [
+            compileSdkVersion    : 32,
+            minSdkVersion        : 19,
+            targetSdkVersion     : 32,
+    ]
+
+    version = [
+            androidxLibVersion  : "1.4.1",
+            androidxLibVer      : "1.5.0",
+
+            butterknifeVersion  : "10.2.0",
+            okhttpVersion       : "4.9.1",
+            retrofitVersion     : "2.9.0",
+            glideVersion        : "4.13.2",
+            dbFlowVersion       : "4.2.4",
+            dbFlow2Version      : "5.0.0-alpha1",
+            fragmentationVersion: "1.3.7",
+            fragmentationVer    : "1.0.0",
+            smartrefreshVersion : "1.1.0",
+            roomVersion : "1.1.0",
+    ]
+
+
+    dependencies = [
+            //原生UI
+            "appcompat-x"                  : "androidx.appcompat:appcompat:${version["androidxLibVersion"]}",
+            "material"                     : "com.google.android.material:material:${version["androidxLibVer"]}",
+            "recyclerview"                 : "androidx.recyclerview:recyclerview:1.2.1",
+            "constraintlayout-x"           : "androidx.constraintlayout:constraintlayout:2.1.3",
+            "junit"                        : "junit:junit:4.13.2",
+            "test-junit"                   : "androidx.test.ext:junit:1.1.3",
+            "espresso"                     : "androidx.test.espresso:espresso-core:3.4.0",
+
+            //multidex
+            "multidex-x"                   : "androidx.multidex:multidex:2.0.1",
+
+            //网络通信
+            "okhttp3"                      : "com.squareup.okhttp3:okhttp:${version["okhttpVersion"]}",
+            "okhttp3-logging"              : "com.squareup.okhttp3:logging-interceptor:${version["okhttpVersion"]}",
+            "okhttp3-mock"                 : "com.squareup.okhttp3:mockwebserver:${version["okhttpVersion"]}",
+
+            "retrofit2"                    : "com.squareup.retrofit2:retrofit:${version["retrofitVersion"]}",
+            "retrofit2-gson"               : "com.squareup.retrofit2:converter-gson:${version["retrofitVersion"]}",
+            "retrofit2-adapter"            : "com.squareup.retrofit2:adapter-rxjava2:${version["retrofitVersion"]}",
+            "retrofit3-adapter"            : "com.squareup.retrofit2:adapter-rxjava3:${version["retrofitVersion"]}",
+            "retrofit2-mock"               : "com.squareup.retrofit2:retrofit-mock:${version["retrofitVersion"]}",
+            "retrofit-url-manager"         : "me.jessyan:retrofit-url-manager:1.4.0",
+            "gson"                         : "com.google.code.gson:gson:2.8.6",
+            "protobuf"                     : "com.google.protobuf:protobuf-java:3.5.0",
+
+            "rxjava2"                      : "io.reactivex.rxjava2:rxjava:2.2.21",
+            "rxandroid2"                   : "io.reactivex.rxjava2:rxandroid:2.1.1",
+
+            "rxjava3"                      : "io.reactivex.rxjava3:rxjava:3.1.4",
+            "rxandroid3"                   : "io.reactivex.rxjava3:rxandroid:3.0.0",
+
+            "rxbinding2"                   : "com.jakewharton.rxbinding2:rxbinding:2.1.0",
+            "rxpermissions2"               : "com.github.tbruyelle:rxpermissions:0.10.2",
+            "easypermissions"              : "pub.devrel:easypermissions:3.0.0",
+            //生命周期管理  AutoDispose解决RxJava内存泄漏
+            "autodispose2"                 : "com.uber.autodispose2:autodispose-android:2.0.0",
+            "autodispose2-lifecycle"       : "com.uber.autodispose2:autodispose-androidx-lifecycle:2.0.0",
+
+            /*图片加载*/
+            "glide"                        : "com.github.bumptech.glide:glide:${version["glideVersion"]}",
+            "glide-compiler"               : "com.github.bumptech.glide:compiler:${version["glideVersion"]}",
+            "glide-loader-okhttp3"         : "com.github.bumptech.glide:okhttp3-integration:${version["glideVersion"]}",
+            "picasso"                      : "com.squareup.picasso.picasso:2.5.2",
+
+
+            "bugly"                      : "com.tencent.bugly:crashreport:latest.release",
+
+            //room
+            "room"                      : "androidx.room:room-runtime:2.3.0",
+            "room-compiler"                      : "androidx.room:room-compiler:2.3.0",
+
+            //dao
+            "greendao"                     : "org.greenrobot:greendao:3.2.2",
+            "greendao-generator"           : "org.greenrobot:greendao-generator:3.2.2",
+            /*用于GreenDao升级的依赖库*/
+            "greendaoUpgradeHelper"        : "io.github.yuweiguocn:GreenDaoUpgradeHelper:2.2.1",
+            //加密库依赖
+            "databaseEncDao"               : "net.zetetic:android-database-sqlcipher:4.2.0",
+
+            //DBFlow
+            /*  "dbflow-compiler"                    : "com.github.agrosner.dbflow:processor:${version["dbFlow2Version"]}",
+              "dbflowCore"                         : "com.github.agrosner.dbflow:core:${version["dbFlow2Version"]}",
+              "dbflowLib"                          : "com.github.agrosner.dbflow:lib:${version["dbFlow2Version"]}",
+              "dbflowSqlcipher"                    : "com.github.agrosner.dbflow:sqlcipher:${version["dbFlow2Version"]}",
+              "dbflowRx2"                          : "com.github.agrosner.dbflow:reactive-streams:${version["dbFlow2Version"]}",
+              "dbflowProvider"                     : "com.github.agrosner.dbflow:contentprovider:${version["dbFlow2Version"]}",
+              "dbflowPaging"                       : "com.github.agrosner.dbflow:paging:${version["dbFlow2Version"]}",
+              "dbflowCoroutines"                   : "com.github.agrosner.dbflow:coroutines:${version["dbFlow2Version"]}", */
+
+            //DBFlow
+            "dbflow-compiler"              : "com.github.Raizlabs.DBFlow:dbflow-processor:${version["dbFlowVersion"]}",
+            "dbflowCore"                   : "com.github.Raizlabs.DBFlow:dbflow-core:${version["dbFlowVersion"]}",
+            "dbflow"                       : "com.github.Raizlabs.DBFlow:dbflow:${version["dbFlowVersion"]}",
+            "dbflowSqlcipher"              : "com.github.Raizlabs.DBFlow:dbflow-sqlcipher:${version["dbFlowVersion"]}",
+            "dbflowRx2"                    : "com.github.Raizlabs.DBFlow:dbflow-rx2:${version["dbFlowVersion"]}",
+
+            //黄油刀
+            "butterknife"                  : "com.jakewharton:butterknife:${version["butterknifeVersion"]}",
+            "butterknife-compiler"         : "com.jakewharton:butterknife-compiler:${version["butterknifeVersion"]}",
+
+            //LibRes:三方UI
+            //https://github.com/scwang90/SmartRefreshLayout
+            "SmartRefreshLayout"           : "com.scwang.smartrefresh:SmartRefreshLayout:${version["smartrefreshVersion"]}",
+            "SmartRefreshHeader"           : "com.scwang.smartrefresh:SmartRefreshHeader:${version["smartrefreshVersion"]}",
+            //https://github.com/YoKeyword/Fragmentation
+            "fragmentation"                : "me.yokeyword:fragmentation:${version["fragmentationVersion"]}",
+            "fragmentation-core"           : "me.yokeyword:fragmentation-core:${version["fragmentationVersion"]}",
+            "fragmentation-swipeback"      : "me.yokeyword:fragmentation-swipeback:${version["fragmentationVersion"]}",
+            "fragmentationx"               : "me.yokeyword:fragmentationx:${version["fragmentationVer"]}",
+            "fragmentationx-core"          : "me.yokeyword:fragmentationx-core:${version["fragmentationVer"]}",
+
+            //https://github.com/gyf-dev/ImmersionBar
+            "immersionbar"                 : "com.gyf.immersionbar:immersionbar:3.0.0",
+            "immersionbar-compt"           : "com.gyf.immersionbar:immersionbar-components:3.0.0",
+            "immersionbar-ktx"             : "com.gyf.immersionbar:immersionbar-ktx:3.0.0",
+
+            //https://github.com/youth5201314/banner
+            "banner"                       : "com.youth.banner:banner:2.0.8",
+            //https://github.com/sunyabin/FlycoTablayout
+            "FlycoTabLayout_Lib"           : "com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar",
+            //https://github.com/qstumn/VerticalTabLayout
+            "VerticalTabLayout"            : "q.rorbin:VerticalTabLayout:1.2.5",
+            //https://github.com/hongyangAndroid/FlowLayout
+            //流式布局
+            "flowlayout-lib"               : "com.hyman:flowlayout-lib:1.1.2",
+            "agentweb"                     : "com.just.agentweb:agentweb:4.0.2",
+            "BaseRecyclerViewAdapterHelper": "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.3",
+
+            //崩溃异常测试显示
+            "spiderman"                    : 'com.simple:spiderman:1.1.3',
+            //内存泄露检测
+            "leakcanary"                   : 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3',
+            "leakcanaryNoOp"               : 'com.squareup.leakcanary:leakcanary-android-no-op:2.0-beta-3',
+            //QUMIUI动态库
+            "qumiui"                       : 'com.qmuiteam:qmui:2.0.0-alpha07',
+            //tablayout
+            "XTabLayout"                   : 'com.androidkun:XTabLayout:1.1.3',
+
+            "zxing-core"                   : 'com.google.zxing:core:3.5.0',
+
+            "websocket"                    : 'org.java-websocket:Java-WebSocket:1.5.3',
+    ]
+}
