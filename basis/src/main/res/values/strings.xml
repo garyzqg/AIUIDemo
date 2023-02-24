@@ -1,0 +1,5 @@
+<resources>
+
+    <string name="double_click_exit_tint">再按一次后退键完全退出</string>
+    <string name="permissions_tip">权限不足带来的使用不便，请您谅解</string>
+</resources>

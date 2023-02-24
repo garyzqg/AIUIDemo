@@ -8,14 +8,6 @@ import android.view.View;
 import android.view.Window;
 
 import com.bumptech.glide.Glide;
-import com.inspur.mspeech.R;
-import com.inspur.mspeech.audio.AudioTrackOperator;
-import com.inspur.mspeech.chat.Msg;
-import com.inspur.mspeech.chat.MsgAdapter;
-import com.inspur.mspeech.utils.InitUtil;
-import com.inspur.mspeech.utils.LogUtil;
-import com.inspur.mspeech.utils.UIHelper;
-import com.inspur.mspeech.websocket.WebsocketOperator;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
@@ -25,6 +17,13 @@ import com.iflytek.aiui.AIUIEvent;
 import com.iflytek.aiui.AIUIListener;
 import com.iflytek.aiui.AIUIMessage;
 import com.iflytek.aiui.AIUISetting;
+import com.inspur.mspeech.R;
+import com.inspur.mspeech.audio.AudioTrackOperator;
+import com.inspur.mspeech.chat.Msg;
+import com.inspur.mspeech.chat.MsgAdapter;
+import com.inspur.mspeech.net.SpeechNet;
+import com.inspur.mspeech.utils.UIHelper;
+import com.inspur.mspeech.websocket.WebsocketOperator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,6 +41,8 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jaygoo.widget.wlv.WaveLineView;
+import payfun.lib.basis.utils.InitUtil;
+import payfun.lib.basis.utils.LogUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initView();
 
         InitUtil.init(this);
+
+        SpeechNet.init();
         //权限
         getPermission();
 
@@ -99,10 +102,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-//        SVGAImageView svgaImageView = findViewById(R.id.svgaImage);
-//        SvgaUtils svgaUtils = new SvgaUtils(this, svgaImageView);
-//        svgaUtils.initAnimator();
-//        svgaUtils.startAnimator("svga1");
     }
 
 

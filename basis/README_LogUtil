@@ -1,0 +1,49 @@
+## 需求说明
+
+-日志
+
+### v1.0.0 版本
+
+#### 功能
+
+-输出各种日志到控制台和文件
+
+-文件可设置过期时间
+
+-可通过配置控制是否开启日志
+
+-可格式化输出日志
+
+-可配置文件存储目录
+
+-默认存储文件格式为：Log-yyyy-MM-dd.txt
+
+-默认存储目录为：/storage/emulated/0/Android/data/应用名称/cache/log/Log-2022-02-25.txt
+
+~~~
+//日志配置
+LogUtil.Config config = LogUtil.getConfig()
+.setLogSwitch(true)//日志总开关
+.setConsoleSwitch(true)//日志输出到控制台开关
+.setGlobalTag(null)//日志全局标签
+.setLogHeadSwitch(true)//日志头开关
+.setLog2FileSwitch(true)//日志输入到文件开关
+.setDir("")//日志文件存储目录
+.setFilePrefix("")//日志文件前缀，默认Log
+.setBorderSwitch(true)//日志输出到控制台边框开关
+.setConsoleFilter(LogUtil.D)//过滤输出到控制台的级别
+.setFileFilter(LogUtil.D)//过滤输出到文件的级别
+.setFileExtension("")//日志文件后缀，默认.txt
+.setLogFileMaxSaveDays(-1)//日志文件保存时间，小于0不过期
+.setFileWriter(null)//日志输出到文件自实现
+.setOnConsoleOutputListener(null)//日志输出到控制台完成后回调
+.setOnFileOutputListener(null)//日志输出到文件完成后回调
+.addFileExtraHead("key", "SN号")//日志文件头内容
+.setBodyStackDeep(1)//日志输出异常内容时，对异常内容层级的控制
+.setHeadStackDeep(1)//日志调用位置的深度控制
+.setHeadStackOffset(0);//针对二次封装时的偏移量，每嵌套一层就加1
+~~~
+
+#### 问题
+
+#### 使用

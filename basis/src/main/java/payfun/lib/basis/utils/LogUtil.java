@@ -1,4 +1,4 @@
-package com.inspur.mspeech.utils;
+package payfun.lib.basis.utils;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -498,7 +498,7 @@ public final class LogUtil {
             sb.append(formatBundle2String(mExtras));
             sb.append('}');
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+        if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             Intent mSelector = intent.getSelector();
             if (mSelector != null) {
                 if (!first) {
@@ -848,7 +848,7 @@ public final class LogUtil {
         /**
          * log 写入文件开关，默认关
          */
-        private boolean mLog2FileSwitch = true;
+        private boolean mLog2FileSwitch = false;
         /**
          * log 边框开关，默认开
          */

@@ -12,6 +12,7 @@ android {
         targetSdk rootProject.ext.android["targetSdkVersion"]
         versionCode 1
         versionName "1.0.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -106,5 +107,5 @@ dependencies {
     implementation 'com.github.Jay-Goo:WaveLineView:v1.0.4'
     implementation 'com.github.getActivity:XXPermissions:16.0'
 
-
+    implementation project(path: ':net')
 }

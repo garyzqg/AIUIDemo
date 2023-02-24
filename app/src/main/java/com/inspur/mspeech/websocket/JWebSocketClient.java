@@ -1,12 +1,12 @@
 package com.inspur.mspeech.websocket;
 
-import com.inspur.mspeech.utils.LogUtil;
-
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.nio.ByteBuffer;
+
+import payfun.lib.basis.utils.LogUtil;
 
 /**
  * @author : zhangqinggong

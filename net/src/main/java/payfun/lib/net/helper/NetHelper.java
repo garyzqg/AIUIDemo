@@ -1,4 +1,9 @@
-package com.inspur.mspeech.utils;
+package payfun.lib.net.helper;
+
+import static android.Manifest.permission.ACCESS_NETWORK_STATE;
+import static android.Manifest.permission.ACCESS_WIFI_STATE;
+import static android.Manifest.permission.INTERNET;
+import static android.content.Context.WIFI_SERVICE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,6 +17,9 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
+
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
@@ -21,12 +29,10 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
-import androidx.annotation.RequiresPermission;
-
-import static android.Manifest.permission.ACCESS_NETWORK_STATE;
-import static android.Manifest.permission.ACCESS_WIFI_STATE;
-import static android.Manifest.permission.INTERNET;
-import static android.content.Context.WIFI_SERVICE;
+import okhttp3.HttpUrl;
+import payfun.lib.basis.utils.InitUtil;
+import payfun.lib.basis.utils.ShellUtil;
+import payfun.lib.basis.utils.ThreadUtil;
 
 /**
  * @author : 时光
@@ -245,18 +251,24 @@ public final class NetHelper {
         return isAvailableByDns() || isAvailableByPing(null);
     }
 
+
     /**
-     * Return whether network is available using ping.
+     * 判断网络是否可用
      * <p>Must hold {@code <uses-permission android:name="android.permission.INTERNET" />}</p>
      *
-     * @param ip The ip address.
-     * @return {@code true}: yes<br>{@code false}: no
+     * @param consumer The consumer.
+     * @return the task
      */
     @RequiresPermission(INTERNET)
-    public static boolean isAvailableByPing(final String ip) {
-        final String realIp = TextUtils.isEmpty(ip) ? "223.5.5.5" : ip;
-        ShellUtil.CmdResult result = ShellUtil.execCmd(String.format("ping -c 1 %s", realIp), false);
-        return result.result == 0;
+    public static ThreadUtil.ConsumerTask<Boolean> isAvailableAsync(@NonNull final ThreadUtil.Consumer<Boolean> consumer) {
+        ThreadUtil.ConsumerTask<Boolean> consumerTask = new ThreadUtil.ConsumerTask<Boolean>(consumer) {
+            @Override
+            public Boolean doInBackground() throws Throwable {
+                return isAvailable();
+            }
+        };
+        ThreadUtil.getInstance().defaultIOExecutor().execute(consumerTask);
+        return consumerTask;
     }
 
     /**
@@ -290,6 +302,32 @@ public final class NetHelper {
         }
     }
 
+    /**
+     * Return whether network is available using ping.
+     * <p>Must hold {@code <uses-permission android:name="android.permission.INTERNET" />}</p>
+     *
+     * @param ip The ip address.
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    @RequiresPermission(INTERNET)
+    public static boolean isAvailableByPing(final String ip) {
+        final String realIp = TextUtils.isEmpty(ip) ? "223.5.5.5" : ip;
+        ShellUtil.CmdResult result = ShellUtil.execCmd(String.format("ping -c 1 %s", realIp), false);
+        return result.result == 0;
+    }
+
+    //endregion 网络是否可用
+
+    /**
+     * 获取IP地址.
+     * <p>Must hold {@code <uses-permission android:name="android.permission.INTERNET" />}</p>
+     *
+     * @return the ip address
+     */
+    @RequiresPermission(INTERNET)
+    public static String getIPAddress() {
+        return getWifiEnabled() ? getIpAddressByWifi() : getIPAddress(null);
+    }
 
 
     /**
@@ -500,4 +538,71 @@ public final class NetHelper {
         return tm.getNetworkOperatorName();
     }
 
+
+    /**
+     * 获取wifi速度
+     */
+    public static String getWifiSpeed() {
+        WifiManager wifiManager = (WifiManager) InitUtil.getAppContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo.getBSSID() != null) {
+            //wifi速度
+            int speed = wifiInfo.getLinkSpeed();
+            //wifi速度单位
+            String units = WifiInfo.LINK_SPEED_UNITS;
+            return speed + units;
+        }
+        return "";
+    }
+
+
+    /**
+     * 获取wifi强度
+     *
+     * @return 0, 1, 2, 3, 4, 5
+     */
+    public static int getWifiLevel() {
+        WifiManager wifiManager = (WifiManager) InitUtil.getAppContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo.getBSSID() != null) {
+            //wifi信号强度
+            int signalLevel = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 5);
+            return signalLevel;
+        } else {
+            return -1;
+        }
+    }
+
+    public static HttpUrl checkUrl(String url) throws Exception {
+        HttpUrl parseUrl = HttpUrl.parse(url);
+        if (null == parseUrl) {
+            throw new Exception(url + ":异常");
+        } else {
+            return parseUrl;
+        }
+    }
+
+
+    /**
+     * 注册网络状态更改的监听器
+     *
+     * @param listener The status of network changed listener
+     */
+    @RequiresPermission(ACCESS_NETWORK_STATE)
+    public static void registerNetworkStatusChangedListener(final OnNetworkStatusChangedListener listener) {
+        NetworkChangedReceiver.getInstance().registerListener(listener);
+    }
+
+    public static boolean isRegisteredNetworkStatusChangedListener(final OnNetworkStatusChangedListener listener) {
+        return NetworkChangedReceiver.getInstance().isRegistered(listener);
+    }
+
+    /**
+     * 注销网络状态更改的监听器。
+     *
+     * @param listener The status of network changed listener.
+     */
+    public static void unregisterNetworkStatusChangedListener(final OnNetworkStatusChangedListener listener) {
+        NetworkChangedReceiver.getInstance().unregisterListener(listener);
+    }
 }

@@ -1,0 +1,100 @@
+## 使用教程
+
+###     一、初始化
+  在Applcation里面初始化ApiManager:
+
+  ApiManager的实质：是一个用来存储Retrofit.create(API.class)创建的对象的一个缓存用单例类。
+
+```
+//初始化 例：
+
+/**
+* initApi()方法用于配置网络请求，只需在使用前初始化一次即可，尽可能在Application中初始化
+* DefaultApi.class是该库提供的默认的接口定义，可替换成自己的接口定义
+*/
+ApiManager.getInstance().initApi(DefaultApi.class, () -> new RxClient.Builder()
+                   .baseUrl(NetConstants.BASE_URL)//BASE_URL内容：http://www.baidu.com/
+                   .connectTimeout(10)
+                   .readTimeout(15)
+                   .writeTimeout(15)
+                   .isUseHttps(true)
+                   .addConvertFactory(GsonConverterFactory.create())
+                   .addAdapterFactory(RxJava3CallAdapterFactory.create())
+                   .isUseLog(true)
+           );
+
+//初始化完成后通过ApiManager.getInstance().getApi()方法获取初始化的请求器
+//而不要直接使用getDefault()方法,该方法对应的是默认的网络请求器和初始化的请求器无关
+
+//完全自己自定义
+ApiManager.getInstance().initApi(DefaultApi.class, () -> new RxClient
+                                 .Builder(new Retrofit.Builder()
+                                          .client(new OkHttpClient.Builder()...build())
+                                          .build()
+                                         )
+           );
+```
+
+
+
+### 二、使用
+
+```
+//直接调用getDefault().post()方法时第一个参数必须传入全路径如
+ApiManager.getInstance().getDefault()
+                .post("http://www.baidu.com/getContent/", "")
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(new BaseObserver<ResponseBody>() {
+                    @Override
+                    protected void onSuccess(ResponseBody o) {
+                        
+                    }
+
+                    @Override
+                    protected void onFailed(Throwable ex) {
+                        
+                    }
+                });
+
+
+//DefaultApi.class可替换成自己定义的接口，只需要在此之前进行初始化
+ApiManager.getInstance().getApi(DefaultApi.class)
+               .post("/getContent", "")//DefaultApi中定义的方法
+               .compose(RxScheduler.obsParseResp(RespAdsEntity.class))//此处可参考obsParseResp()方法进行参数发那会的自定义流程处理
+               .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(activity, Lifecycle.Event.ON_DESTROY)))//可根据需要自行引入autoDispose进行自动解绑 
+               .subscribe(new BaseObserver<RespAdsEntity>() {
+                    @Override
+                    protected void onSuccess(RespAdsEntity o) {
+                       
+                    }
+
+                    @Override
+                    protected void onFailed(Throwable ex) {
+                       
+                    }
+                });
+     
+```
+
+### 三、自定义使用
+
+*注：该库与其说是对okhttp3+Retrofit2+rxjava3的封装，不如说是对两者使用的参考模板。*
+
+api目录下为DefaultApi。（可替换为自己的接口，传入initApi中进行使用）
+
+bean目录。（该目录用于存放下载的bean类）
+
+convert目录。（该目录用于存放编码/解码类，即对请求/响应参数的加密，压缩，转换，解密，解压等的处理的工具类）
+
+exception目录。（该目录用于存放统一的异常提示类）
+
+fun目录。（该目录用于存放响应参数的二次处理类，异常统一处理类）
+
+helper目录下为HttpsHelper和NetHelper。（该目录存放工具类，HttpsHelper是https请求的帮助类，NetHelper是对网络封装的一些工具类）
+
+interceptor目录。（拦截器目录，日志拦截器等）
+
+rx目录。对Retrofit和OkHttp3的封装及对RxJava3的回调的封装和流调用的封装。
+
+ApiManager入口类
+

@@ -6,7 +6,6 @@ import com.inspur.mspeech.bean.NlpBean;
 import com.inspur.mspeech.bean.TtsBean;
 import com.inspur.mspeech.utils.Base64Utils;
 import com.inspur.mspeech.utils.GsonHelper;
-import com.inspur.mspeech.utils.LogUtil;
 
 import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
@@ -17,6 +16,8 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+
+import payfun.lib.basis.utils.LogUtil;
 
 /**
  * @author : zhangqinggong

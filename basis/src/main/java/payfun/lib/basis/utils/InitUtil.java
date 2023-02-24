@@ -1,4 +1,4 @@
-package com.inspur.mspeech.utils;
+package payfun.lib.basis.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -7,6 +7,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.text.TextUtils;
+
+import com.iot.apimanager.ApiManager;
 
 /**
  * @author : 时光
@@ -62,13 +64,13 @@ public final class InitUtil {
         return sHandler;
     }
 
-//    public static synchronized String getSN() {
-//        if (TextUtils.isEmpty(SN)) {
-//            ApiManager apiManager = new ApiManager(InitUtil.getAppContext());
-//            SN = apiManager.getSN();
-//        }
-//        return SN;
-//    }
+    public static synchronized String getSN() {
+        if (TextUtils.isEmpty(SN)) {
+            ApiManager apiManager = new ApiManager(InitUtil.getAppContext());
+            SN = apiManager.getSN();
+        }
+        return SN;
+    }
 
     public static synchronized String getPackageName() {
         if (TextUtils.isEmpty(packageName)) {

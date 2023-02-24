@@ -14,3 +14,5 @@
 //}
 rootProject.name = "Aiui_phone"
 include ':app'
+include ':net'
+include ':basis'
