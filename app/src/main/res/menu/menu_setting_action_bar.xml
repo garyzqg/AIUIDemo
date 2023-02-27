@@ -1,0 +1,9 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/setting_menu_voice_name"
+        android:title="音色设置"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/setting_menu_qa"
+        android:title="问答设置"
+        app:showAsAction="never"/>
+</menu>

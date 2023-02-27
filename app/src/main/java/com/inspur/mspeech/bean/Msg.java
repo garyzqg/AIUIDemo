@@ -1,4 +1,4 @@
-package com.inspur.mspeech.chat;
+package com.inspur.mspeech.bean;
 
 /**
  * @author : zhangqinggong

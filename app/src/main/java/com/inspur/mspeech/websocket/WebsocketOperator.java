@@ -6,6 +6,7 @@ import com.inspur.mspeech.bean.NlpBean;
 import com.inspur.mspeech.bean.TtsBean;
 import com.inspur.mspeech.utils.Base64Utils;
 import com.inspur.mspeech.utils.GsonHelper;
+import com.inspur.mspeech.utils.PrefersTool;
 
 import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
@@ -27,14 +28,28 @@ import payfun.lib.basis.utils.LogUtil;
 public class WebsocketOperator {
    private static final String TAG = "WebsocketOperator";
    private JWebSocketClient mClient;
+   private String voiceName;
+   private static WebsocketOperator instance;
+
+   private WebsocketOperator() {
+   }
+
+   public static WebsocketOperator getInstance(){
+      if (instance == null){
+         instance = new WebsocketOperator();
+      }
+      return instance;
+   }
 
    /**
     * websocket初始化
     */
    public void initWebSocket(IWebsocketListener iWebsocketListener) {
-      if (mClient == null) {
+      if (!TextUtils.equals(PrefersTool.getVoiceName(),voiceName) || mClient == null){
          //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
-         URI uri = URI.create("ws://101.43.161.46:58091/ws?token=fengweisen&scene=main_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
+         voiceName = PrefersTool.getVoiceName();
+         URI uri = URI.create("ws://10.180.151.125:18401/ws?userId=123456789&userAccount=speechtest&sceneId=1628207224099196929&voiceName="+voiceName+"&ttsType=azure");
+//         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
          LogUtil.iTag(TAG, "WebSocket init");
          mClient = new JWebSocketClient(uri) {
@@ -64,7 +79,7 @@ public class WebsocketOperator {
             public void onError(Exception ex) {
                LogUtil.iTag(TAG, "onError:" + ex.toString());
                if (iWebsocketListener != null){
-                  iWebsocketListener.onError();
+//                  iWebsocketListener.onError();
                }
 
             }
@@ -169,6 +184,11 @@ public class WebsocketOperator {
 
    public boolean isOpen(){
       return mClient != null && mClient.isOpen();
+   }
+   public void close(){
+      if (mClient != null && mClient.isOpen()){
+         mClient.close();
+      }
    }
 
    public interface IWebsocketListener{

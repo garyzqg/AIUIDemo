@@ -13,5 +13,5 @@ public interface SpeechServer {
 
     //获取音色
     @GET("/bot/service/mmip/v2/tts/voice")
-    Observable<ResponseBody> getTimbre();
+    Observable<ResponseBody> getVoiceName();
 }

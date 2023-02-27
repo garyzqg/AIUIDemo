@@ -1,4 +1,4 @@
-package com.inspur.mspeech.chat;
+package com.inspur.mspeech.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.inspur.mspeech.R;
+import com.inspur.mspeech.bean.Msg;
 
 import java.util.List;
 
