@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intentActivityResultLauncher.launch(intent);
                 break;
             case R.id.setting_menu_qa:
+                Intent intent2 = new Intent(MainActivity.this, QaSettingActivity.class);
+                startActivity(intent2);
                 break;
         }
         return super.onOptionsItemSelected(item);

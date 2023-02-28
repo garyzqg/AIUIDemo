@@ -4,8 +4,8 @@ import android.text.TextUtils;
 
 import com.inspur.mspeech.bean.NlpBean;
 import com.inspur.mspeech.bean.TtsBean;
+import com.inspur.mspeech.net.NetConstants;
 import com.inspur.mspeech.utils.Base64Utils;
-import com.inspur.mspeech.utils.GsonHelper;
 import com.inspur.mspeech.utils.PrefersTool;
 
 import org.java_websocket.enums.ReadyState;
@@ -19,6 +19,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 import payfun.lib.basis.utils.LogUtil;
+import payfun.lib.net.helper.GsonHelper;
 
 /**
  * @author : zhangqinggong
@@ -30,6 +31,7 @@ public class WebsocketOperator {
    private JWebSocketClient mClient;
    private String voiceName;
    private static WebsocketOperator instance;
+   private IWebsocketListener mIWebsocketListener;
 
    private WebsocketOperator() {
    }
@@ -46,9 +48,10 @@ public class WebsocketOperator {
     */
    public void initWebSocket(IWebsocketListener iWebsocketListener) {
       if (!TextUtils.equals(PrefersTool.getVoiceName(),voiceName) || mClient == null){
+         mIWebsocketListener = iWebsocketListener;
          //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
          voiceName = PrefersTool.getVoiceName();
-         URI uri = URI.create("ws://10.180.151.125:18401/ws?userId=123456789&userAccount=speechtest&sceneId=1628207224099196929&voiceName="+voiceName+"&ttsType=azure");
+         URI uri = URI.create(NetConstants.BASE_WS_URL_PROD+"/ws?userId=123456789&userAccount=speechtest&sceneId=1628207224099196929&voiceName="+voiceName+"&ttsType=azure");
 //         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
          LogUtil.iTag(TAG, "WebSocket init");
@@ -79,7 +82,7 @@ public class WebsocketOperator {
             public void onError(Exception ex) {
                LogUtil.iTag(TAG, "onError:" + ex.toString());
                if (iWebsocketListener != null){
-//                  iWebsocketListener.onError();
+                  iWebsocketListener.onError();
                }
 
             }
@@ -114,7 +117,9 @@ public class WebsocketOperator {
                      TtsBean ttsBean = GsonHelper.GSON.fromJson(data, TtsBean.class);
                      boolean is_finish = ttsBean.isIs_finish();
                      String audio = ttsBean.getAudio();
-
+                     if (TextUtils.isEmpty(audio)){
+                        return;
+                     }
                      byte[] audioByte = Base64Utils.base64EncodeToByte(audio);
                      if (iWebsocketListener != null){
                         iWebsocketListener.OnTtsData(audioByte,is_finish);
@@ -157,8 +162,11 @@ public class WebsocketOperator {
                         mClient.reconnectBlocking();
                         LogUtil.iTag("JWebSocketClient", "WebSocket reconnect");
                      }
-                  } catch (InterruptedException e) {
+                  } catch (Exception e) {
                      e.printStackTrace();
+                     if (mIWebsocketListener != null){
+                        mIWebsocketListener.onError();
+                     }
                   }
                }
             }

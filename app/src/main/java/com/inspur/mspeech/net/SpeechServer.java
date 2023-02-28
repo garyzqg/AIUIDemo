@@ -1,7 +1,11 @@
 package com.inspur.mspeech.net;
 
+import com.inspur.mspeech.bean.BaseResponse;
+import com.inspur.mspeech.bean.VoiceBean;
+
+import java.util.List;
+
 import io.reactivex.rxjava3.core.Observable;
-import okhttp3.ResponseBody;
 import retrofit2.http.GET;
 
 /**
@@ -10,8 +14,8 @@ import retrofit2.http.GET;
  * desc    : 接口管理类
  */
 public interface SpeechServer {
-
     //获取音色
     @GET("/bot/service/mmip/v2/tts/voice")
-    Observable<ResponseBody> getVoiceName();
+    Observable<BaseResponse<List<VoiceBean>>> getVoiceName();
+
 }

@@ -14,7 +14,7 @@ public class Base64Utils {
      * @param content 待解密内容
      * @return 解密后byte数组
      */
-    public static byte[] base64EncodeToByte(String content) {
+    public static byte[]  base64EncodeToByte(String content) {
         return Base64.decode(content, Base64.DEFAULT);
     }
 
