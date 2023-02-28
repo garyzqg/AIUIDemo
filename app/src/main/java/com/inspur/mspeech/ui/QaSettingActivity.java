@@ -49,13 +49,22 @@ public class QaSettingActivity extends AppCompatActivity {
         mRvQa.setLayoutManager(layoutManager);
         mQaAdapter = new QaAdapter(mQaBeanList);
         mRvQa.setAdapter(mQaAdapter);
+
+        mQaAdapter.setOnItemClickListener(new QaAdapter.ItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                //修改问答
+                Intent intent = new Intent(QaSettingActivity.this, QaEditActivity.class);
+                intent.putExtra("qaDetail",mQaBeanList.get(position));
+                intentActivityResultLauncher.launch(intent);
+            }
+        });
         AppCompatImageView addQa = findViewById(R.id.iv_add_qa);
         addQa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //新增问答集
-                Intent intent = new Intent(QaSettingActivity.this,QaEditActivity.class);
-                intent.putExtra("editType","1");
+                Intent intent = new Intent(QaSettingActivity.this, QaAddActivity.class);
                 intentActivityResultLauncher.launch(intent);
             }
         });

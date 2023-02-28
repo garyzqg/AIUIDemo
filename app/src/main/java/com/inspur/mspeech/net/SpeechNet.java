@@ -95,4 +95,61 @@ public class SpeechNet {
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
     }
+
+    /**
+     * 删除问答集
+     * @param observer
+     */
+    public static void deleteQa(String qaId,BaseObserver<BaseResponse> observer){
+        Map<String, Object> para = new HashMap<>();
+        para.put("qaId", qaId);
+        para.put("sceneId", "1628207224099196929");
+        para.put("userAccount", "speechtest");
+        para.put("userId", "123456789");
+        NetManager.getInstance().getApi(QaServer.class)
+                .deleteQa(para)
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
+
+    /**
+     * 问题 - 新增
+     * @param observer
+     */
+    public static void saveQuestion(String qaId,String questionTxt,BaseObserver<BaseResponse> observer){
+        Map<String, Object> para = new HashMap<>();
+        para.put("qaId", qaId);
+        para.put("questionTxt", questionTxt);
+        para.put("standard", "0");
+        para.put("sceneId", "1628207224099196929");
+        para.put("userAccount", "speechtest");
+        para.put("userId", "123456789");
+        String s = GsonHelper.GSON.toJson(para);
+        RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
+        NetManager.getInstance().getApi(QaServer.class)
+                .saveQuestion(body)
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
+
+    /**
+     * 答案 - 新增
+     * @param observer
+     */
+    public static void saveAnswer(String qaId,String answerTxt,BaseObserver<BaseResponse> observer){
+        Map<String, Object> para = new HashMap<>();
+        para.put("qaId", qaId);
+        para.put("answerTxt", answerTxt);
+        para.put("answerType", "txt");
+        para.put("standard", "0");
+        para.put("sceneId", "1628207224099196929");
+        para.put("userAccount", "speechtest");
+        para.put("userId", "123456789");
+        String s = GsonHelper.GSON.toJson(para);
+        RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
+        NetManager.getInstance().getApi(QaServer.class)
+                .saveAnswer(body)
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
 }

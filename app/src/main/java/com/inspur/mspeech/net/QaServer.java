@@ -8,7 +8,6 @@ import java.util.Map;
 
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -31,5 +30,14 @@ public interface QaServer {
 
     //删除问答集
     @DELETE("/bot/service/mmip/v2/qa")
-    Observable<ResponseBody> deleteQa(@Body RequestBody body);
+    Observable<BaseResponse> deleteQa(@QueryMap Map<String,Object> body);
+
+
+    //新增一个问法
+    @POST("/bot/service/mmip/v2/qa/question")
+    Observable<BaseResponse> saveQuestion(@Body RequestBody body);
+
+    //新增一个答案
+    @POST("/bot/service/mmip/v2/qa/answer")
+    Observable<BaseResponse> saveAnswer(@Body RequestBody body);
 }

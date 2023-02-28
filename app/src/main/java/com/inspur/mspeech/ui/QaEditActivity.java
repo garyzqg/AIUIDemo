@@ -5,14 +5,22 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 
 import com.inspur.mspeech.R;
+import com.inspur.mspeech.adapter.QaEditAdapter;
 import com.inspur.mspeech.bean.BaseResponse;
+import com.inspur.mspeech.bean.QaBean;
 import com.inspur.mspeech.net.SpeechNet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
 import payfun.lib.basis.utils.ToastUtil;
 import payfun.lib.net.rx.BaseObserver;
@@ -23,8 +31,17 @@ public class QaEditActivity extends AppCompatActivity {
     private AppCompatTextView mTvConfirm;
     private AppCompatEditText mEtAddQuestion;
     private AppCompatEditText mEtAddAnswer;
+    private Button mBtnDeleteQa;
     private String mQuestionText;
     private String mAnswerText;
+
+    private RecyclerView mRvQuestion;
+    private RecyclerView mRvAnswer;
+    private List<QaBean> mQuestionList = new ArrayList<>();
+    private List<QaBean> mAnswerList = new ArrayList<>();
+    private QaEditAdapter mQaQuestionAdapter;
+    private QaEditAdapter mQaAnswerAdapter;
+    private String mQaId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +50,17 @@ public class QaEditActivity extends AppCompatActivity {
 
         initView();
 
+        getData();
+
+    }
+
+    private void getData() {
+        QaBean qaBean = getIntent().getParcelableExtra("qaDetail");
+        mQuestionList.addAll(qaBean.getQuestionDataList());
+        mAnswerList.addAll(qaBean.getAnswerDataList());
+        mQaId = qaBean.getQaId();
+        mQaQuestionAdapter.notifyDataSetChanged();
+        mQaAnswerAdapter.notifyDataSetChanged();
     }
 
     private void initView() {
@@ -40,10 +68,45 @@ public class QaEditActivity extends AppCompatActivity {
         mTvConfirm = findViewById(R.id.tv_confirm);
         mEtAddQuestion = findViewById(R.id.et_add_question);
         mEtAddAnswer = findViewById(R.id.et_add_answer);
+        mBtnDeleteQa = findViewById(R.id.btn_delete_qa);
 
-        mEtAddQuestion.requestFocus();
+        mRvQuestion = findViewById(R.id.rv_question);
+        mRvAnswer = findViewById(R.id.rv_answer);
+        mQaQuestionAdapter = new QaEditAdapter(mQuestionList);
+        mQaAnswerAdapter = new QaEditAdapter(mAnswerList);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
+        mRvQuestion.setLayoutManager(layoutManager);
+        mRvAnswer.setLayoutManager(layoutManager2);
+
+        mRvQuestion.setAdapter(mQaQuestionAdapter);
+        mRvAnswer.setAdapter(mQaAnswerAdapter);
+
         mTvConfirm.setEnabled(false);
 
+
+        mBtnDeleteQa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SpeechNet.deleteQa(mQaId, new BaseObserver<BaseResponse>() {
+                    @Override
+                    public void onNext(@NonNull BaseResponse response) {
+                        if (response.isSuccess()){
+                            setResult(RESULT_OK);
+                            finish();
+                        }else {
+                            ToastUtil.showLong("删除问答集失败");
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        ToastUtil.showLong("删除问答集失败");
+                    }
+                });
+            }
+        });
         mTvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,22 +117,26 @@ public class QaEditActivity extends AppCompatActivity {
         mTvConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SpeechNet.saveQa(mQuestionText, mAnswerText, new BaseObserver<BaseResponse>() {
-                    @Override
-                    public void onNext(@NonNull BaseResponse response) {
-                        if (response.isSuccess()){
-                            setResult(RESULT_OK);
-                            finish();
-                        }else {
-                            ToastUtil.showLong("创建问答集失败");
+                //问法和回复需要单独调接口 且一次只能添加一条
+                if (!TextUtils.isEmpty(mQuestionText)){
+                    SpeechNet.saveQuestion(mQaId, mQuestionText, new BaseObserver<BaseResponse>() {
+                        @Override
+                        public void onNext(@NonNull BaseResponse response) {
+                            if (response.isSuccess()){
+                                saveAnswer();
+                            }else {
+                                ToastUtil.showLong("新增问题失败");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-
-                    }
-                });
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                            ToastUtil.showLong("新增问题失败");
+                        }
+                    });
+                }else {
+                    saveAnswer();
+                }
             }
         });
 
@@ -111,8 +178,32 @@ public class QaEditActivity extends AppCompatActivity {
         });
     }
 
+    private void saveAnswer() {
+        if (!TextUtils.isEmpty(mAnswerText)){
+            SpeechNet.saveAnswer(mQaId, mAnswerText, new BaseObserver<BaseResponse>() {
+                @Override
+                public void onNext(@NonNull BaseResponse response) {
+                    if (response.isSuccess()){
+                        setResult(RESULT_OK);
+                        finish();
+                    }else {
+                        ToastUtil.showLong("新增答案失败");
+                    }
+                }
+
+                @Override
+                public void onError(@NonNull Throwable e) {
+                    ToastUtil.showLong("新增答案失败");
+                }
+            });
+        }else {
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
+
     private void changeConfirmStatus() {
-        if (!TextUtils.isEmpty(mQuestionText) && !TextUtils.isEmpty(mAnswerText)){
+        if (!TextUtils.isEmpty(mQuestionText) || !TextUtils.isEmpty(mAnswerText)){
             if (!mTvConfirm.isEnabled()){
                 mTvConfirm.setEnabled(true);
                 mTvConfirm.setTextColor(getResources().getColor(R.color.color_msg_bg_2));

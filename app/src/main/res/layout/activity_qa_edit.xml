@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.QaEditActivity"
+    tools:context=".ui.QaAddActivity"
     android:orientation="vertical">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
@@ -15,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="创建自定义问答"
+            android:text="编辑自定义问答"
             android:textSize="20sp"
             android:textColor="@color/black"/>
 
@@ -41,80 +40,116 @@
             android:textSize="16sp"
             android:textColor="@color/color_gray_text"/>
     </RelativeLayout>
-
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#4DCDCDCD"/>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:paddingLeft="20dp"
-        android:gravity="bottom"
-        android:paddingBottom="10dp"
-        android:text="你可以和我说:"
-        android:background="#F6F7FB"
-        android:textSize="14sp"
-        android:textColor="#A4A6AC"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#4DCDCDCD"/>
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_add_question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:background="@null"
-        android:hint="请输入问答问法"
-        android:textColor="@color/black"
-        android:textColorHint="@color/color_gray"
-        android:textSize="16sp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#4DCDCDCD"/>
+        android:layout_height="match_parent">
 
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4DCDCDCD"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:paddingLeft="20dp"
-        android:gravity="bottom"
-        android:paddingBottom="10dp"
-        android:text="我将会回复:"
-        android:background="#F6F7FB"
-        android:textSize="14sp"
-        android:textColor="#A4A6AC"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingLeft="20dp"
+                android:gravity="bottom"
+                android:paddingBottom="10dp"
+                android:text="你可以和我说:"
+                android:background="#F6F7FB"
+                android:textSize="14sp"
+                android:textColor="#A4A6AC"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#4DCDCDCD"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4DCDCDCD"/>
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_add_answer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:background="@null"
-        android:hint="请输入回复内容"
-        android:textColor="@color/black"
-        android:textColorHint="@color/color_gray"
-        android:textSize="16sp"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_add_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@null"
+                android:hint="请添加相似说法"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_gray"
+                android:textSize="16sp"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#4DCDCDCD"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4DCDCDCD"/>
+
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingLeft="20dp"
+                android:gravity="bottom"
+                android:paddingBottom="10dp"
+                android:text="我将会回复:"
+                android:background="#F6F7FB"
+                android:textSize="14sp"
+                android:textColor="#A4A6AC"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4DCDCDCD"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_add_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@null"
+                android:hint="请添加回复内容"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_gray"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4DCDCDCD"/>
+
+            <Button
+                android:id="@+id/btn_delete_qa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="30dp"
+                android:paddingVertical="10dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/white"
+                android:text="删除此问答"
+                android:textSize="20sp"
+                android:textColor="#F44336"
+                android:layout_gravity="center_horizontal"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </ScrollView>
+
+
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>

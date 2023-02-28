@@ -1,6 +1,7 @@
 package com.inspur.mspeech.adapter;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
  * date    : 2023/2/25 11:02
  * desc    :
  */
-public class QaAdapter extends RecyclerView.Adapter<QaAdapter.ViewHolder> {
+public class QaEditAdapter extends RecyclerView.Adapter<QaEditAdapter.ViewHolder> {
 
    private List<QaBean> list;
    private ItemClickListener mItemClickListener;
-   public QaAdapter(List<QaBean> list){
+   public QaEditAdapter(List<QaBean> list){
       this.list = list;
    }
 
@@ -33,7 +34,7 @@ public class QaAdapter extends RecyclerView.Adapter<QaAdapter.ViewHolder> {
    @NonNull
    @Override
    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-      View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.qa_item,parent,false);
+      View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.qa_edit_item,parent,false);
       return new ViewHolder(view);
    }
 
@@ -41,14 +42,16 @@ public class QaAdapter extends RecyclerView.Adapter<QaAdapter.ViewHolder> {
    @Override
    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
       QaBean qaBean = list.get(position);
-      holder.question.setText("\""+qaBean.getQuestionTxt()+"\"");
-      holder.answer.setText("\""+qaBean.getAnswerTxt()+"\"");
-      holder.itemView.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
-            mItemClickListener.onClick(position);
-         }
-      });
+      if (!TextUtils.isEmpty(qaBean.getQuestionTxt())){
+         holder.text.setText(qaBean.getQuestionTxt());
+      }else if (!TextUtils.isEmpty(qaBean.getAnswerTxt())){
+         holder.text.setText(qaBean.getAnswerTxt());
+      }
+
+      if (position == getItemCount()-1){
+         holder.divider.setVisibility(View.GONE);
+      }
+
    }
 
    @Override
@@ -57,12 +60,12 @@ public class QaAdapter extends RecyclerView.Adapter<QaAdapter.ViewHolder> {
    }
 
    public class ViewHolder extends RecyclerView.ViewHolder{
-      AppCompatTextView question;
-      AppCompatTextView answer;
+      AppCompatTextView text;
+      AppCompatTextView divider;
       public ViewHolder(@NonNull View itemView) {
          super(itemView);
-         question = itemView.findViewById(R.id.tv_question);
-         answer = itemView.findViewById(R.id.tv_answer);
+         text = itemView.findViewById(R.id.tv_text);
+         divider = itemView.findViewById(R.id.item_divider);
       }
    }
 
