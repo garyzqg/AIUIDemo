@@ -1,5 +1,6 @@
 package com.inspur.mspeech.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,6 +13,8 @@ import com.inspur.mspeech.net.SpeechNet;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,16 +53,29 @@ public class QaSettingActivity extends AppCompatActivity {
         addQa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                //新增问答集
+                Intent intent = new Intent(QaSettingActivity.this,QaEditActivity.class);
+                intent.putExtra("editType","1");
+                intentActivityResultLauncher.launch(intent);
             }
         });
     }
+
+    public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
+        //更新数据
+        if (result.getResultCode() == RESULT_OK){
+            initData();
+        }
+    });
 
     private void initData() {
         SpeechNet.getQa(new BaseObserver<BaseResponse<List<QaBean>>>() {
             @Override
             public void onNext(@NonNull BaseResponse<List<QaBean>> response) {
                 if (response.isSuccess()){
+                    if (mQaBeanList.size()>0){
+                        mQaBeanList.clear();
+                    }
                     mQaBeanList.addAll(response.getData());
                     mQaAdapter.notifyDataSetChanged();
                 }
