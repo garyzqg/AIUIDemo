@@ -85,6 +85,41 @@ public class QaEditActivity extends AppCompatActivity {
 
         mTvConfirm.setEnabled(false);
 
+        mQaQuestionAdapter.setOnItemClickListener(position -> {
+            QaBean qaBean = mQuestionList.get(position);
+            SpeechNet.deleteQuestion(qaBean.getQaId(), qaBean.getQuestionId(), new BaseObserver<BaseResponse>() {
+                @Override
+                public void onNext(@NonNull BaseResponse response) {
+                    if (response.isSuccess()){
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onError(@NonNull Throwable e) {
+
+                }
+            });
+        });
+
+        mQaAnswerAdapter.setOnItemClickListener(position -> {
+            QaBean qaBean = mAnswerList.get(position);
+            SpeechNet.deleteAnswer(qaBean.getQaId(), qaBean.getAnswerId(), new BaseObserver<BaseResponse>() {
+                @Override
+                public void onNext(@NonNull BaseResponse response) {
+                    if (response.isSuccess()){
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onError(@NonNull Throwable e) {
+
+                }
+            });
+        });
 
         mBtnDeleteQa.setOnClickListener(new View.OnClickListener() {
             @Override

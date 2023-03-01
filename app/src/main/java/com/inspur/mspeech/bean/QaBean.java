@@ -16,9 +16,9 @@ public class QaBean implements Parcelable {
     private String questionTxt;
     private String answerId;
     private String answerTxt;
+    private int standard;
     private List<QaBean> questionDataList;
     private List<QaBean> answerDataList;
-
 
     protected QaBean(Parcel in) {
         qaId = in.readString();
@@ -26,6 +26,7 @@ public class QaBean implements Parcelable {
         questionTxt = in.readString();
         answerId = in.readString();
         answerTxt = in.readString();
+        standard = in.readInt();
         questionDataList = in.createTypedArrayList(QaBean.CREATOR);
         answerDataList = in.createTypedArrayList(QaBean.CREATOR);
     }
@@ -41,6 +42,14 @@ public class QaBean implements Parcelable {
             return new QaBean[size];
         }
     };
+
+    public int getStandard() {
+        return standard;
+    }
+
+    public void setStandard(int standard) {
+        this.standard = standard;
+    }
 
     public List<QaBean> getQuestionDataList() {
         return questionDataList;
@@ -110,6 +119,7 @@ public class QaBean implements Parcelable {
         parcel.writeString(questionTxt);
         parcel.writeString(answerId);
         parcel.writeString(answerTxt);
+        parcel.writeInt(standard);
         parcel.writeTypedList(questionDataList);
         parcel.writeTypedList(answerDataList);
     }

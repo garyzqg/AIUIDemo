@@ -76,10 +76,10 @@ public class SpeechNet {
         Map<String, Object> para = new HashMap<>();
         // TODO: 2023/2/27 参数待实现
         para.put("page", 1);
-        para.put("sceneId", "1628207224099196929");
+        para.put("sceneId", NetConstants.SCENE_ID);
         para.put("size", 50);
-        para.put("userId", "123456789");
-        para.put("userAccount", "speechtest");
+        para.put("userId", NetConstants.USER_ID);
+        para.put("userAccount", NetConstants.USER_ACCOUNT);
         NetManager.getInstance().getApi(QaServer.class)
                 .getQa(para)
                 .compose(RxScheduler.obsIo2Main())
@@ -95,9 +95,9 @@ public class SpeechNet {
         para.put("questionTxt", questionTxt);
         para.put("answerTxt", answerTxt);
         para.put("answerType", "txt");
-        para.put("sceneId", "1628207224099196929");
-        para.put("userAccount", "speechtest");
-        para.put("userId", "123456789");
+        para.put("sceneId", NetConstants.SCENE_ID);
+        para.put("userAccount",  NetConstants.USER_ACCOUNT);
+        para.put("userId", NetConstants.USER_ID);
         String s = GsonHelper.GSON.toJson(para);
         RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
         NetManager.getInstance().getApi(QaServer.class)
@@ -113,9 +113,9 @@ public class SpeechNet {
     public static void deleteQa(String qaId,BaseObserver<BaseResponse> observer){
         Map<String, Object> para = new HashMap<>();
         para.put("qaId", qaId);
-        para.put("sceneId", "1628207224099196929");
-        para.put("userAccount", "speechtest");
-        para.put("userId", "123456789");
+        para.put("sceneId", NetConstants.SCENE_ID);
+        para.put("userAccount",  NetConstants.USER_ACCOUNT);
+        para.put("userId", NetConstants.USER_ID);
         NetManager.getInstance().getApi(QaServer.class)
                 .deleteQa(para)
                 .compose(RxScheduler.obsIo2Main())
@@ -131,13 +131,30 @@ public class SpeechNet {
         para.put("qaId", qaId);
         para.put("questionTxt", questionTxt);
         para.put("standard", "0");
-        para.put("sceneId", "1628207224099196929");
-        para.put("userAccount", "speechtest");
-        para.put("userId", "123456789");
+        para.put("sceneId", NetConstants.SCENE_ID);
+        para.put("userAccount",  NetConstants.USER_ACCOUNT);
+        para.put("userId", NetConstants.USER_ID);
         String s = GsonHelper.GSON.toJson(para);
         RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
         NetManager.getInstance().getApi(QaServer.class)
                 .saveQuestion(body)
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
+
+    /**
+     * 问题 - 删除
+     * @param observer
+     */
+    public static void deleteQuestion(String qaId,String questionId,BaseObserver<BaseResponse> observer){
+        Map<String, Object> para = new HashMap<>();
+        para.put("qaId", qaId);
+        para.put("questionId", questionId);
+        para.put("sceneId", NetConstants.SCENE_ID);
+        para.put("userAccount",  NetConstants.USER_ACCOUNT);
+        para.put("userId", NetConstants.USER_ID);
+        NetManager.getInstance().getApi(QaServer.class)
+                .deleteQuestion(para)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
     }
@@ -152,9 +169,9 @@ public class SpeechNet {
         para.put("answerTxt", answerTxt);
         para.put("answerType", "txt");
         para.put("standard", "0");
-        para.put("sceneId", "1628207224099196929");
-        para.put("userAccount", "speechtest");
-        para.put("userId", "123456789");
+        para.put("sceneId", NetConstants.SCENE_ID);
+        para.put("userAccount",  NetConstants.USER_ACCOUNT);
+        para.put("userId", NetConstants.USER_ID);
         String s = GsonHelper.GSON.toJson(para);
         RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
         NetManager.getInstance().getApi(QaServer.class)
@@ -163,10 +180,31 @@ public class SpeechNet {
                 .subscribe(observer);
     }
 
+    /**
+     * 答案 - 删除
+     * @param observer
+     */
+    public static void deleteAnswer(String qaId,String answerId,BaseObserver<BaseResponse> observer){
+        Map<String, Object> para = new HashMap<>();
+        para.put("qaId", qaId);
+        para.put("answerId", answerId);
+        para.put("sceneId", NetConstants.SCENE_ID);
+        para.put("userAccount",  NetConstants.USER_ACCOUNT);
+        para.put("userId", NetConstants.USER_ID);
+        NetManager.getInstance().getApi(QaServer.class)
+                .deleteAnswer(para)
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
+
+    /**
+     * 次数限制
+     * @param observer
+     */
     public static void userCount(BaseObserver<BaseResponse<Integer>> observer){
         Map<String, Object> para = new HashMap<>();
-        para.put("userAccount", "speechtest");
-        para.put("userId", "123456789");
+        para.put("userAccount",  NetConstants.USER_ACCOUNT);
+        para.put("userId", NetConstants.USER_ID);
         NetManager.getInstance().getApi(UserServer.class)
                 .getUser(para)
                 .compose(RxScheduler.obsIo2Main())

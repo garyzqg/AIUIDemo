@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.QaAddActivity"
+    tools:context=".ui.QaEditActivity"
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -139,11 +139,11 @@
                 android:paddingVertical="10dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginBottom="10dp"
-                android:background="@color/white"
+                android:backgroundTint="@color/white"
                 android:text="删除此问答"
                 android:textSize="20sp"
                 android:textColor="#F44336"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 

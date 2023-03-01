@@ -37,7 +37,15 @@ public interface QaServer {
     @POST("/bot/service/mmip/v2/qa/question")
     Observable<BaseResponse> saveQuestion(@Body RequestBody body);
 
+    //删除一个问法
+    @DELETE("/bot/service/mmip/v2/qa/question")
+    Observable<BaseResponse> deleteQuestion(@QueryMap Map<String,Object> body);
+
     //新增一个答案
     @POST("/bot/service/mmip/v2/qa/answer")
     Observable<BaseResponse> saveAnswer(@Body RequestBody body);
+
+    //删除一个答案
+    @DELETE("/bot/service/mmip/v2/qa/answer")
+    Observable<BaseResponse> deleteAnswer(@QueryMap Map<String,Object> body);
 }

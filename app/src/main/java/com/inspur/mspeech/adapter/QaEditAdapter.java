@@ -52,6 +52,15 @@ public class QaEditAdapter extends RecyclerView.Adapter<QaEditAdapter.ViewHolder
          holder.divider.setVisibility(View.GONE);
       }
 
+      if (qaBean.getStandard() == 1){
+         holder.delete.setVisibility(View.INVISIBLE);
+      }
+      holder.delete.setOnClickListener(view -> {
+         if (mItemClickListener != null){
+            mItemClickListener.onClick(position);
+         }
+      });
+
    }
 
    @Override
@@ -62,10 +71,12 @@ public class QaEditAdapter extends RecyclerView.Adapter<QaEditAdapter.ViewHolder
    public class ViewHolder extends RecyclerView.ViewHolder{
       AppCompatTextView text;
       AppCompatTextView divider;
+      AppCompatTextView delete;
       public ViewHolder(@NonNull View itemView) {
          super(itemView);
          text = itemView.findViewById(R.id.tv_text);
          divider = itemView.findViewById(R.id.item_divider);
+         delete = itemView.findViewById(R.id.delete);
       }
    }
 
