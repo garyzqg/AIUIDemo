@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 
 import com.bumptech.glide.Glide;
 import com.hjq.permissions.OnPermissionCallback;
@@ -23,8 +22,10 @@ import com.iflytek.aiui.AIUISetting;
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.MsgAdapter;
 import com.inspur.mspeech.audio.AudioTrackOperator;
+import com.inspur.mspeech.bean.BaseResponse;
 import com.inspur.mspeech.bean.Msg;
 import com.inspur.mspeech.net.SpeechNet;
+import com.inspur.mspeech.utils.PrefersTool;
 import com.inspur.mspeech.utils.UIHelper;
 import com.inspur.mspeech.websocket.WebsocketOperator;
 
@@ -49,6 +50,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import jaygoo.widget.wlv.WaveLineView;
 import payfun.lib.basis.utils.InitUtil;
 import payfun.lib.basis.utils.LogUtil;
+import payfun.lib.basis.utils.ToastUtil;
+import payfun.lib.net.rx.BaseObserver;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -64,16 +67,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MsgAdapter mAdapter;
     private WaveLineView mWaveLineView;
     private AppCompatImageView mIvVoiceball;
+    private int mWakeUpFlag = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //设置无Title
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         //设置应用全屏,必须写在setContentView方法前面
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main_new);
         UIHelper.hideBottomUIMenu(this);
+
 
         initView();
 
@@ -101,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .into(mIvVoiceball);
         mIvVoiceball.setOnClickListener(view -> {
             if (mAIUIAgent != null){
+                mWakeUpFlag = 0;
                 AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
                 mAIUIAgent.sendMessage(wakeupMsg);
             }
@@ -129,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.setting_menu_qa:
                 Intent intent2 = new Intent(MainActivity.this, QaSettingActivity.class);
-                startActivity(intent2);
+                intentActivityResultLauncher2.launch(intent2);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -138,6 +144,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
         //设置音色页面回来 重新init ws
         initWebsocket();
+
+        controlRecord(AIUIConstant.CMD_START_RECORD);
+    });
+
+    public ActivityResultLauncher<Intent> intentActivityResultLauncher2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
+
+        controlRecord(AIUIConstant.CMD_START_RECORD);
     });
 
     @Override
@@ -173,6 +186,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             //资源文件拷贝  语音唤醒
                             copyAssetFolder(MainActivity.this, "ivw/vtn", String.format("%s/ivw/vtn", "/sdcard/AIUI"));
                             initSDK();
+
+                            //获取可使用次数
+                            getUserCount();
                         } else {
                             LogUtil.i("部分权限获取成功" + permissions.toString());
 
@@ -193,6 +209,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
+    private void getUserCount() {
+        SpeechNet.userCount(new BaseObserver<BaseResponse<Integer>>() {
+            @Override
+            public void onNext(@NonNull BaseResponse<Integer> response) {
+                if(response.isSuccess()){
+                    int data = response.getData();
+                    PrefersTool.setAvailableCount(data);
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+        });
+    }
+
 
     private void initAudioTrack() {
         if (mAudioTrackOperator == null){
@@ -207,7 +240,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (mWaveLineView.getVisibility() != View.VISIBLE && WebsocketOperator.getInstance().isOpen()){
+                            if (mWaveLineView.getVisibility() != View.VISIBLE){
+                                //如果超时了再重新唤醒
+                                if(!WebsocketOperator.getInstance().isOpen()){
+                                    if (mAIUIAgent != null){
+                                        mWakeUpFlag = 1;
+                                        AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
+                                        mAIUIAgent.sendMessage(wakeupMsg);
+                                    }
+                                }else {
+                                    //播放过程中AIUI不接收录音
+                                    controlRecord(AIUIConstant.CMD_STOP_RECORD);
+
+                                    mAudioTrackOperator.play();
+                                    mAudioTrackOperator.writeSource(MainActivity.this,"audio/ding.pcm");
+                                }
                                 mWaveLineView.setVisibility(View.VISIBLE);
                                 mIvVoiceball.setVisibility(View.GONE);
                                 mWaveLineView.startAnim();
@@ -218,6 +265,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     });
 
                 }
+
+                @Override
+                public void onStopResource() {
+                    //播放结束 重新开启录音
+                    controlRecord(AIUIConstant.CMD_START_RECORD);
+                    //展示水波纹 接收录音
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mWaveLineView.getVisibility() != View.VISIBLE){
+                                mWaveLineView.setVisibility(View.VISIBLE);
+                                mIvVoiceball.setVisibility(View.GONE);
+                                mWaveLineView.startAnim();
+                                mWaveLineView.setMoveSpeed(290);
+                                mWaveLineView.setVolume(15);
+                            }
+                        }
+                    });
+                }
             });
         }
     }
@@ -226,8 +292,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         WebsocketOperator.getInstance().initWebSocket(new WebsocketOperator.IWebsocketListener() {
             @Override
             public void OnTtsData(byte[] audioData, boolean isFinish) {
-                // TODO: 2023/1/30 每次都调用play?
+                // TODO: 2023/1/30 每次都调用play CMD_STOP_RECORD?
                 if (mAudioTrackOperator != null) {
+                    controlRecord(AIUIConstant.CMD_STOP_RECORD);
                     mAudioTrackOperator.play();
                     mAudioTrackOperator.write(audioData, isFinish);
                 }
@@ -235,6 +302,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void OnNlpData(String nlpString) {
+                //次数累计一次
+                int usedCount = PrefersTool.getUsedCount();
+                PrefersTool.setUsedCount(++usedCount);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -250,18 +320,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onOpen() {
                 if (mAudioTrackOperator != null) {
                     mAudioTrackOperator.play();
-                    mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaozhong_box_wakeUpReply.pcm");
+//                    mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaozhong_box_wakeUpReply.pcm");
+
                     //播放过程中AIUI不接收录音
                     controlRecord(AIUIConstant.CMD_STOP_RECORD);
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            msgList.add(new Msg("我在呢", Msg.TYPE_RECEIVED));
-                            mAdapter.notifyItemInserted(msgList.size() - 1);
+                            if (mWakeUpFlag == 0){
+                                mAudioTrackOperator.writeSource(MainActivity.this, "audio/"+PrefersTool.getVoiceName()+"_box_wakeUpReply.pcm");
+                                msgList.add(new Msg("我在呢", Msg.TYPE_RECEIVED));
+                                mAdapter.notifyItemInserted(msgList.size() - 1);
 //                    mAdapter.notifyDataSetChanged();
-                            mRvChat.scrollToPosition(msgList.size() - 1);
-
+                                mRvChat.scrollToPosition(msgList.size() - 1);
+                            }else {
+                                mAudioTrackOperator.writeSource(MainActivity.this, "audio/ding.pcm");
+                            }
                             //展示水波纹
                             mIvVoiceball.setVisibility(View.GONE);
                             mWaveLineView.setVisibility(View.VISIBLE);
@@ -365,19 +440,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 case AIUIConstant.EVENT_WAKEUP:
                     LogUtil.iTag(TAG,"AIUI -- WAKEUP 进入识别状态");
-                    //websocket建联 若已连接状态需要先断开
 
-                    WebsocketOperator.getInstance().connectWebSocket();
+                    int usedCount = PrefersTool.getUsedCount();
+                    int availableCount = PrefersTool.getAvailableCount();
+                    if (usedCount>availableCount){
+                        ToastUtil.showLong("您的体验次数已用完");
+                    }else {
+
+                        //websocket建联 若已连接状态需要先断开
+                        WebsocketOperator.getInstance().connectWebSocket();
 
 
-                    //播放本地音频文件 欢迎 需要先停止当前播放且释放队列内数据
-                    if(mAudioTrackOperator != null){
-                        mAudioTrackOperator.shutdownExecutor();
-                        mAudioTrackOperator.stop();
-                        mAudioTrackOperator.flush();
+                        //播放本地音频文件 欢迎 需要先停止当前播放且释放队列内数据
+                        if(mAudioTrackOperator != null){
+                            mAudioTrackOperator.shutdownExecutor();
+                            mAudioTrackOperator.stop();
+                            mAudioTrackOperator.flush();
 
-                        mAudioTrackOperator.isPlaying = false;
+                            mAudioTrackOperator.isPlaying = false;
+                        }
                     }
+
 
                     break;
                 //结果事件（包含听写，语义，离线语法结果）
@@ -465,7 +548,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                     WebsocketOperator.getInstance().sendMessage(mIatMessage);
 
-                                    if (WebsocketOperator.getInstance().isOpen()){
+                                    if (WebsocketOperator.getInstance().isOpen()) {
 
                                         mWaveLineView.setVisibility(View.INVISIBLE);
                                         mWaveLineView.setVolume(15);
@@ -475,8 +558,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                         mAudioTrackOperator.isPlaying = true;
                                         //播放过程中AIUI不接收录音
-                                        controlRecord(AIUIConstant.CMD_STOP_RECORD);
+//                                        controlRecord(AIUIConstant.CMD_STOP_RECORD);
+//
                                     }
+
 
                                 }
 
@@ -607,7 +692,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //切页面或切后台 ws断联 audiotrack停止播放
         WebsocketOperator.getInstance().close();
-
+        mWakeUpFlag = 0;
         if(mAudioTrackOperator != null){
             mAudioTrackOperator.shutdownExecutor();
             mAudioTrackOperator.stop();
@@ -615,8 +700,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             mAudioTrackOperator.isPlaying = false;
         }
-
-
     }
 
     @Override

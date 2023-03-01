@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.aiuidemo",
+  "applicationId": "com.inspur.mspeech",
   "variantName": "release",
   "elements": [
     {
@@ -12,8 +12,8 @@
       "filters": [],
       "attributes": [],
       "versionCode": 1,
-      "versionName": "1.0",
-      "outputFile": "app-release.apk"
+      "versionName": "1.0.0",
+      "outputFile": "com.inspur.mspeech_v1.0.0_release_0228_1819.apk"
     }
   ],
   "elementType": "File"

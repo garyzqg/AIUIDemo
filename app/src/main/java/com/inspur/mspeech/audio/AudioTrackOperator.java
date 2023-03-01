@@ -86,7 +86,7 @@ public class AudioTrackOperator {
         if (mExecutor != null){
             mExecutor.submit(() -> {
                 try{
-                    if (buffer.length> 0 && mAudioTrack != null && mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING && mAudioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+                    if (buffer != null && buffer.length> 0 && mAudioTrack != null && mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING && mAudioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
                         mAudioTrack.write(buffer, 0, buffer.length);
                     }
 
@@ -151,7 +151,7 @@ public class AudioTrackOperator {
                     }
 
                     if (mIAudioTrackListener != null){
-                        mIAudioTrackListener.onStop();
+                        mIAudioTrackListener.onStopResource();
                     }
                 }
 
@@ -163,6 +163,7 @@ public class AudioTrackOperator {
 
     public interface IAudioTrackListener{
         void onStop();
+        void onStopResource();
     }
     /**
      * 开始播放

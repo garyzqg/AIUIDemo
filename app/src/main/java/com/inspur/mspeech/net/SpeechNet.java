@@ -44,6 +44,16 @@ public class SpeechNet {
                 .addAdapterFactory(RxJava3CallAdapterFactory.create())
                 .isUseLog(true)
         );
+
+        NetManager.getInstance().initApi(UserServer.class, () -> new RxClient.Builder()
+                .baseUrl(NetConstants.BASE_URL_USER_PROD)
+                .connectTimeout(10)
+                .readTimeout(15)
+                .writeTimeout(15)
+                .addConvertFactory(GsonConverterFactory.create())
+                .addAdapterFactory(RxJava3CallAdapterFactory.create())
+                .isUseLog(true)
+        );
     }
 
 
@@ -149,6 +159,16 @@ public class SpeechNet {
         RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
         NetManager.getInstance().getApi(QaServer.class)
                 .saveAnswer(body)
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
+
+    public static void userCount(BaseObserver<BaseResponse<Integer>> observer){
+        Map<String, Object> para = new HashMap<>();
+        para.put("userAccount", "speechtest");
+        para.put("userId", "123456789");
+        NetManager.getInstance().getApi(UserServer.class)
+                .getUser(para)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
     }

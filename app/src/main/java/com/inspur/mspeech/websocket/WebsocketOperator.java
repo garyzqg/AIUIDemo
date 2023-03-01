@@ -118,12 +118,16 @@ public class WebsocketOperator {
                      boolean is_finish = ttsBean.isIs_finish();
                      String audio = ttsBean.getAudio();
                      if (TextUtils.isEmpty(audio)){
-                        return;
+                        if (iWebsocketListener != null){
+                           iWebsocketListener.OnTtsData(null,is_finish);
+                        }
+                     }else {
+                        byte[] audioByte = Base64Utils.base64EncodeToByte(audio);
+                        if (iWebsocketListener != null){
+                           iWebsocketListener.OnTtsData(audioByte,is_finish);
+                        }
                      }
-                     byte[] audioByte = Base64Utils.base64EncodeToByte(audio);
-                     if (iWebsocketListener != null){
-                        iWebsocketListener.OnTtsData(audioByte,is_finish);
-                     }
+
 
                   }
 

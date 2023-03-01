@@ -12,4 +12,8 @@ public class NetConstants {
     public static final String BASE_QA_URL_PROD = "http://101.43.161.46:60301";
     public static final String BASE_WS_URL_TEST = "ws://10.180.151.125:18401";
     public static final String BASE_WS_URL_PROD = "ws://101.43.161.46:60306";
+
+    public static final String BASE_URL_COUNT_TEST = "http://10.180.151.125:18101";
+    public static final String BASE_URL_USER_PROD = "http://101.43.161.46:60307";
+
 }
