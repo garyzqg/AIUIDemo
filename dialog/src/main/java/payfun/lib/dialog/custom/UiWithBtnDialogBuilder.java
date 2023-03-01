@@ -4,11 +4,10 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
-
 import payfun.lib.dialog.R;
 import payfun.lib.dialog.base.BaseDialogBuilder;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
@@ -41,8 +40,8 @@ public abstract class UiWithBtnDialogBuilder<B extends UiWithBtnDialogBuilder> e
     @Override
     protected void onInitView(DialogFragment dialog, View view, Bundle savedInstanceState) {
         FrameLayout flDialogContentView = view.findViewById(R.id.fl_dialog_content);
-        Button btnDialogLeft = view.findViewById(R.id.btn_dialog_left);
-        Button btnDialogRight = view.findViewById(R.id.btn_dialog_right);
+        TextView btnDialogLeft = view.findViewById(R.id.btn_dialog_left);
+        TextView btnDialogRight = view.findViewById(R.id.btn_dialog_right);
 
         onDoBeforeViewPerform(dialog, view);
 

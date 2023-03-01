@@ -19,10 +19,13 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
 import payfun.lib.basis.utils.ToastUtil;
+import payfun.lib.dialog.DialogUtil;
+import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 import payfun.lib.net.rx.BaseObserver;
 
 public class QaEditActivity extends AppCompatActivity {
@@ -86,61 +89,88 @@ public class QaEditActivity extends AppCompatActivity {
         mTvConfirm.setEnabled(false);
 
         mQaQuestionAdapter.setOnItemClickListener(position -> {
-            QaBean qaBean = mQuestionList.get(position);
-            SpeechNet.deleteQuestion(qaBean.getQaId(), qaBean.getQuestionId(), new BaseObserver<BaseResponse>() {
+            //弹框提示是否删除
+            DialogUtil.showDeleteDialog(this, "是否确认删除？",new OnDialogButtonClickListener() {
                 @Override
-                public void onNext(@NonNull BaseResponse response) {
-                    if (response.isSuccess()){
-                        setResult(RESULT_OK);
-                        finish();
-                    }
-                }
+                public boolean onClick(DialogFragment baseDialog, View v) {
+                    //确定删除
+                    QaBean qaBean = mQuestionList.get(position);
+                    SpeechNet.deleteQuestion(qaBean.getQaId(), qaBean.getQuestionId(), new BaseObserver<BaseResponse>() {
+                        @Override
+                        public void onNext(@NonNull BaseResponse response) {
+                            if (response.isSuccess()) {
+                                setResult(RESULT_OK);
+                                finish();
+                            }else {
+                                // TODO: 2023/3/1 弹窗
+                            }
+                        }
 
-                @Override
-                public void onError(@NonNull Throwable e) {
-
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                                // TODO: 2023/3/1 弹窗
+                        }
+                    });
+                    return false;
                 }
             });
+
         });
 
         mQaAnswerAdapter.setOnItemClickListener(position -> {
-            QaBean qaBean = mAnswerList.get(position);
-            SpeechNet.deleteAnswer(qaBean.getQaId(), qaBean.getAnswerId(), new BaseObserver<BaseResponse>() {
+            //弹框提示是否删除
+            DialogUtil.showDeleteDialog(this, "是否确认删除？",new OnDialogButtonClickListener() {
                 @Override
-                public void onNext(@NonNull BaseResponse response) {
-                    if (response.isSuccess()){
-                        setResult(RESULT_OK);
-                        finish();
-                    }
-                }
+                public boolean onClick(DialogFragment baseDialog, View v) {
+                    //确定删除
+                    QaBean qaBean = mAnswerList.get(position);
+                    SpeechNet.deleteAnswer(qaBean.getQaId(), qaBean.getAnswerId(), new BaseObserver<BaseResponse>() {
+                        @Override
+                        public void onNext(@NonNull BaseResponse response) {
+                            if (response.isSuccess()){
+                                setResult(RESULT_OK);
+                                finish();
+                            }else {
 
-                @Override
-                public void onError(@NonNull Throwable e) {
+                            }
+                        }
 
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+
+                        }
+                    });
+                    return false;
                 }
             });
+
         });
 
-        mBtnDeleteQa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SpeechNet.deleteQa(mQaId, new BaseObserver<BaseResponse>() {
-                    @Override
-                    public void onNext(@NonNull BaseResponse response) {
-                        if (response.isSuccess()){
-                            setResult(RESULT_OK);
-                            finish();
-                        }else {
+        mBtnDeleteQa.setOnClickListener(view -> {
+            //弹框提示是否删除
+            DialogUtil.showDeleteDialog(this, "是否确认删除此问答集？", new OnDialogButtonClickListener() {
+                @Override
+                public boolean onClick(DialogFragment baseDialog, View v) {
+                    //确定删除
+                    SpeechNet.deleteQa(mQaId, new BaseObserver<BaseResponse>() {
+                        @Override
+                        public void onNext(@NonNull BaseResponse response) {
+                            if (response.isSuccess()) {
+                                setResult(RESULT_OK);
+                                finish();
+                            } else {
+                                ToastUtil.showLong("删除问答集失败");
+                            }
+                        }
+
+                        @Override
+                        public void onError(@NonNull Throwable e) {
                             ToastUtil.showLong("删除问答集失败");
                         }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        ToastUtil.showLong("删除问答集失败");
-                    }
-                });
-            }
+                    });
+                    return false;
+                }
+            });
         });
         mTvCancel.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -42,8 +42,8 @@
     </RelativeLayout>
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -92,8 +92,6 @@
                 android:layout_height="1dp"
                 android:background="#4DCDCDCD"/>
 
-
-
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -131,24 +129,23 @@
                 android:layout_height="1dp"
                 android:background="#4DCDCDCD"/>
 
-            <Button
-                android:id="@+id/btn_delete_qa"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="30dp"
-                android:paddingVertical="10dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="@color/white"
-                android:text="删除此问答"
-                android:textSize="20sp"
-                android:textColor="#F44336"
-                android:layout_gravity="center_horizontal" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 
     </ScrollView>
-
+    <Button
+        android:id="@+id/btn_delete_qa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/white"
+        android:text="删除此问答"
+        android:textSize="20sp"
+        android:textColor="#F44336"
+        android:layout_gravity="center_horizontal" />
 
 
 

@@ -108,4 +108,5 @@ dependencies {
     implementation 'com.github.getActivity:XXPermissions:16.0'
 
     implementation project(path: ':net')
+    implementation project(path: ':dialog')
 }

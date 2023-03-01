@@ -14,6 +14,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
 
@@ -51,7 +52,7 @@ public class PrivacyPolicyDialogBuilder extends UiWithBtnDialogBuilder<PrivacyPo
     public void onInitChildView(DialogFragment dialog, View view, Bundle savedInstanceState) {
         CheckBox cbPrivacySelect = view.findViewById(R.id.cb_privacy_select);
         ProgressView progressPrivacy = view.findViewById(R.id.progress_privacy);
-        Button leftBtn = dialog.getView().findViewById(R.id.btn_dialog_left);
+        TextView leftBtn = dialog.getView().findViewById(R.id.btn_dialog_left);
 
         setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -84,7 +85,7 @@ public class PrivacyPolicyDialogBuilder extends UiWithBtnDialogBuilder<PrivacyPo
     }
 
 
-    void initWebView(WebView webView, ProgressView progressView, Button btn) {
+    void initWebView(WebView webView, ProgressView progressView, TextView btn) {
         progressView.setVisibility(View.VISIBLE);
         btn.setEnabled(false);
         btn.setClickable(false);
