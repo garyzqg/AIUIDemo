@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="2px">
+
+    <LinearLayout
+        android:id="@+id/box_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:minWidth="125dp"
+        android:minHeight="125dp"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+
+        <payfun.lib.dialog.widget.ProgressView
+            android:id="@+id/progress"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@android:color/transparent"
+            app:barColor="@android:color/white"
+            app:barWidth="4dp"
+            app:fillRadius="true"
+            app:linearProgress="true"
+            app:progressIndeterminate="true" />
+
+        <TextView
+            android:id="@+id/tv_wait_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:maxLines="3"
+            android:text="加载中..."
+            android:textColor="@android:color/black"
+            android:textSize="18dp" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

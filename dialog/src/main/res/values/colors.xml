@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="color_4071FF">#4071FF</color>
+    <color name="color_2D2D2D">#2D2D2D</color>
+    <color name="color_FE5578">#FE5578</color>
+    <color name="color_909090">#909090</color>
+    <color name="color_88828282">#88828282</color>
+    <color name="color_ff444444">#ff444444</color>
+    <color name="color_fff">#ffffff</color>
+    <color name="cardview_dark_background">#FF424242</color>
+    <color name="cardview_light_background">#FFFFFFFF</color>
+
+</resources>

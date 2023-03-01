@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_privacy_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/privacy_policy_tip_title"
+        android:textColor="@color/color_2D2D2D"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="356dp"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/rect_border_gray"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="16dp">
+
+        <WebView
+            android:id="@+id/wv_privacy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <payfun.lib.dialog.widget.ProgressView
+            android:id="@+id/progress_privacy"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@android:color/transparent"
+            app:barColor="@android:color/darker_gray"
+            app:barWidth="4dp"
+            app:fillRadius="true"
+            app:linearProgress="true"
+            app:progressIndeterminate="true"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cb_privacy_select"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/sel_rect_gray"
+            android:button="@null"
+            android:checked="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:text="@string/privacy_policy_tip"
+            android:textColor="@color/color_909090"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
+</LinearLayout>

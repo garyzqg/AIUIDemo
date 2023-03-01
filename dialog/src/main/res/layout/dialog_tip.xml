@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="33dp"
+    android:layout_marginEnd="33dp"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_tip_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_2D2D2D"
+        android:textSize="28.5sp"
+        android:textStyle="bold"
+        tools:text="标题" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_tip_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:textColor="@color/color_2D2D2D"
+        android:textSize="25sp"
+        tools:text="内容" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_tip_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/color_FE5578"
+        android:textSize="24sp"
+        android:visibility="gone"
+        tools:text="（详细提示）" />
+
+
+</LinearLayout>

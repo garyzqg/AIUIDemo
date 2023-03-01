@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="privacy_policy_tip">我已阅读并同意上述条款及条件</string>
+    <string name="privacy_policy_tip_title">温馨提示</string>
+    <string name="privacy_policy_next">下一步</string>
+    <string name="ui_str_ok">确认</string>
+    <string name="ui_str_cancel">取消</string>
+</resources>
