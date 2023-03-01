@@ -14,7 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 import io.reactivex.rxjava3.annotations.NonNull;
-import payfun.lib.basis.utils.ToastUtil;
+import payfun.lib.dialog.DialogUtil;
+import payfun.lib.net.exception.ExceptionEngine;
+import payfun.lib.net.exception.NetException;
 import payfun.lib.net.rx.BaseObserver;
 
 public class QaAddActivity extends AppCompatActivity {
@@ -61,13 +63,14 @@ public class QaAddActivity extends AppCompatActivity {
                             setResult(RESULT_OK);
                             finish();
                         }else {
-                            ToastUtil.showLong("创建问答集失败");
+                            DialogUtil.showErrorDialog(QaAddActivity.this,"创建问答集失败 code = " + response.getCode(),response.getMessage());
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        NetException netException = ExceptionEngine.handleException(e);
+                        DialogUtil.showErrorDialog(QaAddActivity.this,"创建问答集失败",netException.getErrorTitle());
                     }
                 });
             }

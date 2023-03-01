@@ -6,10 +6,10 @@ package com.inspur.mspeech.net;
  * desc    : 网络常量
  */
 public class NetConstants {
-    public static final String USER_ID = "123456789";
-    public static final String USER_ACCOUNT = "speechtest";
-//    public static final String USER_ID = "987654321";
-//    public static final String USER_ACCOUNT = "dev";
+//    public static final String USER_ID = "123456789";
+//    public static final String USER_ACCOUNT = "speechtest";
+    public static final String USER_ID = "987654321";
+    public static final String USER_ACCOUNT = "dev";
     public static final String SCENE_ID = "1628207224099196929";
 
 

@@ -7,15 +7,15 @@ import com.inspur.mspeech.adapter.VoiceNameAdapter;
 import com.inspur.mspeech.bean.BaseResponse;
 import com.inspur.mspeech.bean.VoiceBean;
 import com.inspur.mspeech.net.SpeechNet;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
-import payfun.lib.basis.utils.LogUtil;
+import payfun.lib.dialog.DialogUtil;
+import payfun.lib.net.exception.ExceptionEngine;
+import payfun.lib.net.exception.NetException;
 import payfun.lib.net.rx.BaseObserver;
 /**
  * @author : zhangqinggong
@@ -50,6 +50,8 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
                             mVoiceBeanList.add(voiceBeanList.get(i));
                         }
                         mVoiceNameAdapter.notifyDataSetChanged();
+                    }else {
+                        DialogUtil.showErrorDialog(VoiceNameSettingActivity.this,"获取可用音色失败 code = " + response.getCode(),response.getMessage());
                     }
                 }
 
@@ -58,8 +60,8 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
 
             @Override
             public void onError(@NonNull Throwable e) {
-                e.printStackTrace();
-                LogUtil.e(e);
+                NetException netException = ExceptionEngine.handleException(e);
+                DialogUtil.showErrorDialog(VoiceNameSettingActivity.this,"获取可用音色失败",netException.getErrorTitle());
             }
 
         });

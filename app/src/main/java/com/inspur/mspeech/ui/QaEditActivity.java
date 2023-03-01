@@ -23,9 +23,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
-import payfun.lib.basis.utils.ToastUtil;
 import payfun.lib.dialog.DialogUtil;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
+import payfun.lib.net.exception.ExceptionEngine;
+import payfun.lib.net.exception.NetException;
 import payfun.lib.net.rx.BaseObserver;
 
 public class QaEditActivity extends AppCompatActivity {
@@ -102,13 +103,14 @@ public class QaEditActivity extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             }else {
-                                // TODO: 2023/3/1 弹窗
+                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除失败 code = " + response.getCode(),response.getMessage());
                             }
                         }
 
                         @Override
                         public void onError(@NonNull Throwable e) {
-                                // TODO: 2023/3/1 弹窗
+                            NetException netException = ExceptionEngine.handleException(e);
+                            DialogUtil.showErrorDialog(QaEditActivity.this,"删除失败",netException.getErrorTitle());
                         }
                     });
                     return false;
@@ -131,13 +133,14 @@ public class QaEditActivity extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             }else {
-
+                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除失败 code = " + response.getCode(),response.getMessage());
                             }
                         }
 
                         @Override
                         public void onError(@NonNull Throwable e) {
-
+                            NetException netException = ExceptionEngine.handleException(e);
+                            DialogUtil.showErrorDialog(QaEditActivity.this,"删除失败",netException.getErrorTitle());
                         }
                     });
                     return false;
@@ -159,13 +162,14 @@ public class QaEditActivity extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             } else {
-                                ToastUtil.showLong("删除问答集失败");
+                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除问答集失败 code = " + response.getCode(),response.getMessage());
                             }
                         }
 
                         @Override
                         public void onError(@NonNull Throwable e) {
-                            ToastUtil.showLong("删除问答集失败");
+                            NetException netException = ExceptionEngine.handleException(e);
+                            DialogUtil.showErrorDialog(QaEditActivity.this,"删除问答集失败",netException.getErrorTitle());
                         }
                     });
                     return false;
@@ -190,13 +194,15 @@ public class QaEditActivity extends AppCompatActivity {
                             if (response.isSuccess()){
                                 saveAnswer();
                             }else {
-                                ToastUtil.showLong("新增问题失败");
+                                DialogUtil.showErrorDialog(QaEditActivity.this,"新增问题失败 code = " + response.getCode(),response.getMessage());
                             }
                         }
 
                         @Override
                         public void onError(@NonNull Throwable e) {
-                            ToastUtil.showLong("新增问题失败");
+                            NetException netException = ExceptionEngine.handleException(e);
+                            DialogUtil.showErrorDialog(QaEditActivity.this,"新增问题失败",netException.getErrorTitle());
+
                         }
                     });
                 }else {
@@ -252,13 +258,14 @@ public class QaEditActivity extends AppCompatActivity {
                         setResult(RESULT_OK);
                         finish();
                     }else {
-                        ToastUtil.showLong("新增答案失败");
+                        DialogUtil.showErrorDialog(QaEditActivity.this,"新增答案失败 code = " + response.getCode(),response.getMessage());
                     }
                 }
 
                 @Override
                 public void onError(@NonNull Throwable e) {
-                    ToastUtil.showLong("新增答案失败");
+                    NetException netException = ExceptionEngine.handleException(e);
+                    DialogUtil.showErrorDialog(QaEditActivity.this,"新增答案失败",netException.getErrorTitle());
                 }
             });
         }else {

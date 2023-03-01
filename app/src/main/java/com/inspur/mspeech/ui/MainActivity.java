@@ -46,12 +46,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jaygoo.widget.wlv.WaveLineView;
 import payfun.lib.basis.utils.InitUtil;
 import payfun.lib.basis.utils.LogUtil;
 import payfun.lib.basis.utils.ToastUtil;
+import payfun.lib.dialog.DialogUtil;
+import payfun.lib.dialog.listener.OnDialogButtonClickListener;
+import payfun.lib.net.exception.ExceptionEngine;
+import payfun.lib.net.exception.NetException;
 import payfun.lib.net.rx.BaseObserver;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -235,14 +240,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(response.isSuccess()){
                     int data = response.getData();
                     PrefersTool.setAvailableCount(data);
+                }else {
+                    DialogUtil.showErrorDialog(MainActivity.this, "获取权限失败 code = " + response.getCode(), response.getMessage(), new OnDialogButtonClickListener() {
+                        @Override
+                        public boolean onClick(DialogFragment baseDialog, View v) {
+                            ExitApp();
+                            return false;
+                        }
+                    });
                 }
             }
 
             @Override
             public void onError(@NonNull Throwable e) {
-
+                NetException netException = ExceptionEngine.handleException(e);
+                DialogUtil.showErrorDialog(MainActivity.this, "获取权限失败", netException.getErrorTitle(), new OnDialogButtonClickListener() {
+                    @Override
+                    public boolean onClick(DialogFragment baseDialog, View v) {
+                        ExitApp();
+                        return false;
+                    }
+                });
             }
         });
+    }
+
+    private void ExitApp() {
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
     }
 
 

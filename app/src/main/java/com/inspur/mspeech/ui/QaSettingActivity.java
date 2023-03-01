@@ -20,6 +20,9 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
+import payfun.lib.dialog.DialogUtil;
+import payfun.lib.net.exception.ExceptionEngine;
+import payfun.lib.net.exception.NetException;
 import payfun.lib.net.rx.BaseObserver;
 
 /**
@@ -87,12 +90,15 @@ public class QaSettingActivity extends AppCompatActivity {
                     }
                     mQaBeanList.addAll(response.getData());
                     mQaAdapter.notifyDataSetChanged();
+                }else {
+                    DialogUtil.showErrorDialog(QaSettingActivity.this,"获取问答集失败 code = " + response.getCode(),response.getMessage());
                 }
             }
 
             @Override
             public void onError(@NonNull Throwable e) {
-
+                NetException netException = ExceptionEngine.handleException(e);
+                DialogUtil.showErrorDialog(QaSettingActivity.this,"获取问答集失败",netException.getErrorTitle());
             }
         });
     }

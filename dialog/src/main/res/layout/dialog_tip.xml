@@ -25,6 +25,7 @@
         android:layout_marginTop="10dp"
         android:textColor="@color/color_2D2D2D"
         android:textSize="18sp"
+        android:gravity="center"
         tools:text="内容" />
 
 

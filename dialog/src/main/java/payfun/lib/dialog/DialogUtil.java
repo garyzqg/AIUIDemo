@@ -40,6 +40,42 @@ public class DialogUtil {
 
 
 
+    /**
+     * 错误弹窗
+     * @param activity
+     * @return
+     */
+    public static DialogImpl showErrorDialog(FragmentActivity activity, String content,String detailMsg) {
+        HintDialogBuilder hintDialogBuilder = new HintDialogBuilder();
+        hintDialogBuilder.setTitleMsg("温馨提示");
+        hintDialogBuilder.setContentMsg(content);
+        hintDialogBuilder.setLeftMsg("确定");
+        hintDialogBuilder.setDetailMsg(detailMsg);
+
+        FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+        DialogImpl dialog = new DialogImpl(hintDialogBuilder);
+        dialog.showNow(supportFragmentManager, "error");
+        return dialog;
+    }
+
+    /**
+     * 错误弹窗 按键回调
+     * @param activity
+     * @return
+     */
+    public static DialogImpl showErrorDialog(FragmentActivity activity, String content,String detailMsg,OnDialogButtonClickListener onBtnClickListener) {
+        HintDialogBuilder hintDialogBuilder = new HintDialogBuilder();
+        hintDialogBuilder.setTitleMsg("温馨提示");
+        hintDialogBuilder.setContentMsg(content);
+        hintDialogBuilder.setLeftMsg("确定");
+        hintDialogBuilder.setDetailMsg(detailMsg);
+        hintDialogBuilder.setOnLeftBtnClickListener(onBtnClickListener);
+
+        FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+        DialogImpl dialog = new DialogImpl(hintDialogBuilder);
+        dialog.showNow(supportFragmentManager, "error");
+        return dialog;
+    }
 
 
     public static DialogImpl showDialog(FragmentActivity activity, BaseDialogBuilder dialogBuilder) {
