@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/8 13:39
  * desc   : <activity管理器>
  */

@@ -3,8 +3,7 @@ package payfun.lib.basis.utils;
 import androidx.annotation.NonNull;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/21 15:49
  * desc   : <p>崩溃收集工具类
  */

@@ -3,8 +3,7 @@ package payfun.lib.basis.utils;
 import java.util.Random;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/5/12 9:59
  * desc   : <随机数生成工具类>
  * <p>参考自:apache.commons.lang3.RandomStringUtils类</>

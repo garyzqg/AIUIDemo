@@ -11,8 +11,7 @@ import payfun.lib.net.helper.NetHelper;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/19 9:23
  * desc   : <p>Rx订阅回调封装
  */

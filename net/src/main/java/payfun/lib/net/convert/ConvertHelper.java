@@ -14,8 +14,7 @@ import payfun.lib.net.bean.DownloadEntity;
 import payfun.lib.net.helper.GsonHelper;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/27 15:58
  * desc   : <参数转换类>
  */

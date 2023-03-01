@@ -13,8 +13,7 @@ import payfun.lib.net.fun.BaseNetResultFun;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/18 18:09
  * desc   : <p>Rx线程调度,可根据本类进行仿写
  */

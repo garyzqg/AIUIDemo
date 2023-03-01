@@ -10,10 +10,9 @@ import payfun.lib.dialog.R;
 import payfun.lib.dialog.base.TextInfo;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/20 18:08
- * desc   : <p>商户信息对话框
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
+ * desc   : <商户信息对话框>
  */
 public class MerInfoDialogBuilder extends UiWithBtnDialogBuilder<MerInfoDialogBuilder> {
 

@@ -6,8 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/26 18:35
  * desc   : <时间工具类>
  */

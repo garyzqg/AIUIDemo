@@ -22,8 +22,7 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/18 14:37
  * desc   : <对Retrofit，OkHttpClient，HttpLog等的配置组装类>
  */

@@ -7,9 +7,8 @@ import android.os.Message;
 import android.os.SystemClock;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/6/2 15:35
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
  * desc   : <倒计时>
  * * 1. 处理5.0以下版本不能取消问题；
  * * 2. 新增暂停，继续功能和暂停回调；

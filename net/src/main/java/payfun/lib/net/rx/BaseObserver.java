@@ -12,8 +12,7 @@ import io.reactivex.rxjava3.internal.util.EndConsumerHelper;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/19 9:23
  * desc   : <p>Rx订阅回调封装
  */

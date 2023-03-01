@@ -18,8 +18,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/6 13:56
  * desc   : <流读写到文件>
  */

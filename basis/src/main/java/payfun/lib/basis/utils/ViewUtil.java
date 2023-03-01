@@ -24,8 +24,7 @@ import androidx.annotation.NonNull;
 import java.util.Locale;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/6/21 16:23
  * desc   : <p>视图工具类
  */

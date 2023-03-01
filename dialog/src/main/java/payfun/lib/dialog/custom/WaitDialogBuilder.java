@@ -16,9 +16,8 @@ import payfun.lib.dialog.base.BaseDialogBuilder;
 import payfun.lib.dialog.widget.ProgressView;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/20 14:30
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
  * desc   : <等待进度条对话框，可设置提示语和主题>
  */
 public class WaitDialogBuilder extends BaseDialogBuilder<WaitDialogBuilder> {

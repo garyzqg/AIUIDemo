@@ -3,8 +3,7 @@ package payfun.lib.basis.utils;
 import androidx.core.content.FileProvider;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/7/6 10:22
  * desc   : <功能简述>
  */

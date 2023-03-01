@@ -3,9 +3,8 @@ package payfun.lib.dialog.base;
 import payfun.lib.dialog.R;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/19 17:56
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
  * desc   : <功能简述>
  */
 public interface AnimAction {

@@ -12,8 +12,7 @@ import okhttp3.Response;
 import payfun.lib.basis.time.SysTimeUtil;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/28 18:01
  * desc   : <p>同步服务器时间到本地拦截器
  */

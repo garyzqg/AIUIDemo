@@ -8,8 +8,7 @@ import android.text.TextUtils;
 import payfun.lib.basis.utils.LogUtil;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/11/15 15:09
  * desc   : <闹钟广播监听 : 需要在清单文件中添加如下广播注册，可自定义该广播进行监听>
  * <p>

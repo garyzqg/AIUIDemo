@@ -24,10 +24,9 @@ import payfun.lib.dialog.listener.OnAutoDismissListener;
 import payfun.lib.dialog.widget.ProgressView;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/20 18:13
- * desc   : <p>隐私协议对话框构建器
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
+ * desc   : <隐私协议对话框构建器>
  */
 public class PrivacyPolicyDialogBuilder extends UiWithBtnDialogBuilder<PrivacyPolicyDialogBuilder> {
 

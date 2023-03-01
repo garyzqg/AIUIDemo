@@ -15,10 +15,15 @@ import androidx.annotation.Nullable;
 import payfun.lib.dialog.R;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/6/2 15:07
  * desc   : <功能简述>
+ */
+
+/**
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
+ * desc   : <提示对话框>
  */
 public class CountDownView extends LinearLayout {
 

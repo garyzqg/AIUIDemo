@@ -54,8 +54,7 @@ import androidx.annotation.IntRange;
 import androidx.annotation.RequiresApi;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/6 13:58
  * desc   : <日志>
  */

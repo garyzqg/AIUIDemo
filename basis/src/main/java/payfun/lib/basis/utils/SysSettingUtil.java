@@ -14,8 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/6/8 14:51
  * desc   : <部分系统功能设置工具类>
  */

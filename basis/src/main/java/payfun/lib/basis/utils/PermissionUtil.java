@@ -17,8 +17,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/6/21 16:32
  * desc   : <p>权限工具类
  */

@@ -7,8 +7,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/11/9 10:16
  * desc   : <指令发送工具类>
  */

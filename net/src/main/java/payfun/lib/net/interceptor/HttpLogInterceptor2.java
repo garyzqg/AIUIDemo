@@ -40,8 +40,7 @@ import okio.GzipSource;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/18 14:39
  * desc   : <日志拦截器：该日志拦截器适配 okhttp3:4.9.1>
  */

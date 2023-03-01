@@ -1,8 +1,7 @@
 package payfun.lib.net.helper;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/8/11 16:20
  * desc   : <p>网络状态
  */

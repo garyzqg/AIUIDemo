@@ -16,9 +16,8 @@ import payfun.lib.dialog.listener.DialogLifeCycleListener;
 import payfun.lib.dialog.listener.OnAutoDismissListener;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/19 16:26
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
  * desc   : <构建对话框的参数>
  */
 public abstract class BaseDialogBuilder<B extends BaseDialogBuilder> {

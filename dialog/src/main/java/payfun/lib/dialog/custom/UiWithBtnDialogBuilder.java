@@ -14,9 +14,8 @@ import payfun.lib.dialog.base.BaseDialogBuilder;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/20 18:08
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
  * desc   : <底部带左右两个按钮的可填充对话框>
  */
 public abstract class UiWithBtnDialogBuilder<B extends UiWithBtnDialogBuilder> extends BaseDialogBuilder<B> {

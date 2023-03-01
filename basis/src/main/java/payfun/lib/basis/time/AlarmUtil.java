@@ -12,8 +12,7 @@ import java.util.Calendar;
 import payfun.lib.basis.utils.LogUtil;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/11/15 11:28
  * desc   : <定时器工具类>
  */

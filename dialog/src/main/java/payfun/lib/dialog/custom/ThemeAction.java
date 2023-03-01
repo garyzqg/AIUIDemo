@@ -1,10 +1,9 @@
 package payfun.lib.dialog.custom;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/20 14:42
- * desc   : <p>主体模式</p>
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
+ * desc   : <主体模式>
  */
 public enum ThemeAction {
     /**

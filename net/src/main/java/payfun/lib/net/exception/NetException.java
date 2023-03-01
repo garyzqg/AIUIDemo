@@ -2,8 +2,7 @@ package payfun.lib.net.exception;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2018/11/12 9:31
  * desc   : <整个HTTP请求过程中统一的错误接口格式>
  */

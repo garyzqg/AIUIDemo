@@ -16,8 +16,7 @@ import payfun.lib.basis.utils.InitUtil;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/28 13:57
  * desc   : <设置系统时间>
  */

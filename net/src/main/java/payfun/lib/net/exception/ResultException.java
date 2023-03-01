@@ -2,8 +2,7 @@ package payfun.lib.net.exception;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/19 9:32
  * desc   : <结果异常>
  */

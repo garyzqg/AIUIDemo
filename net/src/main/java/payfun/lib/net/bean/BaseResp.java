@@ -1,8 +1,7 @@
 package payfun.lib.net.bean;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/5/10 15:50
  * desc   : <基础响应参数>
  */

@@ -3,8 +3,7 @@ package payfun.lib.net.bean;
 import okhttp3.MediaType;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/27 18:04
  * desc   : <下载结果bean类>
  */

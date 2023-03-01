@@ -3,8 +3,7 @@ package payfun.lib.basis.utils;
 import java.io.Closeable;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/6 13:57
  * desc   : <关流>
  */

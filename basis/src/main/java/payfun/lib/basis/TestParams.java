@@ -1,8 +1,7 @@
 package payfun.lib.basis;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/6/28 15:39
  * desc   : <p>测试用参数
  */

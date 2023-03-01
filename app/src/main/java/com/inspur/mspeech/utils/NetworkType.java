@@ -1,8 +1,7 @@
 package com.inspur.mspeech.utils;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/4/8 19:47
  * desc   : <功能简述>
  */

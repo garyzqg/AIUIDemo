@@ -6,8 +6,7 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.Modifier;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/6/8 11:31
  * desc   : <Gson帮助类>
  */

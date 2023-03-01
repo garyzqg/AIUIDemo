@@ -22,8 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/5/24 13:36
  * desc   : <安卓系统型工具类>
  */

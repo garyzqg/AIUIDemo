@@ -2,8 +2,7 @@ package payfun.lib.net.exception;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2018/11/13 9:32
  * desc   : <和后端沟通后自定义的服务器信息异常类>
  */

@@ -43,8 +43,7 @@ import java.lang.reflect.Field;
 import payfun.lib.basis.R;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/6/21 16:08
  * desc   : <p>提示工具类
  */

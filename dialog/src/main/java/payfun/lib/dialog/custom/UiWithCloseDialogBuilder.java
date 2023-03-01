@@ -13,9 +13,8 @@ import payfun.lib.dialog.base.BaseDialogBuilder;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/20 18:08
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
  * desc   : <右上角带有关闭按钮的对话框>
  */
 public abstract class UiWithCloseDialogBuilder<B extends UiWithCloseDialogBuilder> extends BaseDialogBuilder<B> {

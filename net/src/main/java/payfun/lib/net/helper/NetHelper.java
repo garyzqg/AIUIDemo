@@ -35,8 +35,7 @@ import payfun.lib.basis.utils.ShellUtil;
 import payfun.lib.basis.utils.ThreadUtil;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/18 14:38
  * desc   : <网络通用帮助类>
  */

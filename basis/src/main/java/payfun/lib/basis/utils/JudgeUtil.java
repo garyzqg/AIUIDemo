@@ -3,8 +3,7 @@ package payfun.lib.basis.utils;
 import java.nio.charset.Charset;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/11/1 16:18
  * desc   : <判断工具类>
  */

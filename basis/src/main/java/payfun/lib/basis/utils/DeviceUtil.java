@@ -54,7 +54,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author : 时光
+ * @author : zhangqg
  * date   : 2022/8/9 17:34
  * desc   : <p>设备参数获取工具类
  */

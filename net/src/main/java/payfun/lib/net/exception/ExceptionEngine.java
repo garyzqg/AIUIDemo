@@ -19,8 +19,7 @@ import retrofit2.HttpException;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2018/3/12 9:29
  * desc   : <网络封装框架下错误/异常处理工具，以后可以扩展
  * *

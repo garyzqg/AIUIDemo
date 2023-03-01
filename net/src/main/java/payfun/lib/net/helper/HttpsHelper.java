@@ -28,8 +28,7 @@ import payfun.lib.basis.utils.InitUtil;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/18 14:51
  * desc   : <Https相关的工具类（廖子尧）Github地址：https://github.com/jeasonlzy >
  */

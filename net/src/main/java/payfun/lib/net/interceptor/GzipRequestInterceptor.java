@@ -12,8 +12,7 @@ import okio.GzipSink;
 import okio.Okio;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/21 18:50
  * desc   : <Gzip压缩拦截器，可参考本类仿写拦截器>
  */

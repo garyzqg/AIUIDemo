@@ -23,8 +23,7 @@ import retrofit2.http.Url;
 
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/18 18:27
  * desc   : <默认通信请求接口类; 参考：https://github.com/square/retrofit >
  */

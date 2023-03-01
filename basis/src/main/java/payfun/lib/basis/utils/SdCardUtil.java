@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/6 16:55
  * desc   : <SD卡工具类>
  */

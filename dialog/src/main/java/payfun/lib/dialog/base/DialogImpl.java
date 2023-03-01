@@ -1,9 +1,5 @@
 package payfun.lib.dialog.base;
 
-import static android.view.View.NO_ID;
-import static android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Point;
@@ -22,14 +18,15 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
 import payfun.lib.dialog.listener.OnAutoDismissListener;
 import payfun.lib.dialog.widget.CountDownTimer2;
 
+import static android.view.View.NO_ID;
+import static android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
- * date   : 2022/5/19 15:17
+ * @author : zhangqg
+ * date   : 2023/3/1 15:30
  * desc   : <对话框实现类>
  */
 public class DialogImpl extends DialogFragment {

@@ -9,8 +9,7 @@ import androidx.multidex.MultiDex;
 import payfun.lib.basis.utils.InitUtil;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2021/5/6 11:32
  * desc   : <BasisApp：可参照本Application进行仿写>
  */

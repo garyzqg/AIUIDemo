@@ -1,8 +1,7 @@
 package payfun.lib.basis.utils;
 
 /**
- * @author : 时光
- * e-mail : qurongzhen@pay.media
+ * @author : zhangqg
  * date   : 2022/6/28 17:01
  * desc   : <p>格式化工具类
  */
