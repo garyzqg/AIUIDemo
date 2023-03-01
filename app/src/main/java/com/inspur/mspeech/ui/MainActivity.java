@@ -45,6 +45,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jaygoo.widget.wlv.WaveLineView;
@@ -91,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
         mWaveLineView = findViewById(R.id.waveLineView);
         mRvChat = findViewById(R.id.recyclerview_chat);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -111,6 +115,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mAIUIAgent.sendMessage(wakeupMsg);
             }
         });
+
+        //与onOptionsItemSelected功能一致
+//        toolbar.setOnMenuItemClickListener(item -> {
+//            switch (item.getItemId()) {
+//                case R.id.setting_menu_voice_name:
+//                    Intent intent = new Intent(MainActivity.this, VoiceNameSettingActivity.class);
+//                    intentActivityResultLauncher.launch(intent);
+//                    break;
+//                case R.id.setting_menu_qa:
+//                    Intent intent2 = new Intent(MainActivity.this, QaSettingActivity.class);
+//                    intentActivityResultLauncher2.launch(intent2);
+//                    break;
+//            }
+//            return true;
+//        });
 
     }
 
