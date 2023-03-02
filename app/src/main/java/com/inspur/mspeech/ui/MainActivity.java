@@ -94,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //权限
         getPermission();
 
+//        Intent intent = new Intent(this,LoginActivity.class);
+//        startActivity(intent);
+
     }
 
     private void initView() {
@@ -736,6 +739,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //切页面或切后台 ws断联 audiotrack停止播放
         WebsocketOperator.getInstance().close();
+
         mWakeUpFlag = 0;
         if(mAudioTrackOperator != null){
             mAudioTrackOperator.shutdownExecutor();
@@ -745,6 +749,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mAudioTrackOperator.isPlaying = false;
         }
     }
+
 
     @Override
     protected void onDestroy() {
