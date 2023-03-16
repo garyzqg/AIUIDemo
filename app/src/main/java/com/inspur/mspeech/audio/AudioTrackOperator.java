@@ -126,7 +126,7 @@ public class AudioTrackOperator {
      * @param fileName
      */
     public void writeSource(Context context, String fileName) {
-//        if (isPlaying) return;
+        isPlaying = true;
         Thread t = new Thread(new Runnable() {
             public void run() {
                 //获取文件输入流 我这里存放在assets中
@@ -144,7 +144,7 @@ public class AudioTrackOperator {
                 }catch (Exception e){
                     e.printStackTrace();
                 }finally {
-//                    isPlaying = false;
+                    isPlaying = false;
                     if (mAudioTrack != null){
                         mAudioTrack.stop();
 //                        mAudioTrack.release();
