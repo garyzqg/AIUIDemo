@@ -150,7 +150,7 @@ public class ExceptionEngine {
         } else if (e instanceof HttpException) {
             //HTTP错误
             HttpException httpExc = (HttpException) e;
-            ex = new NetException(HTTP_ERROR, e);
+            ex = new NetException(httpExc.code()+"", e);
             ex.setErrorTitle("<网络错误 " + "HTTP(code：" + httpExc.code() + ")>");
             return ex;
         } else if (e instanceof SocketTimeoutException

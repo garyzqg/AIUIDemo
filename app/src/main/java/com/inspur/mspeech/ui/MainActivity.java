@@ -163,8 +163,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent2 = new Intent(MainActivity.this, QaSettingActivity.class);
                 intentActivityResultLauncher2.launch(intent2);
                 break;
+            case R.id.setting_menu_login:
+//                jumpToLogin();
+                Intent intent3 = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent3);
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void jumpToLogin() {
+        DialogUtil.showTwoBtnDialog(MainActivity.this, "请先登录", new OnDialogButtonClickListener() {
+            @Override
+            public boolean onClick(DialogFragment baseDialog, View v) {
+                PrefersTool.setAccesstoken("");
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intentActivityResultLauncher3.launch(intent);
+                return false;
+            }
+        },null);
+
     }
 
     public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
@@ -178,6 +196,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         controlRecord(AIUIConstant.CMD_START_RECORD);
     });
+
+    public ActivityResultLauncher<Intent> intentActivityResultLauncher3 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
+
+        if (result.getResultCode() == RESULT_OK){
+            //登录成功 重新获取可用次数
+            getUserCount();
+        }
+    });
+
 
     @Override
     public void onClick(View view) {
@@ -256,13 +283,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onError(@NonNull Throwable e) {
                 NetException netException = ExceptionEngine.handleException(e);
-                DialogUtil.showErrorDialog(MainActivity.this, "获取权限失败", netException.getErrorTitle(), new OnDialogButtonClickListener() {
-                    @Override
-                    public boolean onClick(DialogFragment baseDialog, View v) {
-                        ExitApp();
-                        return false;
-                    }
-                });
+                if (TextUtils.equals(netException.getErrorCode(),"401")){//未登录 或 登陆过期
+                    jumpToLogin();
+                }else{
+                    DialogUtil.showErrorDialog(MainActivity.this, "获取权限失败", netException.getErrorTitle(), new OnDialogButtonClickListener() {
+                        @Override
+                        public boolean onClick(DialogFragment baseDialog, View v) {
+                            ExitApp();
+                            return false;
+                        }
+                    });
+                }
+
             }
         });
     }
@@ -422,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onClose() {
+            public void onClose(boolean isLogin) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -431,6 +463,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             mWaveLineView.stopAnim();
                             mWaveLineView.setVisibility(View.INVISIBLE);
                             mIvVoiceball.setVisibility(View.VISIBLE);
+                        }
+
+                        if (isLogin){//token为空或失效 跳转登录
+                            jumpToLogin();
                         }
                     }
                 });

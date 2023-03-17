@@ -1,15 +1,25 @@
 package com.inspur.mspeech.net;
 
-import com.inspur.mspeech.bean.BaseResponse;
-import com.inspur.mspeech.bean.QaBean;
-import com.inspur.mspeech.bean.VoiceBean;
+import android.text.TextUtils;
 
+import com.inspur.mspeech.bean.BaseResponse;
+import com.inspur.mspeech.bean.LoginBean;
+import com.inspur.mspeech.bean.QaBean;
+import com.inspur.mspeech.bean.SceneBean;
+import com.inspur.mspeech.bean.VoiceBean;
+import com.inspur.mspeech.utils.Base64Utils;
+import com.inspur.mspeech.utils.PrefersTool;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import payfun.lib.net.NetManager;
 import payfun.lib.net.helper.GsonHelper;
 import payfun.lib.net.rx.BaseObserver;
@@ -26,36 +36,32 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SpeechNet {
     public static void init(){
         NetManager.getInstance().initApi(SpeechServer.class, () -> new RxClient.Builder()
-                .baseUrl(NetConstants.BASE_URL_VOICENAME_PROD)
+                .baseUrl(NetConstants.BASE_URL_TEST)
                 .connectTimeout(10)
                 .readTimeout(15)
                 .writeTimeout(15)
-                .addConvertFactory(GsonConverterFactory.create())
-                .addAdapterFactory(RxJava3CallAdapterFactory.create())
-                .isUseLog(true)
-        );
-
-        NetManager.getInstance().initApi(QaServer.class, () -> new RxClient.Builder()
-                .baseUrl(NetConstants.BASE_QA_URL_PROD)
-                .connectTimeout(10)
-                .readTimeout(15)
-                .writeTimeout(15)
-                .addConvertFactory(GsonConverterFactory.create())
-                .addAdapterFactory(RxJava3CallAdapterFactory.create())
-                .isUseLog(true)
-        );
-
-        NetManager.getInstance().initApi(UserServer.class, () -> new RxClient.Builder()
-                .baseUrl(NetConstants.BASE_URL_USER_PROD)
-                .connectTimeout(10)
-                .readTimeout(15)
-                .writeTimeout(15)
+                .addInterceptor(new HeaderInterceptor())
                 .addConvertFactory(GsonConverterFactory.create())
                 .addAdapterFactory(RxJava3CallAdapterFactory.create())
                 .isUseLog(true)
         );
     }
 
+    public static class HeaderInterceptor implements Interceptor {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            String token = PrefersTool.getAccesstoken();
+            Request originalRequest = chain.request();
+            if (TextUtils.isEmpty(token)) {
+                return chain.proceed(originalRequest);
+            } else {
+                Request updateRequest = originalRequest.newBuilder()
+                        .header("Authorization", "Bearer " + token)
+                        .build();
+                return chain.proceed(updateRequest);
+            }
+        }
+    }
 
     /**
      * 获取音色列表
@@ -76,11 +82,9 @@ public class SpeechNet {
         Map<String, Object> para = new HashMap<>();
         // TODO: 2023/2/27 参数待实现
         para.put("page", 1);
-        para.put("sceneId", NetConstants.SCENE_ID);
+        para.put("sceneId", PrefersTool.getSceneId());
         para.put("size", 50);
-        para.put("userId", NetConstants.USER_ID);
-        para.put("userAccount", NetConstants.USER_ACCOUNT);
-        NetManager.getInstance().getApi(QaServer.class)
+        NetManager.getInstance().getApi(SpeechServer.class)
                 .getQa(para)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
@@ -95,12 +99,10 @@ public class SpeechNet {
         para.put("questionTxt", questionTxt);
         para.put("answerTxt", answerTxt);
         para.put("answerType", "txt");
-        para.put("sceneId", NetConstants.SCENE_ID);
-        para.put("userAccount",  NetConstants.USER_ACCOUNT);
-        para.put("userId", NetConstants.USER_ID);
+        para.put("sceneId", PrefersTool.getSceneId());
         String s = GsonHelper.GSON.toJson(para);
         RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
-        NetManager.getInstance().getApi(QaServer.class)
+        NetManager.getInstance().getApi(SpeechServer.class)
                 .saveQa(body)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
@@ -113,10 +115,8 @@ public class SpeechNet {
     public static void deleteQa(String qaId,BaseObserver<BaseResponse> observer){
         Map<String, Object> para = new HashMap<>();
         para.put("qaId", qaId);
-        para.put("sceneId", NetConstants.SCENE_ID);
-        para.put("userAccount",  NetConstants.USER_ACCOUNT);
-        para.put("userId", NetConstants.USER_ID);
-        NetManager.getInstance().getApi(QaServer.class)
+        para.put("sceneId", PrefersTool.getSceneId());
+        NetManager.getInstance().getApi(SpeechServer.class)
                 .deleteQa(para)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
@@ -131,12 +131,10 @@ public class SpeechNet {
         para.put("qaId", qaId);
         para.put("questionTxt", questionTxt);
         para.put("standard", "0");
-        para.put("sceneId", NetConstants.SCENE_ID);
-        para.put("userAccount",  NetConstants.USER_ACCOUNT);
-        para.put("userId", NetConstants.USER_ID);
+        para.put("sceneId", PrefersTool.getSceneId());
         String s = GsonHelper.GSON.toJson(para);
         RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
-        NetManager.getInstance().getApi(QaServer.class)
+        NetManager.getInstance().getApi(SpeechServer.class)
                 .saveQuestion(body)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
@@ -150,10 +148,8 @@ public class SpeechNet {
         Map<String, Object> para = new HashMap<>();
         para.put("qaId", qaId);
         para.put("questionId", questionId);
-        para.put("sceneId", NetConstants.SCENE_ID);
-        para.put("userAccount",  NetConstants.USER_ACCOUNT);
-        para.put("userId", NetConstants.USER_ID);
-        NetManager.getInstance().getApi(QaServer.class)
+        para.put("sceneId", PrefersTool.getSceneId());
+        NetManager.getInstance().getApi(SpeechServer.class)
                 .deleteQuestion(para)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
@@ -169,12 +165,10 @@ public class SpeechNet {
         para.put("answerTxt", answerTxt);
         para.put("answerType", "txt");
         para.put("standard", "0");
-        para.put("sceneId", NetConstants.SCENE_ID);
-        para.put("userAccount",  NetConstants.USER_ACCOUNT);
-        para.put("userId", NetConstants.USER_ID);
+        para.put("sceneId", PrefersTool.getSceneId());
         String s = GsonHelper.GSON.toJson(para);
         RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
-        NetManager.getInstance().getApi(QaServer.class)
+        NetManager.getInstance().getApi(SpeechServer.class)
                 .saveAnswer(body)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
@@ -188,10 +182,8 @@ public class SpeechNet {
         Map<String, Object> para = new HashMap<>();
         para.put("qaId", qaId);
         para.put("answerId", answerId);
-        para.put("sceneId", NetConstants.SCENE_ID);
-        para.put("userAccount",  NetConstants.USER_ACCOUNT);
-        para.put("userId", NetConstants.USER_ID);
-        NetManager.getInstance().getApi(QaServer.class)
+        para.put("sceneId", PrefersTool.getSceneId());
+        NetManager.getInstance().getApi(SpeechServer.class)
                 .deleteAnswer(para)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
@@ -202,12 +194,37 @@ public class SpeechNet {
      * @param observer
      */
     public static void userCount(BaseObserver<BaseResponse<Integer>> observer){
-        Map<String, Object> para = new HashMap<>();
-        para.put("userAccount",  NetConstants.USER_ACCOUNT);
-        para.put("userId", NetConstants.USER_ID);
-        NetManager.getInstance().getApi(UserServer.class)
-                .getUser(para)
+
+        NetManager.getInstance().getApi(SpeechServer.class)
+                .getUser()
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
     }
+
+    /**
+     * 登录
+     * @param observer
+     */
+    public static void login(String userName,String pwd,BaseObserver<BaseResponse<LoginBean>> observer){
+        Map<String, Object> para = new HashMap<>();
+        para.put("password", Base64Utils.base64EncodeToString(pwd));
+        para.put("userName", userName);
+        String s = GsonHelper.GSON.toJson(para);
+        RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
+        NetManager.getInstance().getApi(SpeechServer.class)
+                .login(body)
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
+    /**
+     * 获取情景id
+     * @param observer
+     */
+    public static void getSceneId(BaseObserver<BaseResponse<List<SceneBean>>> observer){
+        NetManager.getInstance().getApi(SpeechServer.class)
+                .getSceneId()
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
+
 }

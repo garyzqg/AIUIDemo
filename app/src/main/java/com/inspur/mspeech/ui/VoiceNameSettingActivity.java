@@ -1,19 +1,27 @@
 package com.inspur.mspeech.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.VoiceNameAdapter;
 import com.inspur.mspeech.bean.BaseResponse;
 import com.inspur.mspeech.bean.VoiceBean;
 import com.inspur.mspeech.net.SpeechNet;
+import com.inspur.mspeech.utils.PrefersTool;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
 import payfun.lib.dialog.DialogUtil;
+import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 import payfun.lib.net.exception.ExceptionEngine;
 import payfun.lib.net.exception.NetException;
 import payfun.lib.net.rx.BaseObserver;
@@ -61,12 +69,34 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
             @Override
             public void onError(@NonNull Throwable e) {
                 NetException netException = ExceptionEngine.handleException(e);
-                DialogUtil.showErrorDialog(VoiceNameSettingActivity.this,"获取可用音色失败",netException.getErrorTitle());
+                if (TextUtils.equals(netException.getErrorCode(),"401")){//未登录或登录已过期
+                    jumpToLogin();
+                }else {
+                    DialogUtil.showErrorDialog(VoiceNameSettingActivity.this,"获取可用音色失败",netException.getErrorTitle());
+                }
             }
 
         });
     }
 
+    private void jumpToLogin() {
+        DialogUtil.showTwoBtnDialog(VoiceNameSettingActivity.this, "请先登录", (OnDialogButtonClickListener) (baseDialog, v) -> {
+            PrefersTool.setAccesstoken("");
+            Intent intent = new Intent(VoiceNameSettingActivity.this, LoginActivity.class);
+            intentActivityResultLauncher.launch(intent);
+            return false;
+        }, (baseDialog, v) -> {
+            finish();
+            return false;
+        });
+
+    }
+    public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK){
+            //登录成功
+            getData();
+        }
+    });
     private void initView() {
         mRvVoiceName = findViewById(R.id.rv_voice_name);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

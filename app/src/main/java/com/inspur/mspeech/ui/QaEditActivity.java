@@ -91,7 +91,7 @@ public class QaEditActivity extends AppCompatActivity {
 
         mQaQuestionAdapter.setOnItemClickListener(position -> {
             //弹框提示是否删除
-            DialogUtil.showDeleteDialog(this, "是否确认删除？",new OnDialogButtonClickListener() {
+            DialogUtil.showTwoBtnDialog(this, "是否确认删除？",new OnDialogButtonClickListener() {
                 @Override
                 public boolean onClick(DialogFragment baseDialog, View v) {
                     //确定删除
@@ -115,13 +115,13 @@ public class QaEditActivity extends AppCompatActivity {
                     });
                     return false;
                 }
-            });
+            },null);
 
         });
 
         mQaAnswerAdapter.setOnItemClickListener(position -> {
             //弹框提示是否删除
-            DialogUtil.showDeleteDialog(this, "是否确认删除？",new OnDialogButtonClickListener() {
+            DialogUtil.showTwoBtnDialog(this, "是否确认删除？",new OnDialogButtonClickListener() {
                 @Override
                 public boolean onClick(DialogFragment baseDialog, View v) {
                     //确定删除
@@ -145,13 +145,13 @@ public class QaEditActivity extends AppCompatActivity {
                     });
                     return false;
                 }
-            });
+            },null);
 
         });
 
         mBtnDeleteQa.setOnClickListener(view -> {
             //弹框提示是否删除
-            DialogUtil.showDeleteDialog(this, "是否确认删除此问答集？", new OnDialogButtonClickListener() {
+            DialogUtil.showTwoBtnDialog(this, "是否确认删除此问答集？", new OnDialogButtonClickListener() {
                 @Override
                 public boolean onClick(DialogFragment baseDialog, View v) {
                     //确定删除
@@ -174,7 +174,7 @@ public class QaEditActivity extends AppCompatActivity {
                     });
                     return false;
                 }
-            });
+            },null);
         });
         mTvCancel.setOnClickListener(new View.OnClickListener() {
             @Override

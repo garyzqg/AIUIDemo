@@ -15,10 +15,12 @@ public class NetException extends Exception {
      * 异常标题
      */
     private String errorTitle;
+
     /**
      * 对应错误的处理方法
      */
     private String[] tips;
+
 
     public NetException(String errorCode, String message) {
         super(message);

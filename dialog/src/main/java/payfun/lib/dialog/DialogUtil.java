@@ -23,18 +23,21 @@ import payfun.lib.dialog.widget.ProgressView;
 public class DialogUtil {
 
     /**
-     * 删除确认弹框
+     * 两个按键确认弹框
      * @param activity
-     * @param onBtnClickListener
+     * @param onBtnLeftClickListener
      * @return
      */
-    public static DialogImpl showDeleteDialog(FragmentActivity activity, String content,OnDialogButtonClickListener onBtnClickListener) {
+    public static DialogImpl showTwoBtnDialog(FragmentActivity activity, String content, OnDialogButtonClickListener onBtnLeftClickListener,OnDialogButtonClickListener onBtnRightClickListener) {
         HintDialogBuilder hintDialogBuilder = new HintDialogBuilder();
         hintDialogBuilder.setContentMsg(content);
-        hintDialogBuilder.setOnLeftBtnClickListener(onBtnClickListener);
+        hintDialogBuilder.setOnLeftBtnClickListener(onBtnLeftClickListener);
+        if (onBtnRightClickListener != null){
+            hintDialogBuilder.setOnRightBtnClickListener(onBtnRightClickListener);
+        }
         FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
         DialogImpl dialog = new DialogImpl(hintDialogBuilder);
-        dialog.showNow(supportFragmentManager, "delete");
+        dialog.showNow(supportFragmentManager, "twobtn");
         return dialog;
     }
 

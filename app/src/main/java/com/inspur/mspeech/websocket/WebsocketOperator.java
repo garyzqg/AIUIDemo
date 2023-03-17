@@ -51,7 +51,7 @@ public class WebsocketOperator {
          mIWebsocketListener = iWebsocketListener;
          //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
          voiceName = PrefersTool.getVoiceName();
-         URI uri = URI.create(NetConstants.BASE_WS_URL_PROD+"/ws?userId=123456789&userAccount=speechtest&sceneId=1628207224099196929&voiceName="+voiceName+"&ttsType=azure");
+         URI uri = URI.create(NetConstants.BASE_WS_URL_TEST+"/expressing/ws?sceneId=1628207224099196929&voiceName="+voiceName+"&ttsType=azure");
 //         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
          LogUtil.iTag(TAG, "WebSocket init");
@@ -74,7 +74,7 @@ public class WebsocketOperator {
                LogUtil.iTag(TAG, "onClose: code:" + code + " reason:" + reason + " remote:" + remote);
                // TODO: 2023/1/13 断开连接后 是否控制不往aiui写数据 如何保证websocket的超时和AIUI的超时保持一致?
                if (iWebsocketListener != null){
-                  iWebsocketListener.onClose();
+                  iWebsocketListener.onClose(reason.contains("401"));
                }
             }
 
@@ -122,7 +122,7 @@ public class WebsocketOperator {
                            iWebsocketListener.OnTtsData(null,is_finish);
                         }
                      }else {
-                        byte[] audioByte = Base64Utils.base64EncodeToByte(audio);
+                        byte[] audioByte = Base64Utils.base64DecodeToByte(audio);
                         if (iWebsocketListener != null){
                            iWebsocketListener.OnTtsData(audioByte,is_finish);
                         }
@@ -136,7 +136,10 @@ public class WebsocketOperator {
                }
             }
          };
-
+         String accesstoken = PrefersTool.getAccesstoken();
+         if (!TextUtils.isEmpty(accesstoken)){
+            mClient.addHeader("Authorization", "Bearer " + accesstoken);
+         }
          mClient.setConnectionLostTimeout(10 * 1000);
       }
    }
@@ -208,6 +211,6 @@ public class WebsocketOperator {
       void OnNlpData(String nlpString);
       void onOpen();
       void onError();
-      void onClose();
+      void onClose(boolean isLogin);
    }
 }

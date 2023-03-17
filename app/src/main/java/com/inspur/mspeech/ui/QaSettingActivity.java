@@ -2,6 +2,7 @@ package com.inspur.mspeech.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.inspur.mspeech.R;
@@ -9,6 +10,7 @@ import com.inspur.mspeech.adapter.QaAdapter;
 import com.inspur.mspeech.bean.BaseResponse;
 import com.inspur.mspeech.bean.QaBean;
 import com.inspur.mspeech.net.SpeechNet;
+import com.inspur.mspeech.utils.PrefersTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
 import payfun.lib.dialog.DialogUtil;
+import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 import payfun.lib.net.exception.ExceptionEngine;
 import payfun.lib.net.exception.NetException;
 import payfun.lib.net.rx.BaseObserver;
@@ -80,6 +83,19 @@ public class QaSettingActivity extends AppCompatActivity {
         }
     });
 
+    private void jumpToLogin() {
+        DialogUtil.showTwoBtnDialog(QaSettingActivity.this, "请先登录", (OnDialogButtonClickListener) (baseDialog, v) -> {
+            PrefersTool.setAccesstoken("");
+            Intent intent = new Intent(QaSettingActivity.this, LoginActivity.class);
+            intentActivityResultLauncher.launch(intent);
+            return false;
+        }, (baseDialog, v) -> {
+            finish();
+            return false;
+        });
+
+    }
+
     private void initData() {
         SpeechNet.getQa(new BaseObserver<BaseResponse<List<QaBean>>>() {
             @Override
@@ -98,7 +114,11 @@ public class QaSettingActivity extends AppCompatActivity {
             @Override
             public void onError(@NonNull Throwable e) {
                 NetException netException = ExceptionEngine.handleException(e);
-                DialogUtil.showErrorDialog(QaSettingActivity.this,"获取问答集失败",netException.getErrorTitle());
+                if (TextUtils.equals(netException.getErrorCode(),"401")){//未登录或登录已过期
+                    jumpToLogin();
+                }else {
+                    DialogUtil.showErrorDialog(QaSettingActivity.this,"获取问答集失败",netException.getErrorTitle());
+                }
             }
         });
     }
