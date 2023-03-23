@@ -110,7 +110,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mRvChat.setLayoutManager(layoutManager);
         mRvChat.setAdapter(mAdapter);
-
+//        mRvChat.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //切页面或切后台 ws断联
+//                WebsocketOperator.getInstance().close();
+//
+//                //audiotrack停止播放
+//                if(mAudioTrackOperator != null){
+//                    mAudioTrackOperator.shutdownExecutor();
+//                    mAudioTrackOperator.stop();
+//                    mAudioTrackOperator.flush();
+//
+//                    mAudioTrackOperator.isPlaying = false;
+//                }
+//            }
+//        });
         mIvVoiceball = findViewById(R.id.iv_voiceball);
         Glide.with(this)
                 .load(R.drawable.gif_voice_ball)
@@ -187,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
         //设置音色页面回来 重新init ws
-        initWebsocket();
+        initWebsocket(!TextUtils.equals(PrefersTool.getVoiceName(),WebsocketOperator.getInstance().voiceName));
 
         controlRecord(AIUIConstant.CMD_START_RECORD);
     });
@@ -202,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (result.getResultCode() == RESULT_OK){
             //登录成功 重新获取可用次数
             getUserCount();
+            //新建websocket设置token
+            initWebsocket(true);
         }
     });
 
@@ -217,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //初始化AudioTrack
         initAudioTrack();
         //初始化websocket
-        initWebsocket();
+        initWebsocket(false);
 
     }
 
@@ -371,8 +388,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void initWebsocket() {
-        WebsocketOperator.getInstance().initWebSocket(new WebsocketOperator.IWebsocketListener() {
+    private void initWebsocket(boolean reinit) {
+        WebsocketOperator.getInstance().initWebSocket(reinit,new WebsocketOperator.IWebsocketListener() {
             @Override
             public void OnTtsData(byte[] audioData, boolean isFinish) {
                 // TODO: 2023/1/30 每次都调用play CMD_STOP_RECORD?

@@ -17,6 +17,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.util.UUID;
 
 import payfun.lib.basis.utils.LogUtil;
 import payfun.lib.net.helper.GsonHelper;
@@ -28,8 +29,9 @@ import payfun.lib.net.helper.GsonHelper;
  */
 public class WebsocketOperator {
    private static final String TAG = "WebsocketOperator";
+   private static String sessionId;
    private JWebSocketClient mClient;
-   private String voiceName;
+   public String voiceName;
    private static WebsocketOperator instance;
    private IWebsocketListener mIWebsocketListener;
 
@@ -39,19 +41,24 @@ public class WebsocketOperator {
    public static WebsocketOperator getInstance(){
       if (instance == null){
          instance = new WebsocketOperator();
+         //启动时生成UUID作为sessionId 如果有登出操作需要重置
+         sessionId = UUID.randomUUID().toString();
       }
       return instance;
    }
 
    /**
     * websocket初始化
+    * @param reInit 是否重新初始化ws
+    * @param iWebsocketListener 监听
     */
-   public void initWebSocket(IWebsocketListener iWebsocketListener) {
-      if (!TextUtils.equals(PrefersTool.getVoiceName(),voiceName) || mClient == null){
+   public void initWebSocket(boolean reInit,IWebsocketListener iWebsocketListener) {
+      if (reInit || mClient == null){
          mIWebsocketListener = iWebsocketListener;
          //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
          voiceName = PrefersTool.getVoiceName();
-         URI uri = URI.create(NetConstants.BASE_WS_URL_TEST+"/expressing/ws?sceneId=1628207224099196929&voiceName="+voiceName+"&ttsType=azure");
+         URI uri = URI.create(NetConstants.BASE_WS_URL_TEST+"/expressing/ws?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName+"&ttsType=azure&sessionId="+sessionId);
+
 //         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
          LogUtil.iTag(TAG, "WebSocket init");
@@ -136,13 +143,18 @@ public class WebsocketOperator {
                }
             }
          };
-         String accesstoken = PrefersTool.getAccesstoken();
-         if (!TextUtils.isEmpty(accesstoken)){
-            mClient.addHeader("Authorization", "Bearer " + accesstoken);
-         }
+         setToken();
          mClient.setConnectionLostTimeout(10 * 1000);
       }
    }
+
+   public void setToken(){
+      String accesstoken = PrefersTool.getAccesstoken();
+      if (!TextUtils.isEmpty(accesstoken)){
+         mClient.addHeader("Authorization", "Bearer " + accesstoken);
+      }
+   }
+
 
    /**
     * websocket连接
