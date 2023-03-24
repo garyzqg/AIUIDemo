@@ -10,9 +10,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
-import com.hjq.permissions.OnPermissionCallback;
-import com.hjq.permissions.Permission;
-import com.hjq.permissions.XXPermissions;
+import com.iflytek.aikit.core.AiHandle;
+import com.iflytek.aikit.core.AiHelper;
+import com.iflytek.aikit.core.AiInput;
+import com.iflytek.aikit.core.AiRequest;
+import com.iflytek.aikit.core.AiResponse;
+import com.iflytek.aikit.core.AiResponseListener;
+import com.iflytek.aikit.core.CoreListener;
+import com.iflytek.aikit.core.ErrType;
+import com.iflytek.aikit.core.JLibrary;
 import com.iflytek.aiui.AIUIAgent;
 import com.iflytek.aiui.AIUIConstant;
 import com.iflytek.aiui.AIUIEvent;
@@ -21,10 +27,12 @@ import com.iflytek.aiui.AIUIMessage;
 import com.iflytek.aiui.AIUISetting;
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.MsgAdapter;
+import com.inspur.mspeech.audio.AudioRecordOperator;
 import com.inspur.mspeech.audio.AudioTrackOperator;
 import com.inspur.mspeech.bean.BaseResponse;
 import com.inspur.mspeech.bean.Msg;
 import com.inspur.mspeech.net.SpeechNet;
+import com.inspur.mspeech.utils.PermissionUtil;
 import com.inspur.mspeech.utils.PrefersTool;
 import com.inspur.mspeech.utils.UIHelper;
 import com.inspur.mspeech.websocket.WebsocketOperator;
@@ -67,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int mAIUIState = AIUIConstant.STATE_IDLE;
 
     private AudioTrackOperator mAudioTrackOperator;
+    private AudioRecordOperator mAudioRecordOperator;
     private String mIatMessage;//iat有效数据
     private RecyclerView mRvChat;
     private List<Msg> msgList = new ArrayList<>();
@@ -74,6 +83,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private WaveLineView mWaveLineView;
     private AppCompatImageView mIvVoiceball;
     private int mArg1;
+
+    public static final String WORK_DIR = "/sdcard/ivw";
+    private String keywordPath = WORK_DIR + "/keyword.txt";
+    //能力
+    private final String ABILITY_IVW = "e867a88f2";
+    private AiHandle aiHandle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +105,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         InitUtil.init(this);
 
+        //网络初始化
         SpeechNet.init();
-        //权限
-        getPermission();
 
-//        Intent intent = new Intent(this,LoginActivity.class);
-//        startActivity(intent);
+
+        //权限
+        PermissionUtil.getPermission(this, () -> {
+            //资源文件拷贝  语音唤醒
+            copyAssetFolder(MainActivity.this, "ivw", String.format("%s/ivw", "/sdcard"));
+            //初始化SDK
+            initSDK();
+            //获取可使用次数
+            getUserCount();
+        });
+
 
     }
 
@@ -110,22 +133,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mRvChat.setLayoutManager(layoutManager);
         mRvChat.setAdapter(mAdapter);
-//        mRvChat.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //切页面或切后台 ws断联
-//                WebsocketOperator.getInstance().close();
-//
-//                //audiotrack停止播放
-//                if(mAudioTrackOperator != null){
-//                    mAudioTrackOperator.shutdownExecutor();
-//                    mAudioTrackOperator.stop();
-//                    mAudioTrackOperator.flush();
-//
-//                    mAudioTrackOperator.isPlaying = false;
-//                }
-//            }
-//        });
         mIvVoiceball = findViewById(R.id.iv_voiceball);
         Glide.with(this)
                 .load(R.drawable.gif_voice_ball)
@@ -137,21 +144,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mAIUIAgent.sendMessage(wakeupMsg);
             }
         });
-
-        //与onOptionsItemSelected功能一致
-//        toolbar.setOnMenuItemClickListener(item -> {
-//            switch (item.getItemId()) {
-//                case R.id.setting_menu_voice_name:
-//                    Intent intent = new Intent(MainActivity.this, VoiceNameSettingActivity.class);
-//                    intentActivityResultLauncher.launch(intent);
-//                    break;
-//                case R.id.setting_menu_qa:
-//                    Intent intent2 = new Intent(MainActivity.this, QaSettingActivity.class);
-//                    intentActivityResultLauncher2.launch(intent2);
-//                    break;
-//            }
-//            return true;
-//        });
 
     }
 
@@ -230,54 +222,183 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initSDK() {
         // 初始化AIUI
-        createAgent();
+//        createAgent();
         //初始化AudioTrack
         initAudioTrack();
         //初始化websocket
         initWebsocket(false);
 
+        //初始化AudioRecord
+        initAudioRecord();
+
+        //初始化AIKit唤醒库
+        initIVW();
     }
 
-    private void getPermission() {
-        XXPermissions.with(MainActivity.this)
-                // 申请多个权限
-                .permission(Permission.ACCESS_COARSE_LOCATION, Permission.MANAGE_EXTERNAL_STORAGE, Permission.RECORD_AUDIO)
-                // 申请单个权限
-//                .permission(Permission.Group.CALENDAR)
-                // 设置权限请求拦截器（局部设置）
-                //.interceptor(new PermissionInterceptor())
-                // 设置不触发错误检测机制（局部设置）
-                //.unchecked()
-                .request(new OnPermissionCallback() {
-                    @Override
-                    public void onGranted(List<String> permissions, boolean all) {
-                        if (all) {
-                            LogUtil.i("权限获取成功");
-                            //资源文件拷贝  语音唤醒
-                            copyAssetFolder(MainActivity.this, "ivw/vtn", String.format("%s/ivw/vtn", "/sdcard/AIUI"));
-                            initSDK();
 
-                            //获取可使用次数
-                            getUserCount();
-                        } else {
-                            LogUtil.i("部分权限获取成功" + permissions.toString());
 
-                            XXPermissions.startPermissionActivity(MainActivity.this, permissions);
-                        }
-                    }
-
-                    @Override
-                    public void onDenied(List<String> permissions, boolean never) {
-                        if (never) {
-                            LogUtil.e("拒绝权限,请手动授予");
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
-                            XXPermissions.startPermissionActivity(MainActivity.this, permissions);
-                        } else {
-                            LogUtil.e("权限获取失败");
-                        }
-                    }
-                });
+    private void initIVW() {
+        //授权参数
+        final JLibrary.Params params = JLibrary.Params.builder()
+                .appId(getResources().getString(R.string.appId))
+                .apiKey(getResources().getString(R.string.apiKey))
+                .apiSecret(getResources().getString(R.string.apiSecret))
+                .workDir(WORK_DIR)
+                .logOpen(false)
+                .iLogOpen(false)
+                .recordOpen(false)
+                .build();
+        //能力参数
+        //SDK状态回调监听
+        JLibrary.getInst().registerListener(coreListener);
+        //能力输出回调监听
+        JLibrary.getInst().registerListener(aiResponseListener);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                JLibrary.getInst().initEntry(MainActivity.this, params);
+//            }
+//        }).start();
+        JLibrary.getInst().initEntry(MainActivity.this, params);
     }
+
+    private CoreListener coreListener = new CoreListener() {
+        @Override
+        public void onAuthStateChange(ErrType type, final int code) {
+            if (code == 0) {
+                LogUtil.iTag(TAG,"IVW 初始化成功");
+                new Thread() {
+                    public void run() {
+                        try {
+                            sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        //引擎初始化
+                        initEngine();
+                    }
+                }.start();
+            } else {
+                LogUtil.iTag(TAG,"IVW 初始化失败 " + code);
+            }
+        }
+    };
+
+    private AiResponseListener aiResponseListener = new AiResponseListener() {
+        //能力执行结果返回
+        @Override
+        public void onResult(String ability, int handleID, List<AiResponse> outputData, Object usrContext) {
+            LogUtil.iTag(TAG, "IVW onResult:handleID:" + handleID + ",size:" + outputData.size());
+            if (null != outputData && outputData.size() > 0) {
+                for (int i = 0; i < outputData.size(); i++) {
+                    String key = outputData.get(i).getKey();
+
+                    byte[] bytes = outputData.get(i).getValue();
+                    if (bytes == null) {
+                        continue;
+                    }
+                    String result = new String(bytes);
+                    if (key.equals("func_wake_up") || key.equals("func_pre_wakeup")) {
+                        LogUtil.iTag(TAG, "IVW wakeup:" + result);
+//                        showInfo(key + ": \n " + result);
+                        mAudioTrackOperator.play();
+                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/"+PrefersTool.getVoiceName()+"_box_wakeUpReply.pcm");
+
+                    }
+                }
+            }
+        }
+
+        //事件回调
+        @Override
+        public void onEvent(String ability, int handleID, int event, List<AiResponse> eventData, Object usrContext) {
+            // event: 0=未知；1=开始；2=结束；3=超时；4=进度；
+            LogUtil.iTag(TAG, "IVW onEvent: " + event);
+        }
+
+        //错误通知，能力执行终止
+        @Override
+        public void onError(String ability, int handleID, int err, String msg, Object usrContext) {
+            LogUtil.iTag(TAG, "IVW onError: " + err);
+        }
+    };
+
+
+    private void initEngine() {
+        int ret = AiHelper.getInst().engineInitNoParams(ABILITY_IVW);
+        if (ret != 0) {
+            LogUtil.iTag(TAG,"IVW 引擎初始化失败 " + ret);
+        } else {
+            LogUtil.iTag(TAG,"IVW 引擎初始化成功 " + ret);
+
+            //加载数据
+            loadData();
+            //开始执行
+            startIVW();
+        }
+    }
+
+    private void startIVW() {
+        AiInput.Builder paramBuilder = AiRequest.builder();
+        paramBuilder.param("wdec_param_nCmThreshold", "0 0:800");//门限值 最小长度:0，最大长度:1024
+        paramBuilder.param("gramLoad", true);//更新自定义唤醒词
+        //启动会话，流式接口 开始计算能力 如果开启成功 就可以开启AudioTrack录音 流式写入数据
+        aiHandle = AiHelper.getInst().start(ABILITY_IVW, paramBuilder.build(), null);
+        if (aiHandle.isSuccess()) {
+            LogUtil.iTag(TAG,"IVW start 成功：" + aiHandle.getCode());
+            //开启AudioTrack录音
+            if (mAudioRecordOperator != null){
+                mAudioRecordOperator.startRecord();
+            }
+        } else {
+            LogUtil.iTag(TAG,"IVW start 失败：" + aiHandle.getCode());
+            return;
+        }
+    }
+
+    private void loadData() {
+        //加载数据 唤醒词
+        AiInput.Builder customBuilder = AiInput.builder();
+        /**
+         * 可多次调用 传入多个文件
+         * key 数据标识
+         * value 数据内容
+         * index 数据索引,用户可自定义设置
+         */
+        customBuilder.customText("key_word", keywordPath, 0);
+        //数据加载
+        int i = AiHelper.getInst().loadData(ABILITY_IVW, customBuilder.build());
+
+        if (i != 0) {
+            LogUtil.iTag(TAG,"IVW loadData 失败：" + i);
+            return;
+        } else {
+            LogUtil.iTag(TAG,"IVW loadData 成功: " + i);
+        }
+
+
+        //指定要使用的个性化数据集合，未调用，则默认使用所有loadData加载的数据
+        int[] indexs = {0};
+        /**
+         * indexs 个性化数据索引数组
+         */
+        //数据落盘
+        AiHelper.getInst().specifyDataSet(ABILITY_IVW,"key_word",indexs);
+    }
+
+    private void initAudioRecord() {
+        mAudioRecordOperator = new AudioRecordOperator();
+        mAudioRecordOperator.createAudioRecord(new AudioRecordOperator.RecordListener() {
+            @Override
+            public void data(byte[] data) {
+                //录音数据回调 流式写入IVW
+                AiInput.Builder dataBuilder = AiInput.builder();
+                dataBuilder.audio("wav", data);
+                AiHelper.getInst().write(dataBuilder.build(), aiHandle);
+            }
+        });
+    }
+
 
     private void getUserCount() {
         SpeechNet.userCount(new BaseObserver<BaseResponse<Integer>>() {

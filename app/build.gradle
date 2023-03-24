@@ -105,8 +105,10 @@ dependencies {
 
     implementation 'org.jetbrains:annotations:15.0'
     implementation 'com.github.Jay-Goo:WaveLineView:v1.0.4'
-    implementation 'com.github.getActivity:XXPermissions:16.0'
+    implementation 'com.hjq:xxpermissions:8.2'
 
     implementation project(path: ':net')
     implementation project(path: ':dialog')
+
+    implementation files('libs/AIKit.aar')
 }

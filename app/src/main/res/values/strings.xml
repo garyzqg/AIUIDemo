@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MMCIP</string>
+
+    <string name="appId">5fd48205</string>
+    <string name="apiKey">a4dc693b9534a921345cbd6b1d45731e</string>
+    <string name="apiSecret">ee61e7a6e1708b83cd6e7d93066e3bb2</string>
 </resources>
