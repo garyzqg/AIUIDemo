@@ -46,4 +46,15 @@ public class Base64Utils {
         return s;
     }
 
+    /**
+     * 使用base64加密
+     *
+     * @param data 待加密内容 byte[]
+     * @return 加密后字符串
+     */
+    public static String base64EncodeToString(byte[] data) {
+        String s = Base64.encodeToString(data,Base64.NO_WRAP);
+        return s;
+    }
+
 }

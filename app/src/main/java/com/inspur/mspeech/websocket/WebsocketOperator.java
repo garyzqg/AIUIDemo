@@ -65,7 +65,7 @@ public class WebsocketOperator {
          mClient = new JWebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake handshakedata) {
-               LogUtil.iTag(TAG, "onOpen");
+               LogUtil.iTag(TAG, "WebSocket onOpen");
                if (iWebsocketListener != null){
                   iWebsocketListener.onOpen();
                }
@@ -78,7 +78,7 @@ public class WebsocketOperator {
 
             @Override
             public void onClose(int code, String reason, boolean remote) {
-               LogUtil.iTag(TAG, "onClose: code:" + code + " reason:" + reason + " remote:" + remote);
+               LogUtil.iTag(TAG, "WebSocket onClose: code:" + code + " reason:" + reason + " remote:" + remote);
                // TODO: 2023/1/13 断开连接后 是否控制不往aiui写数据 如何保证websocket的超时和AIUI的超时保持一致?
                if (iWebsocketListener != null){
                   iWebsocketListener.onClose(reason.contains("401"));
@@ -87,7 +87,7 @@ public class WebsocketOperator {
 
             @Override
             public void onError(Exception ex) {
-               LogUtil.iTag(TAG, "onError:" + ex.toString());
+               LogUtil.iTag(TAG, "WebSocket onError:" + ex.toString());
                if (iWebsocketListener != null){
                   iWebsocketListener.onError();
                }
@@ -103,7 +103,7 @@ public class WebsocketOperator {
                CharBuffer decode = charset.decode(bytes);
                String message = decode.toString();
 
-               LogUtil.iTag(TAG, "websocket onMessage: " + message);
+               LogUtil.iTag(TAG, "WebSocket onMessage: " + message);
                if (TextUtils.isEmpty(message)){
                   return;
                }
@@ -112,7 +112,7 @@ public class WebsocketOperator {
                   JSONObject jsonObject = new JSONObject(message);
                   String type = jsonObject.optString("type");
                   String data = jsonObject.optString("data");
-                  LogUtil.iTag(TAG, "onMessage -- type: " + type);
+                  LogUtil.iTag(TAG, "WebSocket onMessage -- type: " + type);
                   if (TextUtils.equals("nlp", type)) {
                      NlpBean nlpBean = GsonHelper.GSON.fromJson(data, NlpBean.class);
                      String question = nlpBean.getQuestion();
@@ -148,7 +148,7 @@ public class WebsocketOperator {
       }
    }
 
-   public void setToken(){
+   private void setToken(){
       String accesstoken = PrefersTool.getAccesstoken();
       if (!TextUtils.isEmpty(accesstoken)){
          mClient.addHeader("Authorization", "Bearer " + accesstoken);
@@ -176,10 +176,10 @@ public class WebsocketOperator {
                   try {
                      if (mClient.getReadyState().equals(ReadyState.NOT_YET_CONNECTED)) {
                         mClient.connectBlocking();
-                        LogUtil.iTag("JWebSocketClient", "WebSocket connect");
+                        LogUtil.iTag(TAG, "WebSocket connect");
                      } else if (mClient.getReadyState().equals(ReadyState.CLOSING) || mClient.getReadyState().equals(ReadyState.CLOSED)) {
                         mClient.reconnectBlocking();
-                        LogUtil.iTag("JWebSocketClient", "WebSocket reconnect");
+                        LogUtil.iTag(TAG, "WebSocket reconnect");
                      }
                   } catch (Exception e) {
                      e.printStackTrace();
@@ -201,7 +201,7 @@ public class WebsocketOperator {
     */
    public void sendMessage(String message) {
       if (mClient != null && mClient.isOpen()) {
-         LogUtil.iTag("JWebSocketClient", "sendMessage:" + message);
+         LogUtil.iTag(TAG, "WebSocket sendMessage:" + message);
 
          mClient.send(message);
       } else {

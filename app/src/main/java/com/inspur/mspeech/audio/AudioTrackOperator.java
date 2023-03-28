@@ -151,7 +151,7 @@ public class AudioTrackOperator {
                     }
 
                     if (mIAudioTrackListener != null){
-                        mIAudioTrackListener.onStopResource();
+                        mIAudioTrackListener.onStopResource(fileName.contains("ding") || fileName.contains("wakeUpReply"));
                     }
                 }
 
@@ -163,7 +163,7 @@ public class AudioTrackOperator {
 
     public interface IAudioTrackListener{
         void onStop();
-        void onStopResource();
+        void onStopResource(boolean startVad);
     }
     /**
      * 开始播放
