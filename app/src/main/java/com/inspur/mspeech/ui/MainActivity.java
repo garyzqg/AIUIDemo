@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -22,7 +23,6 @@ import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.MsgAdapter;
 import com.inspur.mspeech.audio.AudioRecordOperator;
 import com.inspur.mspeech.audio.AudioTrackOperator;
-import com.inspur.mspeech.bean.BaseResponse;
 import com.inspur.mspeech.bean.Msg;
 import com.inspur.mspeech.net.SpeechNet;
 import com.inspur.mspeech.utils.Base64Utils;
@@ -54,9 +54,6 @@ import payfun.lib.basis.utils.InitUtil;
 import payfun.lib.basis.utils.LogUtil;
 import payfun.lib.dialog.DialogUtil;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
-import payfun.lib.net.exception.ExceptionEngine;
-import payfun.lib.net.exception.NetException;
-import payfun.lib.net.rx.BaseObserver;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
@@ -100,8 +97,6 @@ public class MainActivity extends AppCompatActivity{
             copyAssetFolder(MainActivity.this, "ivw", String.format("%s/ivw", "/sdcard"));
             //初始化SDK
             initSDK();
-            //获取可使用次数
-            getUserCount();
         });
 
 
@@ -118,6 +113,25 @@ public class MainActivity extends AppCompatActivity{
 
         mRvChat.setLayoutManager(layoutManager);
         mRvChat.setAdapter(mAdapter);
+
+        mRvChat.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    //点击屏幕暂停播放
+                    if(mAudioTrackOperator != null){
+                        mAudioTrackOperator.shutdownExecutor();
+                        mAudioTrackOperator.stop();
+                        mAudioTrackOperator.flush();
+
+                        mAudioTrackOperator.isPlaying = false;
+                    }
+
+                    WebsocketOperator.getInstance().close();
+                }
+                return false;
+            }
+        });
         mIvVoiceball = findViewById(R.id.iv_voiceball);
         Glide.with(this)
                 .load(R.drawable.gif_voice_ball)
@@ -540,42 +554,6 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private void getUserCount() {
-        SpeechNet.userCount(new BaseObserver<BaseResponse<Integer>>() {
-            @Override
-            public void onNext(@NonNull BaseResponse<Integer> response) {
-                if(response.isSuccess()){
-                    int data = response.getData();
-                    PrefersTool.setAvailableCount(data);
-                }else {
-                    DialogUtil.showErrorDialog(MainActivity.this, "获取权限失败 code = " + response.getCode(), response.getMessage(), new OnDialogButtonClickListener() {
-                        @Override
-                        public boolean onClick(DialogFragment baseDialog, View v) {
-                            ExitApp();
-                            return false;
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                NetException netException = ExceptionEngine.handleException(e);
-                if (TextUtils.equals(netException.getErrorCode(),"401")){//未登录 或 登陆过期
-                    jumpToLogin();
-                }else{
-                    DialogUtil.showErrorDialog(MainActivity.this, "获取权限失败", netException.getErrorTitle(), new OnDialogButtonClickListener() {
-                        @Override
-                        public boolean onClick(DialogFragment baseDialog, View v) {
-                            ExitApp();
-                            return false;
-                        }
-                    });
-                }
-
-            }
-        });
-    }
     //该方法用于创建显示Menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -632,8 +610,6 @@ public class MainActivity extends AppCompatActivity{
     public ActivityResultLauncher<Intent> intentActivityResultLauncher3 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
 
         if (result.getResultCode() == RESULT_OK){
-            //登录成功 重新获取可用次数
-            getUserCount();
             //新建websocket设置token
             initWebsocket(true);
         }
