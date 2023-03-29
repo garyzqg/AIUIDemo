@@ -44,7 +44,7 @@ public class WebsocketVADOperator {
    public void initWebSocket(IWebsocketListener iWebsocketListener) {
       if (mClient == null){
          mIWebsocketListener = iWebsocketListener;
-         URI uri = URI.create("ws://10.180.151.125:10088");
+         URI uri = URI.create("ws://10.180.151.125:10089");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
          LogUtil.iTag(TAG, "VAD WebSocket init");
          mClient = new JWebSocketClient(uri) {

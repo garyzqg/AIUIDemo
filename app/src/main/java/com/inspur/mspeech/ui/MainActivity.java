@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity{
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (mIvVoiceball.getVisibility() == View.VISIBLE){
+                            if (mIvVoiceball.getVisibility() == View.VISIBLE && startVad){
                                 mWaveLineView.setVisibility(View.VISIBLE);
                                 mIvVoiceball.setVisibility(View.GONE);
                                 mWaveLineView.startAnim();
@@ -232,9 +232,6 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void OnNlpData(String nlpString) {
-                //次数累计一次
-                int usedCount = PrefersTool.getUsedCount();
-                PrefersTool.setUsedCount(++usedCount);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
