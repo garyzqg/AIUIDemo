@@ -579,7 +579,7 @@ public class MainActivity extends AppCompatActivity{
             case R.id.setting_menu_login:
 //                jumpToLogin();
                 Intent intent3 = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent3);
+                intentActivityResultLauncher3.launch(intent3);
                 break;
         }
         return super.onOptionsItemSelected(item);
