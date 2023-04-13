@@ -17,6 +17,7 @@ import java.util.List;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -109,6 +110,11 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
             }
         });
         mRvVoiceName.setAdapter(mVoiceNameAdapter);
+
+        AppCompatImageView back = findViewById(R.id.back);
+        back.setOnClickListener(view -> {
+            finish();
+        });
     }
 
 }

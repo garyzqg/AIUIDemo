@@ -21,6 +21,13 @@
             android:text="账户登录"
             android:textColor="@color/white"
             android:textSize="20sp" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/back"/>
     </RelativeLayout>
 
     <androidx.appcompat.widget.AppCompatImageView

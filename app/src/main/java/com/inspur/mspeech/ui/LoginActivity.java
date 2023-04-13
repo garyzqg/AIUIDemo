@@ -16,6 +16,7 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -74,6 +75,11 @@ public class LoginActivity extends AppCompatActivity {
             tvUserName.setText("账号: "+PrefersTool.getUserName());
             tvScene.setText("情景: "+PrefersTool.getsceneName());
         }
+
+        AppCompatImageView back = findViewById(R.id.back);
+        back.setOnClickListener(view -> {
+            finish();
+        });
 
     }
 

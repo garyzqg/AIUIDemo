@@ -3,7 +3,6 @@ package com.inspur.mspeech.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.QaAdapter;
@@ -66,13 +65,15 @@ public class QaSettingActivity extends AppCompatActivity {
             }
         });
         AppCompatImageView addQa = findViewById(R.id.iv_add_qa);
-        addQa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //新增问答集
-                Intent intent = new Intent(QaSettingActivity.this, QaAddActivity.class);
-                intentActivityResultLauncher.launch(intent);
-            }
+        addQa.setOnClickListener(view -> {
+            //新增问答集
+            Intent intent = new Intent(QaSettingActivity.this, QaAddActivity.class);
+            intentActivityResultLauncher.launch(intent);
+        });
+
+        AppCompatImageView back = findViewById(R.id.back);
+        back.setOnClickListener(view -> {
+            finish();
         });
     }
 

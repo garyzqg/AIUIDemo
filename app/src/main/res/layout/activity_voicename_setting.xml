@@ -19,6 +19,13 @@
             android:text="音色设置"
             android:textSize="20sp"
             android:textColor="@color/white"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/back"/>
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
