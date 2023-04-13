@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity{
                         msgList.add(new Msg(nlpString, Msg.TYPE_RECEIVED));
 //                            mAdapter.notifyItemInserted(msgList.size()-1);
                         mAdapter.notifyDataSetChanged();
-                        mRvChat.scrollToPosition(msgList.size() - 1);
+                        mRvChat.scrollToPosition(msgList.size());
                     }
                 });
             }
@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity{
                         public void run() {
                             msgList.set(msgList.size()-1,new Msg(finalString,Msg.TYPE_SEND));
                             mAdapter.notifyDataSetChanged();
+                            mRvChat.scrollToPosition(msgList.size());
 
                             mWaveLineView.setVisibility(View.INVISIBLE);
                             mWaveLineView.setVolume(15);
@@ -332,10 +333,11 @@ public class MainActivity extends AppCompatActivity{
 
                                 msgList.add(new Msg(vadString,Msg.TYPE_SEND));
                                 mAdapter.notifyDataSetChanged();
-                                mRvChat.scrollToPosition(msgList.size()-1);
+                                mRvChat.scrollToPosition(msgList.size());
                             }else{
                                 msgList.set(msgList.size()-1,new Msg(vadString,Msg.TYPE_SEND));
                                 mAdapter.notifyDataSetChanged();
+                                mRvChat.scrollToPosition(msgList.size());
                             }
                         }
                     });
@@ -374,7 +376,7 @@ public class MainActivity extends AppCompatActivity{
                                 msgList.add(new Msg("我在呢", Msg.TYPE_RECEIVED));
                                 mAdapter.notifyItemInserted(msgList.size() - 1);
 //                                 mAdapter.notifyDataSetChanged();
-                                mRvChat.scrollToPosition(msgList.size() - 1);
+                                mRvChat.scrollToPosition(msgList.size());
                             }
                             //展示水波纹
                             mIvVoiceball.setVisibility(View.GONE);
