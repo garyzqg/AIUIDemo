@@ -63,7 +63,7 @@ public interface SpeechServer {
     @DELETE("/bot/service/mmip/understanding/v2/qa/answer")
     Observable<BaseResponse> deleteAnswer(@QueryMap Map<String,Object> body);
 
-    //获取问答集
+    //登录
     @POST("/bot/service/mmip/auth/v2/login")
     Observable<BaseResponse<LoginBean>> login(@Body RequestBody body);
 }

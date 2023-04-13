@@ -17,6 +17,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +31,7 @@
         </activity>
         <activity
             android:name=".ui.VoiceNameSettingActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -37,6 +39,7 @@
         </activity>
         <activity
             android:name=".ui.QaSettingActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -44,6 +47,7 @@
         </activity>
         <activity
             android:name=".ui.QaAddActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -51,6 +55,7 @@
         </activity>
         <activity
             android:name=".ui.QaEditActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -58,6 +63,7 @@
         </activity>
         <activity
             android:name=".ui.LoginActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
