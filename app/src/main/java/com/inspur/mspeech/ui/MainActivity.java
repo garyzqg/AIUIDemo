@@ -300,7 +300,11 @@ public class MainActivity extends AppCompatActivity{
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            msgList.set(msgList.size()-1,new Msg(finalString,Msg.TYPE_SEND));
+                            if(mIsNewMsg){
+                                msgList.add(new Msg(finalString,Msg.TYPE_SEND));
+                            }else {
+                                msgList.set(msgList.size()-1,new Msg(finalString,Msg.TYPE_SEND));
+                            }
                             mAdapter.notifyDataSetChanged();
                             mRvChat.scrollToPosition(msgList.size());
 
