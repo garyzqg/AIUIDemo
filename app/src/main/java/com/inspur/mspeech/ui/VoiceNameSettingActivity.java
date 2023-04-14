@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.VoiceNameAdapter;
+import com.inspur.mspeech.audio.AudioTrackOperator;
 import com.inspur.mspeech.bean.BaseResponse;
 import com.inspur.mspeech.bean.VoiceBean;
 import com.inspur.mspeech.net.SpeechNet;
@@ -107,6 +108,8 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
             @Override
             public void onClick(int position) {
                 mVoiceNameAdapter.notifyDataSetChanged();
+                AudioTrackOperator.getInstance().writeSource(VoiceNameSettingActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm");
+
             }
         });
         mRvVoiceName.setAdapter(mVoiceNameAdapter);

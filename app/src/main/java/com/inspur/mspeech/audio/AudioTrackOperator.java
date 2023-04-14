@@ -30,12 +30,19 @@ public class AudioTrackOperator {
     private final static int mPcmFormat = AudioFormat.ENCODING_PCM_16BIT;
 
     private AudioTrack mAudioTrack;
-    private boolean mBoolean;
     private ExecutorService mExecutor;
     public boolean isPlaying = false;
     private int threadCount = 0;
     private IAudioTrackListener mIAudioTrackListener;
-
+    private static AudioTrackOperator instance;
+    public static AudioTrackOperator getInstance(){
+        if (instance == null){
+            instance = new AudioTrackOperator();
+        }
+        return instance;
+    }
+    private AudioTrackOperator() {
+    }
 
     public void setStopListener(IAudioTrackListener iAudioTrackListener){
         mIAudioTrackListener = iAudioTrackListener;
@@ -80,8 +87,9 @@ public class AudioTrackOperator {
      * @param isFinish
      */
     public void write(byte[] buffer,boolean isFinish) {
+        play();
         if (mExecutor == null){
-                mExecutor = Executors.newSingleThreadExecutor();
+            mExecutor = Executors.newSingleThreadExecutor();
         }
         if (mExecutor != null){
             mExecutor.submit(() -> {
@@ -126,9 +134,16 @@ public class AudioTrackOperator {
      * @param fileName
      */
     public void writeSource(Context context, String fileName) {
+        //播报之前先stop
+        stop();
+
+        play();
         isPlaying = true;
-        Thread t = new Thread(new Runnable() {
-            public void run() {
+        if (mExecutor == null){
+            mExecutor = Executors.newSingleThreadExecutor();
+        }
+        if (mExecutor != null){
+            mExecutor.submit(() -> {
                 //获取文件输入流 我这里存放在assets中
                 InputStream dis = null;
                 try{
@@ -149,16 +164,9 @@ public class AudioTrackOperator {
                         mAudioTrack.stop();
 //                        mAudioTrack.release();
                     }
-
-                    if (mIAudioTrackListener != null){
-                        mIAudioTrackListener.onStopResource(fileName.contains("ding") || fileName.contains("wakeUpReply"));
-                    }
                 }
-
-            }
-        });
-        t.start();
-//        isPlaying = true;
+            });
+        }
     }
 
     public interface IAudioTrackListener{
@@ -187,8 +195,11 @@ public class AudioTrackOperator {
      * 停止
      */
     public void stop() {
+        shutdownExecutor();
+        isPlaying = false;
         if (mAudioTrack != null && mAudioTrack.getState() != AudioTrack.STATE_UNINITIALIZED){
             mAudioTrack.stop();
+            mAudioTrack.flush();
         }
     }
 

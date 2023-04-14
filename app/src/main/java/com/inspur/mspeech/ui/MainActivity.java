@@ -57,7 +57,6 @@ import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
-    private AudioTrackOperator mAudioTrackOperator;
     private AudioRecordOperator mAudioRecordOperator;
     private RecyclerView mRvChat;
     private List<Msg> msgList = new ArrayList<>();
@@ -119,14 +118,7 @@ public class MainActivity extends AppCompatActivity{
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     //点击屏幕暂停播放
-                    if(mAudioTrackOperator != null){
-                        mAudioTrackOperator.shutdownExecutor();
-                        mAudioTrackOperator.stop();
-                        mAudioTrackOperator.flush();
-
-                        mAudioTrackOperator.isPlaying = false;
-                    }
-
+                    AudioTrackOperator.getInstance().stop();
                     WebsocketOperator.getInstance().close();
                 }
                 return false;
@@ -180,54 +172,47 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void initAudioTrack() {
-        if (mAudioTrackOperator == null){
-            mAudioTrackOperator = new AudioTrackOperator();
-            mAudioTrackOperator.createStreamModeAudioTrack();
-            mAudioTrackOperator.setStopListener(new AudioTrackOperator.IAudioTrackListener() {
-                @Override
-                public void onStop() {
-                    //重新建联VAD websocket
-                    if (WebsocketOperator.getInstance().isOpen()){
-                        mIsPlayWord = false;
-                        WebsocketVADOperator.getInstance().connectWebSocket();
-                    }
+        AudioTrackOperator.getInstance().createStreamModeAudioTrack();
+        AudioTrackOperator.getInstance().setStopListener(new AudioTrackOperator.IAudioTrackListener() {
+            @Override
+            public void onStop() {
+                //重新建联VAD websocket
+                if (WebsocketOperator.getInstance().isOpen()) {
+                    mIsPlayWord = false;
+                    WebsocketVADOperator.getInstance().connectWebSocket();
+                }
+            }
 
+            @Override
+            public void onStopResource(boolean startVad) {
+                //播放结束 vad ws发送start 收到{"status":"ok","type":"server_ready"}后开始语音检测识别
+                if (startVad) {
+                    WebsocketVADOperator.getInstance().sendMessage("start", true);
                 }
 
-                @Override
-                public void onStopResource(boolean startVad) {
-                    //播放结束 vad ws发送start 收到{"status":"ok","type":"server_ready"}后开始语音检测识别
-                    if (startVad){
-                        WebsocketVADOperator.getInstance().sendMessage("start",true);
-                    }
-
-                    //展示水波纹
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mIvVoiceball.getVisibility() == View.VISIBLE && startVad){
-                                mWaveLineView.setVisibility(View.VISIBLE);
-                                mIvVoiceball.setVisibility(View.GONE);
-                                mWaveLineView.startAnim();
-                                mWaveLineView.setMoveSpeed(290);
-                                mWaveLineView.setVolume(15);
-                            }
+                //展示水波纹
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mIvVoiceball.getVisibility() == View.VISIBLE && startVad) {
+                            mWaveLineView.setVisibility(View.VISIBLE);
+                            mIvVoiceball.setVisibility(View.GONE);
+                            mWaveLineView.startAnim();
+                            mWaveLineView.setMoveSpeed(290);
+                            mWaveLineView.setVolume(15);
                         }
-                    });
-                }
-            });
-        }
+                    }
+                });
+            }
+        });
+
     }
 
     private void initWebsocket(boolean reinit) {
         WebsocketOperator.getInstance().initWebSocket(reinit,new WebsocketOperator.IWebsocketListener() {
             @Override
             public void OnTtsData(byte[] audioData, boolean isFinish) {
-                // TODO: 2023/1/30 每次都调用play CMD_STOP_RECORD?
-                if (mAudioTrackOperator != null) {
-                    mAudioTrackOperator.play();
-                    mAudioTrackOperator.write(audioData, isFinish);
-                }
+                AudioTrackOperator.getInstance().write(audioData, isFinish);
             }
 
             @Override
@@ -253,10 +238,7 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onError() {
-                if (mAudioTrackOperator != null) {
-                    mAudioTrackOperator.play();
-                    mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm");
-                }
+                AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm");
             }
 
             @Override
@@ -351,54 +333,36 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onOpen() {
-
                 mIsNewMsg = true;
 
-                if (mAudioTrackOperator != null) {
-                    //播放本地音频文件 欢迎 需要先停止当前播放且释放队列内数据
-                    if(mAudioTrackOperator != null){
-                        mAudioTrackOperator.shutdownExecutor();
-                        mAudioTrackOperator.stop();
-                        mAudioTrackOperator.flush();
-
-                        mAudioTrackOperator.isPlaying = false;
-                    }
-
-                    mAudioTrackOperator.play();
-
-                    if (mIsPlayWord){//语音唤醒
-                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/"+PrefersTool.getVoiceName()+"_box_wakeUpReply.pcm");
-                    }else {//手动唤醒或自动唤醒
-                        mAudioTrackOperator.writeSource(MainActivity.this, "audio/ding.pcm");
-                    }
-
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mIsPlayWord){
-                                msgList.add(new Msg("我在呢", Msg.TYPE_RECEIVED));
-                                mAdapter.notifyItemInserted(msgList.size() - 1);
-//                                 mAdapter.notifyDataSetChanged();
-                                mRvChat.scrollToPosition(msgList.size());
-                            }
-                            //展示水波纹
-                            mIvVoiceball.setVisibility(View.GONE);
-                            mWaveLineView.setVisibility(View.VISIBLE);
-                            mWaveLineView.startAnim();
-                            mWaveLineView.setVolume(15);
-                        }
-                    });
+                if (mIsPlayWord) {//语音唤醒
+                    AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm");
+                } else {//手动唤醒或自动唤醒
+                    AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/ding.pcm");
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mIsPlayWord) {
+                            msgList.add(new Msg("我在呢", Msg.TYPE_RECEIVED));
+                            mAdapter.notifyItemInserted(msgList.size() - 1);
+//                                 mAdapter.notifyDataSetChanged();
+                            mRvChat.scrollToPosition(msgList.size());
+                        }
+                        //展示水波纹
+                        mIvVoiceball.setVisibility(View.GONE);
+                        mWaveLineView.setVisibility(View.VISIBLE);
+                        mWaveLineView.startAnim();
+                        mWaveLineView.setVolume(15);
+                    }
+                });
             }
 
             @Override
             public void onError() {
                 //建联失败直接播报网络异常
-                if (mAudioTrackOperator != null) {
-                    mAudioTrackOperator.play();
-                    mAudioTrackOperator.writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm");
-                }
+                AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm");
             }
 
             @Override
@@ -683,13 +647,8 @@ public class MainActivity extends AppCompatActivity{
         WebsocketOperator.getInstance().close();
 
         //audiotrack停止播放
-        if(mAudioTrackOperator != null){
-            mAudioTrackOperator.shutdownExecutor();
-            mAudioTrackOperator.stop();
-            mAudioTrackOperator.flush();
+        AudioTrackOperator.getInstance().stop();
 
-            mAudioTrackOperator.isPlaying = false;
-        }
     }
 
 
