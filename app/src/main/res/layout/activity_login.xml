@@ -133,6 +133,18 @@
             android:textSize="18sp"
             android:textColor="@color/black"
             android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:layout_marginTop="30dp"
+            android:text="退出登录"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/login_btn_bg"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 

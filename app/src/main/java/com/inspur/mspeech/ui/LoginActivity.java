@@ -41,8 +41,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initView() {
 
+        mEtUsername = findViewById(R.id.et_username);
         if (TextUtils.isEmpty(PrefersTool.getAccesstoken())){//未登录状态
-            mEtUsername = findViewById(R.id.et_username);
             String userNameSave = PrefersTool.getUserName();
             if (!TextUtils.isEmpty(userNameSave)){
                 mEtUsername.setText(userNameSave);
@@ -69,11 +69,17 @@ public class LoginActivity extends AppCompatActivity {
             AppCompatTextView title = findViewById(R.id.title);
             AppCompatTextView tvUserName = findViewById(R.id.tv_userName);
             AppCompatTextView tvScene = findViewById(R.id.tv_scene);
+            TextView logout = findViewById(R.id.logout);
             title.setText("已登录");
             llLogIn.setVisibility(View.GONE);
             llLoggedIn.setVisibility(View.VISIBLE);
             tvUserName.setText("账号: "+PrefersTool.getUserName());
             tvScene.setText("情景: "+PrefersTool.getsceneName());
+            logout.setOnClickListener(view -> {
+                PrefersTool.setAccesstoken("");
+                setResult(RESULT_OK);
+                finish();
+            });
         }
 
         AppCompatImageView back = findViewById(R.id.back);
@@ -125,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (!TextUtils.isEmpty(sceneId)){
                             PrefersTool.setSceneId(sceneId);
                             PrefersTool.setSceneName(sceneBean.getSceneName());
-                            ToastUtil.showLong("登陆成功");
+                            ToastUtil.showLong("登录成功");
 
                             setResult(RESULT_OK);
                             finish();

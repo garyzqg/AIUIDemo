@@ -164,6 +164,10 @@ public class AudioTrackOperator {
                         mAudioTrack.stop();
 //                        mAudioTrack.release();
                     }
+
+                    if (mIAudioTrackListener != null){
+                        mIAudioTrackListener.onStopResource(fileName.contains("ding") || fileName.contains("wakeUpReply"));
+                    }
                 }
             });
         }
