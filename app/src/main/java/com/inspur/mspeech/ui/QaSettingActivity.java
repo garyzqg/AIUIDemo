@@ -3,6 +3,7 @@ package com.inspur.mspeech.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.QaAdapter;
@@ -18,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -36,6 +38,7 @@ public class QaSettingActivity extends AppCompatActivity {
     private RecyclerView mRvQa;
     private List<QaBean> mQaBeanList = new ArrayList<>();
     private QaAdapter mQaAdapter;
+    private LinearLayoutCompat mLlNoData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,9 @@ public class QaSettingActivity extends AppCompatActivity {
         back.setOnClickListener(view -> {
             finish();
         });
+
+        mLlNoData = findViewById(R.id.ll_no_data);
+
     }
 
     public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
@@ -105,8 +111,17 @@ public class QaSettingActivity extends AppCompatActivity {
                     if (mQaBeanList.size()>0){
                         mQaBeanList.clear();
                     }
-                    mQaBeanList.addAll(response.getData());
-                    mQaAdapter.notifyDataSetChanged();
+                    List<QaBean> data = response.getData();
+                    if(data.size()>0){
+                        mRvQa.setVisibility(View.VISIBLE);
+                        mLlNoData.setVisibility(View.GONE);
+                        mQaBeanList.addAll(data);
+                        mQaAdapter.notifyDataSetChanged();
+                    }else {
+                        mRvQa.setVisibility(View.GONE);
+                        mLlNoData.setVisibility(View.VISIBLE);
+                    }
+
                 }else {
                     DialogUtil.showErrorDialog(QaSettingActivity.this,"获取问答集失败 code = " + response.getCode(),response.getMessage());
                 }
