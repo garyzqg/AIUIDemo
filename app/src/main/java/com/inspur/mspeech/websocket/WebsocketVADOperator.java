@@ -30,7 +30,7 @@ public class WebsocketVADOperator {
    private WebsocketVADOperator() {
    }
 
-   public static WebsocketVADOperator getInstance(){
+   public static synchronized WebsocketVADOperator getInstance(){
       if (instance == null){
          instance = new WebsocketVADOperator();
       }

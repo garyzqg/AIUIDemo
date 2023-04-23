@@ -3,10 +3,12 @@ package payfun.lib.basis;
 import android.app.Application;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
-
+import android.util.Log;
+import androidx.annotation.MainThread;
 import androidx.multidex.MultiDex;
-
+import payfun.lib.basis.utils.CrashUtil;
 import payfun.lib.basis.utils.InitUtil;
+import payfun.lib.basis.utils.LogUtil;
 
 /**
  * @author : zhangqg
@@ -14,7 +16,7 @@ import payfun.lib.basis.utils.InitUtil;
  * desc   : <BasisApp：可参照本Application进行仿写>
  */
 public class BasisApp extends Application {
-
+    private static final String TAG = "BasisApp";
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -25,6 +27,23 @@ public class BasisApp extends Application {
     public void onCreate() {
         super.onCreate();
         InitUtil.init(this);
+
+        //日志初始化
+        InitUtil.initDefaultLog(true);
+        //开启崩溃监听
+        initCrash(BasisApp.this);
+
+    }
+
+    @MainThread
+    private static void initCrash(Context context) {
+        CrashUtil.init(new CrashUtil.OnCrashListener() {
+            @Override
+            public void onCrash(Throwable ex) {
+                LogUtil.eTag(TAG, "======应用程序异常======");
+                LogUtil.eTag(TAG, "异常信息：\n" + Log.getStackTraceString(ex));
+            }
+        });
     }
 
     @Override

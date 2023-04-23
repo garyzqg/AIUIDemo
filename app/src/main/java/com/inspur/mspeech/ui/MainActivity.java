@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity{
 
         initView();
 
-        InitUtil.init(this);
+//        InitUtil.init(this);
 
         //网络初始化
         SpeechNet.init();
@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity{
             //初始化SDK
             initSDK();
         });
-
 
     }
 
