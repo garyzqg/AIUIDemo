@@ -2,6 +2,8 @@ package com.inspur.mspeech.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.media.AudioTrack;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -19,6 +21,12 @@ import com.iflytek.aikit.core.AiResponseListener;
 import com.iflytek.aikit.core.CoreListener;
 import com.iflytek.aikit.core.ErrType;
 import com.iflytek.aikit.core.JLibrary;
+import com.iflytek.aiui.AIUIAgent;
+import com.iflytek.aiui.AIUIConstant;
+import com.iflytek.aiui.AIUIEvent;
+import com.iflytek.aiui.AIUIListener;
+import com.iflytek.aiui.AIUIMessage;
+import com.iflytek.aiui.AIUISetting;
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.MsgAdapter;
 import com.inspur.mspeech.audio.AudioRecordOperator;
@@ -49,8 +57,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import jaygoo.widget.wlv.WaveLineView;
-import payfun.lib.basis.utils.InitUtil;
+import payfun.lib.basis.Switch;
 import payfun.lib.basis.utils.LogUtil;
 import payfun.lib.dialog.DialogUtil;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
@@ -64,6 +76,11 @@ public class MainActivity extends AppCompatActivity{
     private WaveLineView mWaveLineView;
     private AppCompatImageView mIvVoiceball;
 
+    // AIUI
+    private AIUIAgent mAIUIAgent = null;
+    // AIUI工作状态
+    private int mAIUIState = AIUIConstant.STATE_IDLE;
+
     public static final String WORK_DIR = "/sdcard/ivw";
     private String keywordPath = WORK_DIR + "/keyword.txt";
     //能力
@@ -71,6 +88,9 @@ public class MainActivity extends AppCompatActivity{
     private AiHandle aiHandle;
     private boolean mIsNewMsg = false;//定义变量 控制是否是新的一条消息 用于UI列表展示
     private boolean mIsPlayWord = false;//定义变量 播放什么唤醒词
+
+    private int mAiuiCount = 0;//AIUI初始化重试次数
+    private String mIatMessage;//iat有效数据
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +151,7 @@ public class MainActivity extends AppCompatActivity{
         mIvVoiceball.setOnClickListener(view -> {
             //手动唤醒
             LogUtil.iTag(TAG, "click wakeup");
-            //先后建联两个websocket
+            //先后建联两个websocket 如果是自研语音识别 只建联一个
             WebsocketOperator.getInstance().connectWebSocket();
         });
 
@@ -143,14 +163,242 @@ public class MainActivity extends AppCompatActivity{
         initAudioTrack();
         //初始化websocket
         initWebsocket(false);
-        //初始化websocket VAD
-        initWebsocketVAD();
         //初始化AudioRecord
         initAudioRecord();
         //初始化AIKit唤醒库
         initIVW();
+        if (Switch.VAD_AIUI){
+            // 初始化AIUI
+            initAIUI();
+        }else {
+            //初始化websocket VAD
+            initWebsocketVAD();
+        }
+    }
+
+    /**
+     * 初始化AIUI
+     */
+    private void initAIUI() {
+        if (null == mAIUIAgent) {
+            AIUISetting.setSystemInfo(AIUIConstant.KEY_SERIAL_NUM, "HS6103001A2106000028");
+            mAIUIAgent = AIUIAgent.createAgent(this, getAIUIParams(), mAIUIListener);
+        }
+
+        if (null == mAIUIAgent) {
+            LogUtil.iTag(TAG,"---------create_AIUI FAIL---------");
+        } else {
+            LogUtil.iTag(TAG,"---------create_AIUI SUCCESS---------");
+//            controlRecord(AIUIConstant.CMD_START_RECORD);
+        }
 
     }
+
+    private String getAIUIParams() {
+        String params = "";
+        AssetManager assetManager = getResources().getAssets();
+        try {
+            InputStream ins = assetManager.open( "cfg/aiui_phone.cfg" );
+            byte[] buffer = new byte[ins.available()];
+
+            ins.read(buffer);
+            ins.close();
+
+            params = new String(buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return params;
+    }
+
+    AIUIListener mAIUIListener = new AIUIListener() {
+        @Override
+        public void onEvent(AIUIEvent event) {
+            switch (event.eventType) {
+                case AIUIConstant.EVENT_CONNECTED_TO_SERVER:
+                    LogUtil.iTag(TAG,"AIUI -- 已连接服务器");
+                    String uid = event.data.getString("uid");
+                    break;
+
+                case AIUIConstant.EVENT_SERVER_DISCONNECTED:
+                    LogUtil.iTag(TAG,"AIUI -- 与服务器断开连接");
+                    break;
+
+                case AIUIConstant.EVENT_WAKEUP:
+                    LogUtil.iTag(TAG,"AIUI -- WAKEUP 进入识别状态");
+//                    wakeUp();
+                    break;
+                //结果事件（包含听写，语义，离线语法结果）
+                case AIUIConstant.EVENT_RESULT://1
+                    //结果解析事件
+//                    LogUtil.iTag(TAG, "AIUI STATUS --- 结果INFO -- " + event.info);
+//                    LogUtil.iTag(TAG, "AIUI STATUS --- 结果DATA -- " + event.data);
+                    //听写结果(iat)
+                    //语义结果(nlp)
+                    //后处理服务结果(tpp)
+                    //云端tts结果(tts)
+                    //翻译结果(itrans)
+
+                    /**
+                     * event.info
+                     * {
+                     *     "data": [{
+                     *         "params": {
+                     *             "sub": "iat",
+                     *         },
+                     *         "content": [{
+                     *             "dte": "utf8",
+                     *             "dtf": "json",
+                     *             "cnt_id": "0"
+                     *         }]
+                     *     }]
+                     * }
+                     */
+                    try {
+                        JSONObject info = new JSONObject(event.info);
+                        JSONObject infoData = info.optJSONArray("data").optJSONObject(0);
+                        String sub = infoData.optJSONObject("params").optString("sub");
+                        JSONObject content = infoData.optJSONArray("content").optJSONObject(0);
+
+                        if (content.has("cnt_id")) {
+                            String cnt_id = content.optString("cnt_id");
+                            String resultString = new String(event.data.getByteArray(cnt_id), "utf-8");
+                            if ("iat".equals(sub) && resultString.length() > 2) {
+//                                LogUtil.iTag(TAG, "AIUI EVENT_RESULT --- resultString -- " + resultString);
+                                JSONObject result = new JSONObject(resultString);
+                                JSONObject text = result.optJSONObject("text");
+                                boolean ls = text.optBoolean("ls");//是否结束
+                                int sn = text.optInt("sn");//第几句
+                                JSONArray ws = text.optJSONArray("ws");
+                                StringBuilder currentIatMessage = new StringBuilder();
+                                for (int j = 0; j < ws.length(); j++) {
+                                    JSONArray cw = ws.optJSONObject(j).optJSONArray("cw");
+                                    String w = cw.optJSONObject(0).optString("w");
+                                    if (!TextUtils.isEmpty(w)){
+                                        currentIatMessage.append(w);
+                                    }
+                                }
+
+                                LogUtil.iTag(TAG, "AIUI EVENT_RESULT --- iat -- current -- " + currentIatMessage);
+
+                                if (currentIatMessage!= null && currentIatMessage.length()>0){
+                                    mIatMessage = currentIatMessage.toString();
+
+                                    if (WebsocketOperator.getInstance().isOpen()){
+
+                                        if(sn == 1){
+                                            //刚开始收到音频
+                                            if (mIvVoiceball.getVisibility() == View.VISIBLE){
+                                                mWaveLineView.setVisibility(View.VISIBLE);
+                                                mIvVoiceball.setVisibility(View.GONE);
+                                                mWaveLineView.startAnim();
+                                            }
+                                            mWaveLineView.setVolume(70);
+                                            mWaveLineView.setMoveSpeed(150);
+
+                                            msgList.add(new Msg(mIatMessage,Msg.TYPE_SEND));
+                                        }else{
+                                            msgList.set(msgList.size()-1,new Msg(mIatMessage,Msg.TYPE_SEND));
+                                        }
+
+//                                    mAdapter.notifyItemInserted(msgList.size()-1);
+                                        mAdapter.notifyDataSetChanged();
+                                        mRvChat.scrollToPosition(msgList.size()-1);
+                                    }
+
+                                }
+
+                                if (ls){
+                                    LogUtil.iTag(TAG, "AIUI EVENT_RESULT --- iat -- final -- " + mIatMessage);
+
+                                    WebsocketOperator.getInstance().sendMessage(mIatMessage);
+
+                                    AudioTrackOperator.getInstance().isPlaying = true;
+
+                                    if (WebsocketOperator.getInstance().isOpen()) {
+                                        mWaveLineView.setVisibility(View.INVISIBLE);
+                                        mWaveLineView.setVolume(15);
+                                        mWaveLineView.setMoveSpeed(290);
+                                        mWaveLineView.stopAnim();
+                                        mIvVoiceball.setVisibility(View.VISIBLE);
+                                    }
+
+
+                                }
+
+                            }
+                        }
+
+
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case AIUIConstant.EVENT_SLEEP:
+                    LogUtil.iTag(TAG, "AIUI -- 设备进入休眠");
+                    break;
+
+                case AIUIConstant.EVENT_START_RECORD:
+                    LogUtil.iTag(TAG, "AIUI -- 已开始录音");
+                    break;
+
+                case AIUIConstant.EVENT_STOP_RECORD:
+                    LogUtil.iTag(TAG, "AIUI -- 已停止录音");
+                    break;
+                // 状态事件
+                case AIUIConstant.EVENT_STATE://3
+                    mAIUIState = event.arg1;
+                    if (AIUIConstant.STATE_IDLE == mAIUIState) {
+                        // 闲置状态，AIUI未开启
+                        LogUtil.iTag(TAG, "AIUI -- STATE_IDLE");
+                    } else if (AIUIConstant.STATE_READY == mAIUIState) {
+                        // AIUI已就绪，等待唤醒
+                        LogUtil.iTag(TAG, "AIUI -- STATE_READY");
+                    } else if (AIUIConstant.STATE_WORKING == mAIUIState) {
+                        // AIUI工作中，可进行交互
+                        LogUtil.iTag(TAG, "AIUI -- STATE_WORKING");
+                    }
+                    break;
+                case AIUIConstant.EVENT_TTS: {
+                    switch (event.arg1) {
+                        case AIUIConstant.TTS_SPEAK_BEGIN:
+                            LogUtil.iTag(TAG, "TTS --- 开始播放");
+                            break;
+
+                        case AIUIConstant.TTS_SPEAK_PROGRESS:
+                            LogUtil.iTag(TAG, "TTS --- 播放进度为" + event.data.getInt("percent"));
+                            break;
+
+                        case AIUIConstant.TTS_SPEAK_PAUSED:
+                            LogUtil.iTag(TAG, "TTS --- 暂停播放");
+                            break;
+
+                        case AIUIConstant.TTS_SPEAK_RESUMED:
+                            LogUtil.iTag(TAG, "TTS --- 恢复播放");
+                            break;
+
+                        case AIUIConstant.TTS_SPEAK_COMPLETED:
+                            LogUtil.iTag(TAG, "TTS --- 播放完成");
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+                break;
+                //错误事件
+                case AIUIConstant.EVENT_ERROR://2
+                    LogUtil.iTag(TAG,"AIUI 错误: " + event.arg1 + "\n" + event.info);
+                    //失败后重试3次
+                    if (mAiuiCount <3){
+                        mAiuiCount++;
+                        mAIUIAgent = null;
+                        initAIUI();
+                    }
+                    break;
+            }
+        }
+    };
 
     private void initAudioRecord() {
         mAudioRecordOperator = new AudioRecordOperator();
@@ -162,10 +410,19 @@ public class MainActivity extends AppCompatActivity{
                 dataBuilder.audio("wav", data);
                 AiHelper.getInst().write(dataBuilder.build(), aiHandle);
 
-                //在收到VAD开始消息后 同步将采集到的数据发送给vad websocket
-                if (WebsocketVADOperator.getInstance().isOpen() && WebsocketVADOperator.getInstance().startSendMsg){
-                    WebsocketVADOperator.getInstance().sendMessage(Base64Utils.base64EncodeToString(data),false);
+                if (Switch.VAD_AIUI){
+                    if(mAIUIState == AIUIConstant.STATE_WORKING && AudioTrackOperator.getInstance().getPlayState() != AudioTrack.PLAYSTATE_PLAYING && !AudioTrackOperator.getInstance().isPlaying){
+                        String params = "data_type=audio,sample_rate=16000";
+                        AIUIMessage msg = new AIUIMessage(AIUIConstant.CMD_WRITE, 0, 0, params, data);
+                        mAIUIAgent.sendMessage(msg);
+                    }
+                }else {
+                    //在收到VAD开始消息后 同步将采集到的数据发送给vad websocket
+                    if (WebsocketVADOperator.getInstance().isOpen() && WebsocketVADOperator.getInstance().startSendMsg){
+                        WebsocketVADOperator.getInstance().sendMessage(Base64Utils.base64EncodeToString(data),false);
+                    }
                 }
+
             }
         });
     }
@@ -175,17 +432,23 @@ public class MainActivity extends AppCompatActivity{
         AudioTrackOperator.getInstance().setStopListener(new AudioTrackOperator.IAudioTrackListener() {
             @Override
             public void onStop() {
-                //重新建联VAD websocket
-                if (WebsocketOperator.getInstance().isOpen()) {
+                if (WebsocketOperator.getInstance().isOpen()){
                     mIsPlayWord = false;
-                    WebsocketVADOperator.getInstance().connectWebSocket();
+                    if (Switch.VAD_AIUI){
+                        //AIUI交互设置成 continuous模式 不需要每次都唤醒
+//                        AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
+//                        mAIUIAgent.sendMessage(wakeupMsg);
+                        chatStateUi();
+                    }else {
+                        WebsocketVADOperator.getInstance().connectWebSocket();
+                    }
                 }
             }
 
             @Override
             public void onStopResource(boolean startVad) {
                 //播放结束 vad ws发送start 收到{"status":"ok","type":"server_ready"}后开始语音检测识别
-                if (startVad) {
+                if (!Switch.VAD_AIUI && startVad) {
                     WebsocketVADOperator.getInstance().sendMessage("start", true);
                 }
 
@@ -229,10 +492,15 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onOpen() {
-                //建联成功后再建联VAD websocket
-                WebsocketVADOperator.getInstance().connectWebSocket();
-
                 mIsPlayWord = true;
+                if (Switch.VAD_AIUI){//如果走AIUI语音识别渠道 此时需要唤醒AIUI
+                    AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
+                    mAIUIAgent.sendMessage(wakeupMsg);
+                    chatStateUi();
+                }else {//如果走自研语音唤醒 建联成功后再建联VAD websocket
+                    WebsocketVADOperator.getInstance().connectWebSocket();
+                }
+
             }
 
             @Override
@@ -252,8 +520,14 @@ public class MainActivity extends AppCompatActivity{
                             mIvVoiceball.setVisibility(View.VISIBLE);
                         }
 
-                        //断联vad
-                        WebsocketVADOperator.getInstance().close();
+                        if (Switch.VAD_AIUI){
+                            //AIUI休眠
+                            AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_RESET_WAKEUP, 0, 0, "", null);
+                            mAIUIAgent.sendMessage(wakeupMsg);
+                        }else {
+                            //断联vad
+                            WebsocketVADOperator.getInstance().close();
+                        }
 
                         if (isLogin){//token为空或失效 跳转登录
                             jumpToLogin();
@@ -269,7 +543,6 @@ public class MainActivity extends AppCompatActivity{
 
     private void initWebsocketVAD() {
         WebsocketVADOperator.getInstance().initWebSocket(new WebsocketVADOperator.IWebsocketListener() {
-
             @Override
             public void OnFinalData(String finalString) {
                 //最终识别结果 发给语音交互webscocket
@@ -334,28 +607,7 @@ public class MainActivity extends AppCompatActivity{
             public void onOpen() {
                 mIsNewMsg = true;
 
-                if (mIsPlayWord) {//语音唤醒
-                    AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm");
-                } else {//手动唤醒或自动唤醒
-                    AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/ding.pcm");
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mIsPlayWord) {
-                            msgList.add(new Msg("我在呢", Msg.TYPE_RECEIVED));
-                            mAdapter.notifyItemInserted(msgList.size() - 1);
-//                                 mAdapter.notifyDataSetChanged();
-                            mRvChat.scrollToPosition(msgList.size());
-                        }
-                        //展示水波纹
-                        mIvVoiceball.setVisibility(View.GONE);
-                        mWaveLineView.setVisibility(View.VISIBLE);
-                        mWaveLineView.startAnim();
-                        mWaveLineView.setVolume(15);
-                    }
-                });
+                chatStateUi();
             }
 
             @Override
@@ -367,6 +619,34 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClose() {
 
+            }
+        });
+    }
+
+    /**
+     * 对话状态ui更新
+     */
+    private void chatStateUi() {
+        if (mIsPlayWord) {//语音唤醒
+            AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm");
+        } else {//手动唤醒或自动唤醒
+            AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/ding.pcm");
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mIsPlayWord) {
+                    msgList.add(new Msg("我在呢", Msg.TYPE_RECEIVED));
+                    mAdapter.notifyItemInserted(msgList.size() - 1);
+//                                 mAdapter.notifyDataSetChanged();
+                    mRvChat.scrollToPosition(msgList.size());
+                }
+                //展示水波纹
+                mIvVoiceball.setVisibility(View.GONE);
+                mWaveLineView.setVisibility(View.VISIBLE);
+                mWaveLineView.startAnim();
+                mWaveLineView.setVolume(15);
             }
         });
     }

@@ -29,7 +29,7 @@ public class BasisApp extends Application {
         InitUtil.init(this);
 
         //日志初始化
-        InitUtil.initDefaultLog(true);
+        InitUtil.initDefaultLog(Switch.lOG_SWITCH);
         //开启崩溃监听
         initCrash(BasisApp.this);
 
