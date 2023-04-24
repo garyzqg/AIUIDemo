@@ -133,7 +133,7 @@ public class AudioTrackOperator {
      * @param context
      * @param fileName
      */
-    public void writeSource(Context context, String fileName) {
+    public void writeSource(Context context, String fileName, boolean isCallBack) {
         //播报之前先stop
         stop();
 
@@ -165,7 +165,7 @@ public class AudioTrackOperator {
 //                        mAudioTrack.release();
                     }
 
-                    if (mIAudioTrackListener != null){
+                    if (mIAudioTrackListener != null && isCallBack){
                         mIAudioTrackListener.onStopResource(fileName.contains("ding") || fileName.contains("wakeUpReply"));
                     }
                 }

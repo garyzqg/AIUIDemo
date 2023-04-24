@@ -109,7 +109,7 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
             @Override
             public void onClick(int position) {
                 mVoiceNameAdapter.notifyDataSetChanged();
-                AudioTrackOperator.getInstance().writeSource(VoiceNameSettingActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm");
+                AudioTrackOperator.getInstance().writeSource(VoiceNameSettingActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm",false);
 
             }
         });

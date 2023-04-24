@@ -505,7 +505,7 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onError() {
-                AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm");
+                AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm",true);
             }
 
             @Override
@@ -613,7 +613,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onError() {
                 //建联失败直接播报网络异常
-                AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm");
+                AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm",true);
             }
 
             @Override
@@ -628,9 +628,9 @@ public class MainActivity extends AppCompatActivity{
      */
     private void chatStateUi() {
         if (mIsPlayWord) {//语音唤醒
-            AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm");
+            AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm",true);
         } else {//手动唤醒或自动唤醒
-            AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/ding.pcm");
+            AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/ding.pcm",true);
         }
 
         runOnUiThread(new Runnable() {
