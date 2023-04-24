@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity{
 
     private int mAiuiCount = 0;//AIUI初始化重试次数
     private String mIatMessage;//iat有效数据
+    private boolean isFinalStringEmpty = false;//自研语音识别是否为空
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -493,6 +494,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onOpen() {
                 mIsPlayWord = true;
+                isFinalStringEmpty = false;
                 if (Switch.VAD_AIUI){//如果走AIUI语音识别渠道 此时需要唤醒AIUI
                     AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
                     mAIUIAgent.sendMessage(wakeupMsg);
@@ -547,6 +549,8 @@ public class MainActivity extends AppCompatActivity{
             public void OnFinalData(String finalString) {
                 //最终识别结果 发给语音交互webscocket
                 if(TextUtils.isEmpty(finalString)){
+                    //如果最终识别结果为空 自动重新唤醒 不更新ui
+                    isFinalStringEmpty = true;
                     return;
                 }
                 WebsocketOperator.getInstance().sendMessage(finalString);
@@ -607,7 +611,9 @@ public class MainActivity extends AppCompatActivity{
             public void onOpen() {
                 mIsNewMsg = true;
 
-                chatStateUi();
+                if (!isFinalStringEmpty){//如果是因为本次识别结果为空导致的自动重连 不需要更新ui
+                    chatStateUi();
+                }
             }
 
             @Override
@@ -618,7 +624,12 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onClose() {
-
+                //如果当前识别到的结果是空,则需要重新开启新一轮检测
+                if (isFinalStringEmpty){
+                    if (WebsocketOperator.getInstance().isOpen()){
+                        WebsocketVADOperator.getInstance().connectWebSocket();
+                    }
+                }
             }
         });
     }
