@@ -1,6 +1,7 @@
 package com.inspur.mspeech.websocket;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 import com.inspur.mspeech.bean.VadBean;
@@ -13,6 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 import payfun.lib.basis.utils.LogUtil;
+import payfun.lib.basis.utils.ToastUtil;
 import payfun.lib.net.helper.GsonHelper;
 
 /**
@@ -51,8 +53,8 @@ public class WebsocketVADOperator {
             @Override
             public void onOpen(ServerHandshake handshakedata) {
                LogUtil.iTag(TAG, "VAD WebSocket onOpen");
-               if (iWebsocketListener != null){
-                  iWebsocketListener.onOpen();
+               if (mIWebsocketListener != null){
+                  mIWebsocketListener.onOpen();
                }
             }
 
@@ -78,19 +80,19 @@ public class WebsocketVADOperator {
                      String type = vadBean.getType();
                      if (TextUtils.equals("partial_result",type)){
                         //流式识别结果
-                        if (iWebsocketListener != null){
+                        if (mIWebsocketListener != null){
                            String nbest = vadBean.getNbest();
                            List<VadMsgBean> datas = GsonHelper.GSON.fromJson(nbest, new TypeToken<List<VadMsgBean>>() {}.getType());
                            String sentence = datas.get(0).getSentence();
-                           iWebsocketListener.OnVadData(sentence);
+                           mIWebsocketListener.OnVadData(sentence);
                         }
                      }else if (TextUtils.equals("final_result",type)){
                         //最终识别结果
-                        if (iWebsocketListener != null){
+                        if (mIWebsocketListener != null){
                            String nbest = vadBean.getNbest();
                            List<VadMsgBean> datas = GsonHelper.GSON.fromJson(nbest, new TypeToken<List<VadMsgBean>>() {}.getType());
                            String sentence = datas.get(0).getSentence();
-                           iWebsocketListener.OnFinalData(sentence);
+                           mIWebsocketListener.OnFinalData(sentence);
                         }
                      }
                   }catch (Exception e){//解析异常捕获
@@ -103,8 +105,8 @@ public class WebsocketVADOperator {
             @Override
             public void onClose(int code, String reason, boolean remote) {
                LogUtil.iTag(TAG, "VAD WebSocket onClose: code:" + code + " reason:" + reason + " remote:" + remote);
-               if (iWebsocketListener != null){
-                  iWebsocketListener.onClose();
+               if (mIWebsocketListener != null){
+                  mIWebsocketListener.onClose();
                }
 
                startSendMsg = false;
@@ -113,13 +115,14 @@ public class WebsocketVADOperator {
             @Override
             public void onError(Exception ex) {
                LogUtil.iTag(TAG, "VAD WebSocket onError:" + ex.toString());
-               if (iWebsocketListener != null){
-                  iWebsocketListener.onError();
+               if (mIWebsocketListener != null){
+                  mIWebsocketListener.onError();
                }
             }
 
          };
 
+         mClient.setConnectionLostTimeout(10 * 1000);
       }
    }
 
@@ -151,9 +154,11 @@ public class WebsocketVADOperator {
                      }
                   } catch (Exception e) {
                      e.printStackTrace();
-                     if (mIWebsocketListener != null){
-                        mIWebsocketListener.onError();
-                     }
+//                     if (mIWebsocketListener != null){
+//                        mIWebsocketListener.onError();
+//                     }
+                     LogUtil.iTag(TAG, Log.getStackTraceString(e));
+                     ToastUtil.showLong("vad服务调用异常");
                   }
                }
             }

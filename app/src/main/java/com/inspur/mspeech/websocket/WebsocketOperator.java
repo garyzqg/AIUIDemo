@@ -1,6 +1,7 @@
 package com.inspur.mspeech.websocket;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.inspur.mspeech.bean.NlpBean;
 import com.inspur.mspeech.bean.TtsBean;
@@ -20,6 +21,7 @@ import java.nio.charset.Charset;
 import java.util.UUID;
 
 import payfun.lib.basis.utils.LogUtil;
+import payfun.lib.basis.utils.ToastUtil;
 import payfun.lib.net.helper.GsonHelper;
 
 /**
@@ -66,8 +68,8 @@ public class WebsocketOperator {
             @Override
             public void onOpen(ServerHandshake handshakedata) {
                LogUtil.iTag(TAG, "WebSocket onOpen");
-               if (iWebsocketListener != null){
-                  iWebsocketListener.onOpen();
+               if (mIWebsocketListener != null){
+                  mIWebsocketListener.onOpen();
                }
             }
 
@@ -80,16 +82,16 @@ public class WebsocketOperator {
             public void onClose(int code, String reason, boolean remote) {
                LogUtil.iTag(TAG, "WebSocket onClose: code:" + code + " reason:" + reason + " remote:" + remote);
                // TODO: 2023/1/13 断开连接后 是否控制不往aiui写数据 如何保证websocket的超时和AIUI的超时保持一致?
-               if (iWebsocketListener != null){
-                  iWebsocketListener.onClose(reason.contains("401"));
+               if (mIWebsocketListener != null){
+                  mIWebsocketListener.onClose(reason.contains("401"));
                }
             }
 
             @Override
             public void onError(Exception ex) {
                LogUtil.iTag(TAG, "WebSocket onError:" + ex.toString());
-               if (iWebsocketListener != null){
-                  iWebsocketListener.onError();
+               if (mIWebsocketListener != null){
+                  mIWebsocketListener.onError();
                }
 
             }
@@ -117,21 +119,21 @@ public class WebsocketOperator {
                      NlpBean nlpBean = GsonHelper.GSON.fromJson(data, NlpBean.class);
                      String question = nlpBean.getQuestion();
                      String answer = nlpBean.getAnswer();
-                     if (iWebsocketListener != null){
-                        iWebsocketListener.OnNlpData(answer);
+                     if (mIWebsocketListener != null){
+                        mIWebsocketListener.OnNlpData(answer);
                      }
                   } else if (TextUtils.equals("tts", type)) {
                      TtsBean ttsBean = GsonHelper.GSON.fromJson(data, TtsBean.class);
                      boolean is_finish = ttsBean.isIs_finish();
                      String audio = ttsBean.getAudio();
                      if (TextUtils.isEmpty(audio)){
-                        if (iWebsocketListener != null){
-                           iWebsocketListener.OnTtsData(null,is_finish);
+                        if (mIWebsocketListener != null){
+                           mIWebsocketListener.OnTtsData(null,is_finish);
                         }
                      }else {
                         byte[] audioByte = Base64Utils.base64DecodeToByte(audio);
-                        if (iWebsocketListener != null){
-                           iWebsocketListener.OnTtsData(audioByte,is_finish);
+                        if (mIWebsocketListener != null){
+                           mIWebsocketListener.OnTtsData(audioByte,is_finish);
                         }
                      }
 
@@ -183,9 +185,11 @@ public class WebsocketOperator {
                      }
                   } catch (Exception e) {
                      e.printStackTrace();
-                     if (mIWebsocketListener != null){
-                        mIWebsocketListener.onError();
-                     }
+                     LogUtil.iTag(TAG, Log.getStackTraceString(e));
+                     ToastUtil.showLong("服务调用异常");
+//                     if (mIWebsocketListener != null){
+//                        mIWebsocketListener.onError();
+//                     }
                   }
                }
             }
