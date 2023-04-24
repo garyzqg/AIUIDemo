@@ -14,9 +14,9 @@ public class NetConstants {
 
 
     public static final String BASE_URL_TEST = "http://10.180.151.125:18088";
-    public static final String BASE_URL_PROD = "http://101.43.161.46:60306";
+    public static final String BASE_URL_PROD = "http://apigateway.icloudbot.com";
 
     public static final String BASE_WS_URL_TEST = "ws://10.180.151.125:18088";
-    public static final String BASE_WS_URL_PROD = "ws://101.43.161.46:60306";
+    public static final String BASE_WS_URL_PROD = "ws://apigateway.icloudbot.com";
 
 }
