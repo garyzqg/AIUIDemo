@@ -18,12 +18,18 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import payfun.lib.dialog.listener.OnAutoDismissListener;
 import payfun.lib.dialog.widget.CountDownTimer2;
 
 import static android.view.View.NO_ID;
 import static android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
 import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+
+import java.lang.reflect.Field;
+
 /**
  * @author : zhangqg
  * date   : 2023/3/1 15:30
@@ -212,4 +218,31 @@ public class DialogImpl extends DialogFragment {
         }
         return displayHeight;
     }
+
+    /**
+     * 解决问题 DialogFragment.showNow：Can not perform this action after onSaveInstanceState
+     * @param manager The FragmentManager this fragment will be added to.
+     * @param tag The tag for this fragment, as per
+     */
+    @Override
+    public void showNow(@NonNull FragmentManager manager, @Nullable String tag) {
+        try {
+            //由于父类方法中mDismissed，mShownByMe不可直接访问，所以此处采用反射修改他们的值
+            Class dialogFragmentClass = DialogFragment.class;
+            Field mDismissed = dialogFragmentClass.getDeclaredField("mDismissed");
+            mDismissed.setAccessible(true);
+            mDismissed.set(this, false);
+
+            Field mShownByMe = dialogFragmentClass.getDeclaredField("mShownByMe");
+            mShownByMe.setAccessible(true);
+            mShownByMe.set(this, true);
+
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(this, tag);
+            ft.commitNowAllowingStateLoss();
+        } catch (Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -107,9 +107,6 @@ public class MainActivity extends AppCompatActivity{
 
 //        InitUtil.init(this);
 
-        //网络初始化
-        SpeechNet.init();
-
 
         //权限
         PermissionUtil.getPermission(this, () -> {

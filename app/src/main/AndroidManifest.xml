@@ -4,7 +4,7 @@
     package="com.inspur.mspeech">
 
     <application
-        android:name="payfun.lib.basis.BasisApp"
+        android:name=".ui.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
