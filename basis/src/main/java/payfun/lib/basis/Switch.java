@@ -7,5 +7,5 @@ package payfun.lib.basis;
  */
 public class Switch {
     public static final boolean lOG_SWITCH = true;
-    public static final boolean VAD_AIUI = true;//vad渠道 true:AIUI  false:自研
+    public static final boolean VAD_AIUI = false;//vad渠道 true:AIUI  false:自研
 }

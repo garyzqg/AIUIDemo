@@ -173,14 +173,15 @@ public class WebsocketVADOperator {
     * @param message
     */
    public void sendMessage(String message,boolean log) {
-      if (mClient != null && mClient.isOpen()) {
+      if (mClient != null && mClient.isOpen() && mClient.getReadyState().equals(ReadyState.OPEN)) {
          if (log){
             LogUtil.iTag(TAG, "VAD WebSocket sendMessage:" + message);
          }
-
-         mClient.send(message);
-      } else {
-         // TODO: 2023/1/13 此时如果是唤醒后超时没有交互,是否不做任何播报?
+         try{
+            mClient.send(message);
+         }catch (Exception e){
+            LogUtil.eTag(TAG,Log.getStackTraceString(e));
+         }
       }
    }
 

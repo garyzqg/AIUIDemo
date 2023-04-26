@@ -59,7 +59,7 @@ public class WebsocketOperator {
          mIWebsocketListener = iWebsocketListener;
          //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
          voiceName = PrefersTool.getVoiceName();
-         URI uri = URI.create(NetConstants.BASE_WS_URL_PROD+"/expressing/ws?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName+"&ttsType=azure&sessionId="+sessionId);
+         URI uri = URI.create(NetConstants.BASE_WS_URL_TEST+"/expressing/ws?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName+"&ttsType=azure&sessionId="+sessionId);
 
 //         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
@@ -105,7 +105,7 @@ public class WebsocketOperator {
                CharBuffer decode = charset.decode(bytes);
                String message = decode.toString();
 
-               LogUtil.iTag(TAG, "WebSocket onMessage: " + message);
+
                if (TextUtils.isEmpty(message)){
                   return;
                }
@@ -116,6 +116,7 @@ public class WebsocketOperator {
                   String data = jsonObject.optString("data");
                   LogUtil.iTag(TAG, "WebSocket onMessage -- type: " + type);
                   if (TextUtils.equals("nlp", type)) {
+                     LogUtil.iTag(TAG, "WebSocket onMessage: " + message);
                      NlpBean nlpBean = GsonHelper.GSON.fromJson(data, NlpBean.class);
                      String question = nlpBean.getQuestion();
                      String answer = nlpBean.getAnswer();
@@ -204,12 +205,13 @@ public class WebsocketOperator {
     * @param message
     */
    public void sendMessage(String message) {
-      if (mClient != null && mClient.isOpen()) {
+      if (mClient != null && mClient.isOpen() && mClient.getReadyState().equals(ReadyState.OPEN)) {
          LogUtil.iTag(TAG, "WebSocket sendMessage:" + message);
-
-         mClient.send(message);
-      } else {
-         // TODO: 2023/1/13 此时如果是唤醒后超时没有交互,是否不做任何播报?
+         try{
+            mClient.send(message);
+         }catch (Exception e){
+            LogUtil.eTag(TAG,Log.getStackTraceString(e));
+         }
       }
    }
 
