@@ -608,7 +608,9 @@ public class MainActivity extends AppCompatActivity{
             public void onOpen() {
                 mIsNewMsg = true;
 
-                if (!isFinalStringEmpty){//如果是因为本次识别结果为空导致的自动重连 不需要更新ui
+                if (isFinalStringEmpty){//如果是因为本次识别结果为空导致的自动重连 不需要更新ui 直接发送start
+                    WebsocketVADOperator.getInstance().sendMessage("start", true);
+                }else {
                     chatStateUi();
                 }
             }
