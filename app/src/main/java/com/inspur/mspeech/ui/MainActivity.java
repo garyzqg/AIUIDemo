@@ -549,6 +549,8 @@ public class MainActivity extends AppCompatActivity{
                     //如果最终识别结果为空 自动重新唤醒 不更新ui
                     isFinalStringEmpty = true;
                     return;
+                }else {
+                    isFinalStringEmpty = false;
                 }
                 WebsocketOperator.getInstance().sendMessage(finalString);
                 if (WebsocketOperator.getInstance().isOpen()){
