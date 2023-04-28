@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.reflect.TypeToken;
 import com.inspur.mspeech.bean.VadBean;
 import com.inspur.mspeech.bean.VadMsgBean;
+import com.inspur.mspeech.net.NetConstants;
 
 import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
@@ -13,6 +14,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 import java.util.List;
 
+import payfun.lib.basis.Switch;
 import payfun.lib.basis.utils.LogUtil;
 import payfun.lib.basis.utils.ToastUtil;
 import payfun.lib.net.helper.GsonHelper;
@@ -46,7 +48,7 @@ public class WebsocketVADOperator {
    public void initWebSocket(IWebsocketListener iWebsocketListener) {
       if (mClient == null){
          mIWebsocketListener = iWebsocketListener;
-         URI uri = URI.create("ws://10.180.151.125:10089");
+         URI uri = URI.create(Switch.VAD_AIUI_MODEL == 1?NetConstants.BASE_VAD_WS_URL_TEST_1:NetConstants.BASE_VAD_WS_URL_TEST_2);
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
          LogUtil.iTag(TAG, "VAD WebSocket init");
          mClient = new JWebSocketClient(uri) {
@@ -78,23 +80,35 @@ public class WebsocketVADOperator {
                      //{"status":"ok","type":"final_result","nbest":"[{\"sentence\":\"在接收复这\",\"word_pieces\":[{\"word\":\"在\",\"start\":100,\"end\":200},{\"word\":\"接\",\"start\":340,\"end\":440},{\"word\":\"收\",\"start\":660,\"end\":760},{\"word\":\"复\",\"start\":900,\"end\":1000},{\"word\":\"这\",\"start\":1180,\"end\":1280}]}]"}
                      VadBean vadBean = GsonHelper.GSON.fromJson(message, VadBean.class);
                      String type = vadBean.getType();
-                     if (TextUtils.equals("partial_result",type)){
-                        //流式识别结果
-                        if (mIWebsocketListener != null){
-                           String nbest = vadBean.getNbest();
-                           List<VadMsgBean> datas = GsonHelper.GSON.fromJson(nbest, new TypeToken<List<VadMsgBean>>() {}.getType());
-                           String sentence = datas.get(0).getSentence();
-                           mIWebsocketListener.OnVadData(sentence);
+                     if (Switch.VAD_AIUI_MODEL == 1){//模型1
+                        if (TextUtils.equals("partial_result",type)){
+                           //流式识别结果
+                           if (mIWebsocketListener != null){
+                              String nbest = vadBean.getNbest();
+                              List<VadMsgBean> datas = GsonHelper.GSON.fromJson(nbest, new TypeToken<List<VadMsgBean>>() {}.getType());
+                              String sentence = datas.get(0).getSentence();
+                              mIWebsocketListener.OnVadData(sentence);
+                           }
+                        }else if (TextUtils.equals("final_result",type)){
+                           //最终识别结果
+                           if (mIWebsocketListener != null){
+                              String nbest = vadBean.getNbest();
+                              List<VadMsgBean> datas = GsonHelper.GSON.fromJson(nbest, new TypeToken<List<VadMsgBean>>() {}.getType());
+                              String sentence = datas.get(0).getSentence();
+                              mIWebsocketListener.OnFinalData(sentence);
+                           }
                         }
-                     }else if (TextUtils.equals("final_result",type)){
+                     }else if (Switch.VAD_AIUI_MODEL == 2){//模型2
+                        //{"status":"ok","type":"paraformer_result","nbest":"后天天气"}
                         //最终识别结果
-                        if (mIWebsocketListener != null){
-                           String nbest = vadBean.getNbest();
-                           List<VadMsgBean> datas = GsonHelper.GSON.fromJson(nbest, new TypeToken<List<VadMsgBean>>() {}.getType());
-                           String sentence = datas.get(0).getSentence();
-                           mIWebsocketListener.OnFinalData(sentence);
+                        if (TextUtils.equals("paraformer_result",type)){
+                           if (mIWebsocketListener != null){
+                              String nbest = vadBean.getNbest();
+                              mIWebsocketListener.onParaData(nbest);
+                           }
                         }
                      }
+
                   }catch (Exception e){//解析异常捕获
                      e.printStackTrace();
                   }
@@ -197,8 +211,10 @@ public class WebsocketVADOperator {
    public interface IWebsocketListener{
       void OnFinalData(String finalString);
       void OnVadData(String vadString);
+      void onParaData(String paraString);//模型2回调
       void onOpen();
       void onError();
       void onClose();
+
    }
 }

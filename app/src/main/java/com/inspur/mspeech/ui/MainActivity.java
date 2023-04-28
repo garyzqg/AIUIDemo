@@ -32,7 +32,6 @@ import com.inspur.mspeech.adapter.MsgAdapter;
 import com.inspur.mspeech.audio.AudioRecordOperator;
 import com.inspur.mspeech.audio.AudioTrackOperator;
 import com.inspur.mspeech.bean.Msg;
-import com.inspur.mspeech.net.SpeechNet;
 import com.inspur.mspeech.utils.Base64Utils;
 import com.inspur.mspeech.utils.PermissionUtil;
 import com.inspur.mspeech.utils.PrefersTool;
@@ -545,34 +544,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void OnFinalData(String finalString) {
                 //最终识别结果 发给语音交互webscocket
-                if(TextUtils.isEmpty(finalString)){
-                    //如果最终识别结果为空 自动重新唤醒 不更新ui
-                    isFinalStringEmpty = true;
-                    return;
-                }else {
-                    isFinalStringEmpty = false;
-                }
-                WebsocketOperator.getInstance().sendMessage(finalString);
-                if (WebsocketOperator.getInstance().isOpen()){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(mIsNewMsg){
-                                msgList.add(new Msg(finalString,Msg.TYPE_SEND));
-                            }else {
-                                msgList.set(msgList.size()-1,new Msg(finalString,Msg.TYPE_SEND));
-                            }
-                            mAdapter.notifyDataSetChanged();
-                            mRvChat.scrollToPosition(msgList.size());
-
-                            mWaveLineView.setVisibility(View.INVISIBLE);
-                            mWaveLineView.setVolume(15);
-                            mWaveLineView.setMoveSpeed(290);
-                            mWaveLineView.stopAnim();
-                            mIvVoiceball.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
+                handleFinalData(finalString);
             }
 
             @Override
@@ -607,9 +579,15 @@ public class MainActivity extends AppCompatActivity{
             }
 
             @Override
+            public void onParaData(String paraString) {
+                //模型2回调 最终结果
+                //最终识别结果 发给语音交互webscocket
+                handleFinalData(paraString);
+            }
+
+            @Override
             public void onOpen() {
                 mIsNewMsg = true;
-
                 if (isFinalStringEmpty){//如果是因为本次识别结果为空导致的自动重连 不需要更新ui 直接发送start
                     WebsocketVADOperator.getInstance().sendMessage("start", true);
                 }else {
@@ -633,6 +611,37 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
+    }
+
+    private void handleFinalData(String paraString) {
+        if(TextUtils.isEmpty(paraString)){
+            //如果最终识别结果为空 自动重新唤醒 不更新ui
+            isFinalStringEmpty = true;
+            return;
+        }else {
+            isFinalStringEmpty = false;
+        }
+        WebsocketOperator.getInstance().sendMessage(paraString);
+        if (WebsocketOperator.getInstance().isOpen()){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(mIsNewMsg){
+                        msgList.add(new Msg(paraString,Msg.TYPE_SEND));
+                    }else {
+                        msgList.set(msgList.size()-1,new Msg(paraString,Msg.TYPE_SEND));
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    mRvChat.scrollToPosition(msgList.size());
+
+                    mWaveLineView.setVisibility(View.INVISIBLE);
+                    mWaveLineView.setVolume(15);
+                    mWaveLineView.setMoveSpeed(290);
+                    mWaveLineView.stopAnim();
+                    mIvVoiceball.setVisibility(View.VISIBLE);
+                }
+            });
+        }
     }
 
     /**
