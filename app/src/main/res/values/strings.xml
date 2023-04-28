@@ -4,4 +4,9 @@
     <string name="appId">5fd48205</string>
     <string name="apiKey">a4dc693b9534a921345cbd6b1d45731e</string>
     <string name="apiSecret">ee61e7a6e1708b83cd6e7d93066e3bb2</string>
+
+    <!--落落账号-->
+<!--    <string name="appId">771e041b</string>-->
+<!--    <string name="apiKey">d2d4c090044aeced2738e554ac6690f5</string>-->
+<!--    <string name="apiSecret">OTg1OWY1NjFmZDgyMTY0YTYzMDg2ODRm</string>-->
 </resources>
