@@ -15,6 +15,7 @@ public class PrefersTool {
     private static final String USERNAME = "user_name";
     private static final String SCENE_ID = "scene_id";
     private static final String SCENE_NAME = "scene_name";
+    private static final String MODEL_SWITCH = "model_switch";
 
     public static void setSceneId(String sceneId) {
         SpUtil.getInstance().put(SCENE_ID, sceneId);
@@ -64,4 +65,12 @@ public class PrefersTool {
     public static int getUsedCount() {
         return SpUtil.getInstance().getInt(USED_COUNT, 0);
     }
+
+    public static void setModelSwitch(boolean modelSwitch) {
+        SpUtil.getInstance().put(MODEL_SWITCH, modelSwitch);
+    }
+    public static boolean getModelSwitch() {
+        return SpUtil.getInstance().getBoolean(MODEL_SWITCH, false);
+    }
+
 }

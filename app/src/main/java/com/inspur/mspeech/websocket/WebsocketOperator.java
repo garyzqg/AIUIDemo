@@ -59,7 +59,9 @@ public class WebsocketOperator {
          mIWebsocketListener = iWebsocketListener;
          //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
          voiceName = PrefersTool.getVoiceName();
-         URI uri = URI.create(NetConstants.BASE_WS_URL_PROD+"/expressing/ws?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName+"&ttsType=azure&sessionId="+sessionId);
+         boolean modelSwitch = PrefersTool.getModelSwitch();
+
+         URI uri = URI.create(NetConstants.BASE_WS_URL_TEST+"/expressing/ws"+(modelSwitch?"/stream":"")+"?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName+"&ttsType=azure&sessionId="+sessionId);
 
 //         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
@@ -89,6 +91,7 @@ public class WebsocketOperator {
 
             @Override
             public void onError(Exception ex) {
+               ex.printStackTrace();
                LogUtil.iTag(TAG, "WebSocket onError:" + ex.toString());
                if (mIWebsocketListener != null){
                   mIWebsocketListener.onError();
@@ -118,11 +121,26 @@ public class WebsocketOperator {
                   if (TextUtils.equals("nlp", type)) {
                      LogUtil.iTag(TAG, "WebSocket onMessage: " + message);
                      NlpBean nlpBean = GsonHelper.GSON.fromJson(data, NlpBean.class);
-                     String question = nlpBean.getQuestion();
-                     String answer = nlpBean.getAnswer();
-                     if (mIWebsocketListener != null){
-                        mIWebsocketListener.OnNlpData(answer);
+                     if (PrefersTool.getModelSwitch()){
+                        String answer = nlpBean.getAnswer();
+                        boolean finish = nlpBean.isFinish();
+                        String text="";
+                        if (!TextUtils.isEmpty(answer)){
+                           JSONObject answerObject = new JSONObject(answer);
+                           text = answerObject.optString("text");
+                        }
+                        if (mIWebsocketListener != null){
+                           mIWebsocketListener.onNlpStreamData(text,finish);
+                        }
+
+                     }else {
+                        String question = nlpBean.getQuestion();
+                        String answer = nlpBean.getAnswer();
+                        if (mIWebsocketListener != null){
+                           mIWebsocketListener.OnNlpData(answer);
+                        }
                      }
+
                   } else if (TextUtils.equals("tts", type)) {
                      TtsBean ttsBean = GsonHelper.GSON.fromJson(data, TtsBean.class);
                      boolean is_finish = ttsBean.isIs_finish();
@@ -227,6 +245,8 @@ public class WebsocketOperator {
    public interface IWebsocketListener{
       void OnTtsData(byte[] audioData,boolean isFinish);
       void OnNlpData(String nlpString);
+
+      void onNlpStreamData(String nlpStream,boolean isFinish);
       void onOpen();
       void onError();
       void onClose(boolean isLogin);

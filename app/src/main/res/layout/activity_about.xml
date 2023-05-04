@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.MoreSettingActivity">
+    tools:context=".ui.AboutActivity">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="更多设置"
+            android:text="关于"
             android:textColor="@color/white"
             android:textSize="20sp" />
         <androidx.appcompat.widget.AppCompatImageView
@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="web设置请访问:"
+            android:text="web设置请访问(PC端):"
             android:textColor="@color/black"
             android:textSize="20sp"/>
         <TextView
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:text="演示视频:"
             android:textColor="@color/black"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:textSize="20sp"/>
         <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
             android:id="@+id/video"
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:text="交流合作微信:18963078940"/>
         <ImageView
             android:layout_width="200dp"

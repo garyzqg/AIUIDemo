@@ -9,13 +9,13 @@ import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
-public class MoreSettingActivity extends AppCompatActivity {
+public class AboutActivity extends AppCompatActivity {
     StandardGSYVideoPlayer videoPlayer;
     OrientationUtils orientationUtils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_more_setting);
+        setContentView(R.layout.activity_about);
         AppCompatImageView back = findViewById(R.id.back);
         back.setOnClickListener(view -> {
             finish();

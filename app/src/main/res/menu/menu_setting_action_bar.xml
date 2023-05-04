@@ -10,7 +10,11 @@
         android:title="问答设置"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/setting_menu_more"
-        android:title="更多设置"
+    <item android:id="@+id/setting_menu_model_switch"
+        android:title="大模型"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/setting_menu_about"
+        android:title="关于"
         app:showAsAction="never"/>
 </menu>

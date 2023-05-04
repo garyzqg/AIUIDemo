@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity{
     private AiHandle aiHandle;
     private boolean mIsNewMsg = false;//定义变量 控制是否是新的一条消息 用于UI列表展示
     private boolean mIsPlayWord = false;//定义变量 播放什么唤醒词
+//    private boolean mIsNewStreamAnswer= false;//定义变量 控制是否是新的一条流式答案 只针对流式答案返回处理
+    private StringBuilder streamAnwser = new StringBuilder();
 
     private int mAiuiCount = 0;//AIUI初始化重试次数
     private String mIatMessage;//iat有效数据
@@ -488,9 +490,40 @@ public class MainActivity extends AppCompatActivity{
             }
 
             @Override
+            public void onNlpStreamData(String nlpStream, boolean isFinish) {
+                //流式结果返回
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFinish){
+                            streamAnwser.delete(0, streamAnwser.length());
+                            return;
+                        }
+                        if (TextUtils.isEmpty(nlpStream)){
+                            return;
+                        }
+                        if (TextUtils.isEmpty(streamAnwser)){
+                            //新的数据
+                            streamAnwser.append(nlpStream);
+                            msgList.add(new Msg(streamAnwser.toString(), Msg.TYPE_RECEIVED));
+                        }else {
+                            streamAnwser.append(nlpStream);
+                            msgList.set(msgList.size()-1,new Msg(streamAnwser.toString(), Msg.TYPE_RECEIVED));
+                        }
+                        mAdapter.notifyDataSetChanged();
+                        mRvChat.scrollToPosition(msgList.size());
+                    }
+                });
+            }
+
+            @Override
             public void onOpen() {
                 mIsPlayWord = true;
                 isFinalStringEmpty = false;
+                if (PrefersTool.getModelSwitch()){
+                    streamAnwser.delete(0, streamAnwser.length());
+                }
+
                 if (Switch.VAD_AIUI){//如果走AIUI语音识别渠道 此时需要唤醒AIUI
                     AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
                     mAIUIAgent.sendMessage(wakeupMsg);
@@ -526,7 +559,7 @@ public class MainActivity extends AppCompatActivity{
                             //断联vad
                             WebsocketVADOperator.getInstance().close();
                         }
-
+                        LogUtil.iTag(TAG,"jumpToLogin: " + isLogin);
                         if (isLogin){//token为空或失效 跳转登录
                             jumpToLogin();
                         }
@@ -844,17 +877,22 @@ public class MainActivity extends AppCompatActivity{
                 break;
             case R.id.setting_menu_qa:
                 Intent intent2 = new Intent(MainActivity.this, QaSettingActivity.class);
-                startActivity(intent2);
+                intentActivityResultLauncher.launch(intent2);
                 break;
             case R.id.setting_menu_login:
 //                jumpToLogin();
                 Intent intent3 = new Intent(MainActivity.this, LoginActivity.class);
-                intentActivityResultLauncher3.launch(intent3);
+                intentActivityResultLauncher.launch(intent3);
                 break;
 
-            case R.id.setting_menu_more:
-                Intent intent4 = new Intent(MainActivity.this, MoreSettingActivity.class);
+            case R.id.setting_menu_about:
+                Intent intent4 = new Intent(MainActivity.this, AboutActivity.class);
                 startActivity(intent4);
+                break;
+
+            case R.id.setting_menu_model_switch:
+                Intent intent5 = new Intent(MainActivity.this, ModelSettingActivity.class);
+                intentActivityResultLauncher.launch(intent5);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -866,7 +904,7 @@ public class MainActivity extends AppCompatActivity{
             public boolean onClick(DialogFragment baseDialog, View v) {
                 PrefersTool.setAccesstoken("");
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                intentActivityResultLauncher3.launch(intent);
+                intentActivityResultLauncher.launch(intent);
                 return false;
             }
         },null);
@@ -875,17 +913,12 @@ public class MainActivity extends AppCompatActivity{
 
     public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
         //设置音色页面回来 重新init ws
-        initWebsocket(!TextUtils.equals(PrefersTool.getVoiceName(),WebsocketOperator.getInstance().voiceName));
+//        initWebsocket(!TextUtils.equals(PrefersTool.getVoiceName(),WebsocketOperator.getInstance().voiceName));
+
+        //token更新
+        initWebsocket(true);
     });
 
-
-    public ActivityResultLauncher<Intent> intentActivityResultLauncher3 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
-
-        if (result.getResultCode() == RESULT_OK){
-            //新建websocket设置token
-            initWebsocket(true);
-        }
-    });
 
     private void ExitApp() {
         android.os.Process.killProcess(android.os.Process.myPid());

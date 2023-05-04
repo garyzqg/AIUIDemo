@@ -72,9 +72,18 @@
         </activity>
 
         <activity
-            android:name=".ui.MoreSettingActivity"
+            android:name=".ui.AboutActivity"
             android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".ui.ModelSettingActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
