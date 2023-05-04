@@ -59,7 +59,7 @@ public class WebsocketOperator {
          mIWebsocketListener = iWebsocketListener;
          //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
          voiceName = PrefersTool.getVoiceName();
-         URI uri = URI.create(NetConstants.BASE_WS_URL_TEST+"/expressing/ws?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName+"&ttsType=azure&sessionId="+sessionId);
+         URI uri = URI.create(NetConstants.BASE_WS_URL_PROD+"/expressing/ws?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName+"&ttsType=azure&sessionId="+sessionId);
 
 //         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
@@ -80,7 +80,7 @@ public class WebsocketOperator {
 
             @Override
             public void onClose(int code, String reason, boolean remote) {
-               LogUtil.iTag(TAG, "WebSocket onClose: code:" + code + " reason:" + reason + " remote:" + remote);
+               LogUtil.iTag(TAG, "WebSocket onClose: code:" + code + " reason:" + reason + " remote:" + remote + "  " + (mIWebsocketListener != null));
                // TODO: 2023/1/13 断开连接后 是否控制不往aiui写数据 如何保证websocket的超时和AIUI的超时保持一致?
                if (mIWebsocketListener != null){
                   mIWebsocketListener.onClose(reason.contains("401"));

@@ -851,6 +851,11 @@ public class MainActivity extends AppCompatActivity{
                 Intent intent3 = new Intent(MainActivity.this, LoginActivity.class);
                 intentActivityResultLauncher3.launch(intent3);
                 break;
+
+            case R.id.setting_menu_more:
+                Intent intent4 = new Intent(MainActivity.this, MoreSettingActivity.class);
+                startActivity(intent4);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
