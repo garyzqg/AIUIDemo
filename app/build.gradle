@@ -10,8 +10,8 @@ android {
         applicationId "com.inspur.mspeech"
         minSdk rootProject.ext.android["minSdkVersion"]
         targetSdk rootProject.ext.android["targetSdkVersion"]
-        versionCode 3
-        versionName "2.0.1"
+        versionCode 4
+        versionName "2.0.2"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -114,4 +114,10 @@ dependencies {
 
     //视频播放组件
     implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.3.5-release-jitpack'
+
+    //弹幕
+    implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
+    implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
+
+//    implementation 'com.jieWang:Muti-Barrage:1.0.8'
 }
