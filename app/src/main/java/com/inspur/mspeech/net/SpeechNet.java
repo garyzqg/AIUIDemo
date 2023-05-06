@@ -20,6 +20,7 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import payfun.lib.net.NetManager;
 import payfun.lib.net.helper.GsonHelper;
 import payfun.lib.net.rx.BaseObserver;
@@ -41,6 +42,16 @@ public class SpeechNet {
                 .readTimeout(15)
                 .writeTimeout(15)
                 .addInterceptor(new HeaderInterceptor())
+                .addConvertFactory(GsonConverterFactory.create())
+                .addAdapterFactory(RxJava3CallAdapterFactory.create())
+                .isUseLog(true)
+        );
+
+        NetManager.getInstance().initApi(UpdateServer.class, () -> new RxClient.Builder()
+                .baseUrl(NetConstants.BASE_URL_UPDATE)
+                .connectTimeout(10)
+                .readTimeout(15)
+                .writeTimeout(15)
                 .addConvertFactory(GsonConverterFactory.create())
                 .addAdapterFactory(RxJava3CallAdapterFactory.create())
                 .isUseLog(true)
@@ -223,6 +234,22 @@ public class SpeechNet {
     public static void getSceneId(BaseObserver<BaseResponse<List<SceneBean>>> observer){
         NetManager.getInstance().getApi(SpeechServer.class)
                 .getSceneId()
+                .compose(RxScheduler.obsIo2Main())
+                .subscribe(observer);
+    }
+
+    /**
+     * 登录
+     * @param observer
+     */
+    public static void getUpdatgeInfo(BaseObserver<ResponseBody> observer){
+        Map<String, Object> para = new HashMap<>();
+        para.put("agent_os", "Android");
+        para.put("agent_model", "M");
+        String s = GsonHelper.GSON.toJson(para);
+        RequestBody body = RequestBody.create(s, MediaType.parse("application/json; charset=utf-8"));
+        NetManager.getInstance().getApi(UpdateServer.class)
+                .getUpdateVersion(body)
                 .compose(RxScheduler.obsIo2Main())
                 .subscribe(observer);
     }

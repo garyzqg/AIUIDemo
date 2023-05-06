@@ -10,7 +10,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
+import com.allenliu.versionchecklib.v2.AllenVersionChecker;
+import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
+import com.allenliu.versionchecklib.v2.builder.UIData;
+import com.allenliu.versionchecklib.v2.callback.ForceUpdateListener;
 import com.bumptech.glide.Glide;
 import com.iflytek.aikit.core.AiHandle;
 import com.iflytek.aikit.core.AiHelper;
@@ -32,6 +37,7 @@ import com.inspur.mspeech.adapter.MsgAdapter;
 import com.inspur.mspeech.audio.AudioRecordOperator;
 import com.inspur.mspeech.audio.AudioTrackOperator;
 import com.inspur.mspeech.bean.Msg;
+import com.inspur.mspeech.net.SpeechNet;
 import com.inspur.mspeech.utils.Base64Utils;
 import com.inspur.mspeech.utils.PermissionUtil;
 import com.inspur.mspeech.utils.PrefersTool;
@@ -58,13 +64,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import jaygoo.widget.wlv.WaveLineView;
+import okhttp3.ResponseBody;
 import payfun.lib.basis.Switch;
+import payfun.lib.basis.utils.DeviceUtil;
 import payfun.lib.basis.utils.LogUtil;
 import payfun.lib.dialog.DialogUtil;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
+import payfun.lib.net.rx.BaseObserver;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
@@ -115,7 +125,91 @@ public class MainActivity extends AppCompatActivity{
             copyAssetFolder(MainActivity.this, "ivw", String.format("%s/ivw", "/sdcard"));
             //初始化SDK
             initSDK();
+            //版本升級
+            getVersionInfo();
         });
+
+    }
+
+    private void getVersionInfo() {
+        SpeechNet.getUpdatgeInfo(new BaseObserver<ResponseBody>() {
+            @Override
+            public void onNext(@NonNull ResponseBody baseResponse) {
+                try {
+                    String response = baseResponse.string();
+                    JSONObject jsonObject = new JSONObject(response);
+                    int code = jsonObject.optInt("code");
+                    if (code == 200){
+                        JSONArray data = jsonObject.optJSONArray("data");
+                        if (data != null && data.length()>0){
+                            JSONObject object = data.optJSONObject(0);
+                            JSONObject info = object.optJSONObject("pag_info");
+//                            String version = info.optString("pag_ver");
+                            String versionName = info.optString("pag_name");//取这个值作为code
+                            String downloadUrl = info.optString("tmp_access_addr");
+                            String desc = info.optString("pag_desc");
+
+                            int newVersionCode = Integer.parseInt(versionName);
+                            int versionCode = DeviceUtil.getVersionCode(MainActivity.this);
+
+                            if (newVersionCode>versionCode){
+                                update(newVersionCode,downloadUrl,desc);
+                            }
+
+                        }
+                    }
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+        });
+    }
+
+    /**
+     * 版本升级
+     */
+    private void update(int newVersionCode,String downloadUrl,String desc) {
+        DownloadBuilder builder= AllenVersionChecker.getInstance()
+                .downloadOnly(
+                        UIData.create()
+                                .setDownloadUrl(downloadUrl)
+                                .setTitle("版本升级提示")
+                                .setContent(desc.replace(" ","\n"))
+                );
+        //缓存策略：如果本地有安装包，首先判断与当前运行的程序的versionCode是否不一致，然后判断是否有传入最新的 versionCode，如果传入的versionCode大于本地的，重新从服务器下载，否则使用缓存
+        builder.setNewestVersionCode(newVersionCode);//设置当前服务器最新的版本号，供库判断是否使用缓存
+        builder.setForceRedownload(true); //默认false 设置为true表示如果本地有安装包缓存也会重新下载apk
+        builder.setForceUpdateListener(new ForceUpdateListener() {//用户想要取消下载的时候回调 需要你自己关闭所有界面
+            @Override
+            public void onShouldForceUpdate() {
+                ExitApp();
+            }
+        });
+//        builder.setSilentDownload(true); //静默下载 默认false
+        builder.setShowDownloadingDialog(true); //是否显示下载对话框 默认true
+        builder.setShowNotification(true);// 是否显示通知栏  默认true
+        builder.setRunOnForegroundService(true);//以前台service运行 推荐以前台服务运行更新，防止在后台时，服务被杀死 默认true
+        builder.setShowDownloadFailDialog(true);//是否显示失败对话框 默认true
+        builder.setDownloadAPKPath("/storage/emulated/0/inspurApk/");//自定义下载路径 默认：/storage/emulated/0/AllenVersionPath/
+//        builder.setApkName(apkName);//自定义下载文件名 默认：getPackageName()
+
+        //region 静默下载+直接安装（不会弹出升级对话框）
+//        builder.setDirectDownload(true);
+//        builder.setShowNotification(false);
+//        builder.setShowDownloadingDialog(false);
+//        builder.setShowDownloadFailDialog(false);
+        //endregion 静默下载+直接安装（不会弹出升级对话框）
+
+        builder.executeMission(this);
+
 
     }
 
@@ -123,11 +217,12 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
+        TextView title = findViewById(R.id.title);
+        title.setText("多模态认知交互V"+DeviceUtil.getVersionName(this));
         mWaveLineView = findViewById(R.id.waveLineView);
         mRvChat = findViewById(R.id.recyclerview_chat);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new MsgAdapter(msgList);
-
         mRvChat.setLayoutManager(layoutManager);
         mRvChat.setAdapter(mAdapter);
 
