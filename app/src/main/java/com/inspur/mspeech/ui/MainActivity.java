@@ -1,8 +1,11 @@
 package com.inspur.mspeech.ui;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.media.AudioTrack;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,6 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.allenliu.versionchecklib.v2.AllenVersionChecker;
@@ -76,7 +85,7 @@ import payfun.lib.dialog.DialogUtil;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 import payfun.lib.net.rx.BaseObserver;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     private AudioRecordOperator mAudioRecordOperator;
     private RecyclerView mRvChat;
@@ -103,6 +112,8 @@ public class MainActivity extends AppCompatActivity{
     private int mAiuiCount = 0;//AIUI初始化重试次数
     private String mIatMessage;//iat有效数据
     private boolean isFinalStringEmpty = false;//自研语音识别是否为空
+    private HorizontalScrollView horizontalScrollViewMarquee;
+    private LinearLayout ll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,15 +253,63 @@ public class MainActivity extends AppCompatActivity{
                 .load(R.drawable.gif_voice_ball)
                 .placeholder(R.drawable.voice_ball)
                 .into(mIvVoiceball);
-        mIvVoiceball.setOnClickListener(view -> {
-            //手动唤醒
-            LogUtil.iTag(TAG, "click wakeup");
-            //先后建联两个websocket 如果是自研语音识别 只建联一个
-            WebsocketOperator.getInstance().connectWebSocket();
+        mIvVoiceball.setOnClickListener(this);
+
+        horizontalScrollViewMarquee = findViewById(R.id.horizontalScrollViewMarquee);
+        ll = findViewById(R.id.ll);
+
+        for (int i = 0; i < 3; i++) {
+            LinearLayout hoLl = (LinearLayout) ((LinearLayout) horizontalScrollViewMarquee.getChildAt(0)).getChildAt(i);
+            for (int j = 0; j < 5; j++) {
+                TextView tvTip = (TextView) hoLl.getChildAt(j);
+                tvTip.setOnClickListener(this);
+            }
+        }
+        // 启动跑马灯效果
+        startMarquee();
+    }
+
+
+    private void startMarquee() {
+        ViewTreeObserver vto = horizontalScrollViewMarquee.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // 获取跑马灯子 View 的数量
+//                int childCount = ((LinearLayout) horizontalScrollViewMarquee.getChildAt(0)).getChildCount();
+//
+//                // 获取跑马灯子 View 的总宽度
+//                int childWidth = 0;
+//                for (int i = 0; i < childCount; i++) {
+//                    childWidth += ((LinearLayout) horizontalScrollViewMarquee.getChildAt(0)).getChildAt(i).getWidth();
+//                }
+
+                // 计算跑马灯滚动的距离
+                final int distance = ll.getWidth() - horizontalScrollViewMarquee.getWidth();
+
+                // 创建一个 ValueAnimator 对象，用于执行跑马灯动画
+                ValueAnimator animator = ValueAnimator.ofInt(0, distance);
+                animator.setDuration(10000);
+                animator.setInterpolator(new LinearInterpolator());
+                animator.setRepeatCount(ValueAnimator.INFINITE);
+                animator.setRepeatMode(ValueAnimator.REVERSE);
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        // 每次动画更新时，设置水平滚动
+                        horizontalScrollViewMarquee.scrollTo((int) animation.getAnimatedValue(), 0);
+                    }
+                });
+
+                // 启动动画
+                animator.start();
+
+                // 移除 OnGlobalLayoutListener
+                horizontalScrollViewMarquee.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
         });
 
     }
-
 
     private void initSDK() {
         //初始化AudioTrack
@@ -1089,5 +1148,37 @@ public class MainActivity extends AppCompatActivity{
     protected void onDestroy() {
         super.onDestroy();
         mWaveLineView.release();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.iv_voiceball:
+                //手动唤醒
+                LogUtil.iTag(TAG, "click wakeup");
+                //先后建联两个websocket 如果是自研语音识别 只建联一个
+                WebsocketOperator.getInstance().connectWebSocket();
+                break;
+            case R.id.tv_1:
+            case R.id.tv_2:
+            case R.id.tv_3:
+            case R.id.tv_4:
+            case R.id.tv_5:
+            case R.id.tv_6:
+            case R.id.tv_7:
+            case R.id.tv_8:
+            case R.id.tv_9:
+            case R.id.tv_10:
+            case R.id.tv_11:
+            case R.id.tv_12:
+            case R.id.tv_13:
+            case R.id.tv_14:
+            case R.id.tv_15:
+                String text = ((TextView) v).getText().toString();
+
+                break;
+            default:
+                break;
+        }
     }
 }

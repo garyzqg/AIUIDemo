@@ -27,6 +27,206 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:paddingHorizontal="10dp"/>
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollViewMarquee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/ll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="请以春天为主题作首诗。"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="帮我写篇500字作文，包括花草树木元素。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="我生病了，帮我写个请假条。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="帮我写一份周计划。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="以下句子表达的是积极还是消极情感：今天好开心呀！"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="用python写段冒泡排序程序。"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="请将以下句子翻译成英文。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="“嫦娥五号”是什么时候返回地球的？"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="请扮演一个5岁的小女孩，回答我的问题。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="请预测一下未来的城市是什么样子。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="请帮我润色以下句子。"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="用郭德纲的口吻写一段相声。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="请基于以下几条扩充成1000字。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="我想去济南玩，给我推荐几个景点。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tips_item_bg"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="我走在春风里，以这句话开头，帮我创作一篇文章。"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </HorizontalScrollView>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -37,16 +237,6 @@
             android:layout_height="60dp"
             android:src="@drawable/voice_ball"
             android:layout_centerHorizontal="true"/>
-
-<!--        <com.opensource.svgaplayer.SVGAImageView-->
-<!--            android:id="@+id/svgaImage"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="80dp"-->
-<!--            android:layout_centerHorizontal="true"-->
-<!--            app:autoPlay="true"-->
-<!--            app:loopCount="-1"-->
-<!--            android:visibility="visible"/>-->
-
 
 
         <jaygoo.widget.wlv.WaveLineView
