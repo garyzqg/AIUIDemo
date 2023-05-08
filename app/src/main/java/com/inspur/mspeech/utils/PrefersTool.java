@@ -70,7 +70,7 @@ public class PrefersTool {
         SpUtil.getInstance().put(MODEL_SWITCH, modelSwitch);
     }
     public static boolean getModelSwitch() {
-        return SpUtil.getInstance().getBoolean(MODEL_SWITCH, false);
+        return SpUtil.getInstance().getBoolean(MODEL_SWITCH, true);
     }
 
 }
