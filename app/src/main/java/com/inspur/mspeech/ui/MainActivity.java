@@ -296,7 +296,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    return inputSendMessage();
+                    inputSendMessage(etInput.getText().toString().trim());
+                    etInput.setText("");
+                    return true;
                 }
                 return false;
             }
@@ -320,32 +322,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         wakeupTip = findViewById(R.id.wakeup_tip);
     }
 
-    private boolean inputSendMessage() {
-        inputMessage = etInput.getText().toString().trim();
+    private void inputSendMessage(String message) {
+        inputMessage = message;
         if (TextUtils.isEmpty(inputMessage)){
             ToastUtil.showLong("请输入文字后点击发送");
-            return true;
+            return;
         }
-        if (AudioTrackOperator.getInstance().getPlayState() == AudioTrack.PLAYSTATE_PLAYING || AudioTrackOperator.getInstance().isPlaying){
+        if (AudioTrackOperator.getInstance().getPlayState() == AudioTrack.PLAYSTATE_PLAYING || AudioTrackOperator.getInstance().isPlaying ){
             //如果当前正在播放 不允许再次发送
             ToastUtil.showLong("我正在思考中哦,请等待本次回复完成后再发送");
-            return true;
+            return;
         }
 
-        //输入框输入唤醒
-        LogUtil.iTag(TAG, "input wakeup");
         if (WebsocketOperator.getInstance().isOpen()){
             AudioTrackOperator.getInstance().isPlaying = true;
             WebsocketOperator.getInstance().sendMessage(inputMessage);
         }else {
+            //输入框输入唤醒
+            LogUtil.iTag(TAG, "input wakeup");
             WebsocketOperator.getInstance().connectWebSocket();
         }
         msgList.add(new Msg(inputMessage, Msg.TYPE_SEND));
         mAdapter.notifyItemInserted(msgList.size() - 1);
         mRvChat.scrollToPosition(msgList.size());
-
-        etInput.setText("");
-        return true;
     }
 
 
@@ -1255,7 +1254,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showInputMethod(this,etInput);
                 break;
             case R.id.send:
-                inputSendMessage();
+                inputSendMessage(etInput.getText().toString().trim());
+                etInput.setText("");
                 break;
             case R.id.tv_1:
             case R.id.tv_2:
@@ -1272,8 +1272,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.tv_13:
             case R.id.tv_14:
             case R.id.tv_15:
+                if (AudioTrackOperator.getInstance().getPlayState() != AudioTrack.PLAYSTATE_PLAYING && !AudioTrackOperator.getInstance().isPlaying){
+                    changeChatType(1);
+                    etInput.requestFocus();
+                    showInputMethod(this,etInput);
+                }
                 String text = ((TextView) v).getText().toString();
-
+                inputSendMessage(text);
                 break;
             default:
                 break;
@@ -1287,6 +1292,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mAudioRecordOperator.startRecord();
             inputLayout.setVisibility(View.GONE);
             speechLayout.setVisibility(View.VISIBLE);
+            if (mIvVoiceball.getVisibility() != View.VISIBLE) {
+                mWaveLineView.stopAnim();
+                mWaveLineView.setVisibility(View.INVISIBLE);
+                mIvVoiceball.setVisibility(View.VISIBLE);
+                iconInput.setVisibility(View.VISIBLE);
+            }
         } else {//输入
             wakeupTip.setVisibility(View.GONE);
             mAudioRecordOperator.stopRecord();
