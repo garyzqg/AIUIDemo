@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.Switch;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -15,9 +16,11 @@ import androidx.appcompat.widget.AppCompatImageView;
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.utils.PrefersTool;
 
+import payfun.lib.basis.utils.LogUtil;
+import payfun.lib.basis.utils.SysSettingUtil;
 import retrofit2.Call;
 
-public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
+public class SettingActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +28,14 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.back).setOnClickListener(this);
         findViewById(R.id.rl_voicename_setting).setOnClickListener(this);
         findViewById(R.id.rl_qa_setting).setOnClickListener(this);
+        //语速设置
+        SeekBar speedAjust = findViewById(R.id.speed_adjust);
+        speedAjust.setOnSeekBarChangeListener(this);
+        speedAjust.setProgress(PrefersTool.getSpeed());
+        //音调设置
+        SeekBar toneAjust = findViewById(R.id.tone_adjust);
+        toneAjust.setOnSeekBarChangeListener(this);
+        toneAjust.setProgress(PrefersTool.getTone());
 
         Switch modelSwitch = findViewById(R.id.model_switch);
         if (!PrefersTool.getModelSwitch()){
@@ -69,5 +80,25 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        int progress = seekBar.getProgress();
+        if (seekBar.getId() == R.id.speed_adjust){//语速设置
+            PrefersTool.setSpeed(progress);
+        }else if (seekBar.getId() == R.id.tone_adjust){//音调设置
+            PrefersTool.setTone(progress);
+        }
     }
 }

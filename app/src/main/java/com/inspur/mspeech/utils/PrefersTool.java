@@ -16,6 +16,8 @@ public class PrefersTool {
     private static final String SCENE_ID = "scene_id";
     private static final String SCENE_NAME = "scene_name";
     private static final String MODEL_SWITCH = "model_switch";
+    private static final String SPEED = "speed";
+    private static final String TONE = "tone";
 
     public static void setSceneId(String sceneId) {
         SpUtil.getInstance().put(SCENE_ID, sceneId);
@@ -71,6 +73,20 @@ public class PrefersTool {
     }
     public static boolean getModelSwitch() {
         return SpUtil.getInstance().getBoolean(MODEL_SWITCH, true);
+    }
+
+    public static void setSpeed(int speed) {
+        SpUtil.getInstance().put(SPEED, speed);
+    }
+    public static int getSpeed() {
+        return SpUtil.getInstance().getInt(SPEED, 20);
+    }
+
+    public static void setTone(int tone) {
+        SpUtil.getInstance().put(TONE, tone);
+    }
+    public static int getTone() {
+        return SpUtil.getInstance().getInt(TONE, 0);
     }
 
 }
