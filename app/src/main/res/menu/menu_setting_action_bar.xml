@@ -2,16 +2,8 @@
     <item android:id="@+id/setting_menu_login"
         android:title="登录"
         app:showAsAction="never"/>
-    <item android:id="@+id/setting_menu_voice_name"
-        android:title="音色设置"
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/setting_menu_qa"
-        android:title="问答设置"
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/setting_menu_model_switch"
-        android:title="大模型"
+    <item android:id="@+id/setting_menu_setting"
+        android:title="设置"
         app:showAsAction="never"/>
 
     <item android:id="@+id/setting_menu_about"

@@ -85,8 +85,7 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
         DialogUtil.showTwoBtnDialog(VoiceNameSettingActivity.this, "请先登录", (OnDialogButtonClickListener) (baseDialog, v) -> {
             PrefersTool.setAccesstoken("");
             Intent intent = new Intent(VoiceNameSettingActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            intentActivityResultLauncher.launch(intent);
             return false;
         }, (baseDialog, v) -> {
             finish();
@@ -95,10 +94,7 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
 
     }
     public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode() == RESULT_OK){
-            //登录成功
-            getData();
-        }
+        getData();
     });
     private void initView() {
         mRvVoiceName = findViewById(R.id.rv_voice_name);

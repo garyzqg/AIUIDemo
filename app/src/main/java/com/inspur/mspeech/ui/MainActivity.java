@@ -1119,30 +1119,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent intent = new Intent();
         switch (item.getItemId()){
-            case R.id.setting_menu_voice_name:
-                Intent intent = new Intent(MainActivity.this, VoiceNameSettingActivity.class);
-                intentActivityResultLauncher.launch(intent);
-                break;
-            case R.id.setting_menu_qa:
-                Intent intent2 = new Intent(MainActivity.this, QaSettingActivity.class);
-                intentActivityResultLauncher.launch(intent2);
-                break;
             case R.id.setting_menu_login:
-//                jumpToLogin();
-                Intent intent3 = new Intent(MainActivity.this, LoginActivity.class);
-                intentActivityResultLauncher.launch(intent3);
+                intent.setClass(MainActivity.this, LoginActivity.class);
+                intentActivityResultLauncher.launch(intent);
                 break;
 
             case R.id.setting_menu_about:
-                Intent intent4 = new Intent(MainActivity.this, AboutActivity.class);
-                startActivity(intent4);
+                intent.setClass(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
                 break;
 
-            case R.id.setting_menu_model_switch:
-                Intent intent5 = new Intent(MainActivity.this, ModelSettingActivity.class);
-                intentActivityResultLauncher.launch(intent5);
+            case R.id.setting_menu_setting:
+                intent.setClass(MainActivity.this, SettingActivity.class);
+                intentActivityResultLauncher.launch(intent);
                 break;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -1161,10 +1154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
-        //设置音色页面回来 重新init ws
-//        initWebsocket(!TextUtils.equals(PrefersTool.getVoiceName(),WebsocketOperator.getInstance().voiceName));
-
-        //token更新
+        //设置界面回来重新init
         initWebsocket(true);
     });
 

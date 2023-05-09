@@ -27,4 +27,11 @@
         <!-- 设置弹出的背景颜色 -->
 <!--        <item name="android:popupBackground">#f33333</item>-->
     </style>
+
+    <!--    设置分割线样式-->
+    <style name="PmSettingLineStyle" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">#33222222</item>
+    </style>
 </resources>
