@@ -271,7 +271,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         horizontalScrollViewMarquee = findViewById(R.id.horizontalScrollViewMarquee);
         ll = findViewById(R.id.ll);
-
+        horizontalScrollViewMarquee.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
         for (int i = 0; i < 3; i++) {
             LinearLayout hoLl = (LinearLayout) ((LinearLayout) horizontalScrollViewMarquee.getChildAt(0)).getChildAt(i);
             for (int j = 0; j < 5; j++) {
