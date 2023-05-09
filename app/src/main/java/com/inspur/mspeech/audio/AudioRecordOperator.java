@@ -107,8 +107,8 @@ public class AudioRecordOperator {
         isRecording = false;
         if (audioRecord != null) {
             audioRecord.stop();
-            audioRecord.release();
-            audioRecord = null;
+//            audioRecord.release();
+//            audioRecord = null;
             recordingThread = null;
         }
     }

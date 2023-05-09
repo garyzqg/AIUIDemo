@@ -9,4 +9,10 @@
 <!--    <string name="appId">771e041b</string>-->
 <!--    <string name="apiKey">d2d4c090044aeced2738e554ac6690f5</string>-->
 <!--    <string name="apiSecret">OTg1OWY1NjFmZDgyMTY0YTYzMDg2ODRm</string>-->
+
+
+    <!--山哥账号-->
+<!--        <string name="appId">41a432d6</string>-->
+<!--        <string name="apiKey">b4932424c989f00877684d743cecdee5</string>-->
+<!--        <string name="apiSecret">NjM2OTkwZmViZmM0ZDM2YmY1MjQwM2E5</string>-->
 </resources>

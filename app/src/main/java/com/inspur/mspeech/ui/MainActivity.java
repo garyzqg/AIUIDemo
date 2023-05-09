@@ -1,14 +1,14 @@
 package com.inspur.mspeech.ui;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.media.AudioTrack;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -17,8 +17,12 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.allenliu.versionchecklib.v2.AllenVersionChecker;
@@ -50,6 +54,7 @@ import com.inspur.mspeech.net.SpeechNet;
 import com.inspur.mspeech.utils.Base64Utils;
 import com.inspur.mspeech.utils.PermissionUtil;
 import com.inspur.mspeech.utils.PrefersTool;
+import com.inspur.mspeech.utils.SoftKeyBoardListener;
 import com.inspur.mspeech.utils.UIHelper;
 import com.inspur.mspeech.websocket.WebsocketOperator;
 import com.inspur.mspeech.websocket.WebsocketVADOperator;
@@ -81,6 +86,7 @@ import okhttp3.ResponseBody;
 import payfun.lib.basis.Switch;
 import payfun.lib.basis.utils.DeviceUtil;
 import payfun.lib.basis.utils.LogUtil;
+import payfun.lib.basis.utils.ToastUtil;
 import payfun.lib.dialog.DialogUtil;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 import payfun.lib.net.rx.BaseObserver;
@@ -114,6 +120,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isFinalStringEmpty = false;//自研语音识别是否为空
     private HorizontalScrollView horizontalScrollViewMarquee;
     private LinearLayout ll;
+    private AppCompatImageView iconInput;
+    private EditText etInput;
+    private LinearLayout inputLayout;
+    private RelativeLayout speechLayout;
+    private int chatType = 0; //0 语音交互 1输入交互
+    private String inputMessage;
+    private AppCompatImageView send;
+    private TextView wakeupTip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -267,6 +281,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         // 启动跑马灯效果
         startMarquee();
+
+        inputLayout = findViewById(R.id.input_layout);
+        speechLayout = findViewById(R.id.speech_layout);
+        iconInput = findViewById(R.id.input_icon);
+        iconInput.setOnClickListener(this);
+        etInput = findViewById(R.id.et_input);
+        etInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    return inputSendMessage();
+                }
+                return false;
+            }
+        });
+
+        SoftKeyBoardListener.setListener(this, new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
+            @Override
+            public void keyBoardShow(int height) {
+
+            }
+
+            @Override
+            public void keyBoardHide(int height) {
+                // 键盘已经隐藏
+                changeChatType(0);
+            }
+        });
+
+        send = findViewById(R.id.send);
+        send.setOnClickListener(this);
+        wakeupTip = findViewById(R.id.wakeup_tip);
+    }
+
+    private boolean inputSendMessage() {
+        inputMessage = etInput.getText().toString().trim();
+        if (TextUtils.isEmpty(inputMessage)){
+            ToastUtil.showLong("请输入文字后点击发送");
+            return true;
+        }
+        if (AudioTrackOperator.getInstance().getPlayState() == AudioTrack.PLAYSTATE_PLAYING || AudioTrackOperator.getInstance().isPlaying){
+            //如果当前正在播放 不允许再次发送
+            ToastUtil.showLong("我正在思考中哦,请等待本次回复完成后再发送");
+            return true;
+        }
+
+        //输入框输入唤醒
+        LogUtil.iTag(TAG, "input wakeup");
+        if (WebsocketOperator.getInstance().isOpen()){
+            AudioTrackOperator.getInstance().isPlaying = true;
+            WebsocketOperator.getInstance().sendMessage(inputMessage);
+        }else {
+            WebsocketOperator.getInstance().connectWebSocket();
+        }
+        msgList.add(new Msg(inputMessage, Msg.TYPE_SEND));
+        mAdapter.notifyItemInserted(msgList.size() - 1);
+        mRvChat.scrollToPosition(msgList.size());
+
+        etInput.setText("");
+        return true;
     }
 
 
@@ -585,6 +659,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AudioTrackOperator.getInstance().setStopListener(new AudioTrackOperator.IAudioTrackListener() {
             @Override
             public void onStop() {
+                if (chatType == 1) return;
                 if (WebsocketOperator.getInstance().isOpen()){
                     mIsPlayWord = false;
                     if (Switch.VAD_AIUI){
@@ -678,14 +753,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     streamAnwser.delete(0, streamAnwser.length());
                 }
 
-                if (Switch.VAD_AIUI){//如果走AIUI语音识别渠道 此时需要唤醒AIUI
-                    AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
-                    mAIUIAgent.sendMessage(wakeupMsg);
-                    chatStateUi();
-                }else {//如果走自研语音唤醒 建联成功后再建联VAD websocket
-                    WebsocketVADOperator.getInstance().connectWebSocket();
-                }
+                //输入交互模式 不走语音识别相关逻辑
+                if (chatType == 1){
+                    if (!TextUtils.isEmpty(inputMessage)){
+                        AudioTrackOperator.getInstance().isPlaying = true;
+                        WebsocketOperator.getInstance().sendMessage(inputMessage);
+                    }
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            iconInput.setVisibility(View.GONE);
+                            wakeupTip.setVisibility(View.GONE);
+                        }
+                    });
 
+                    if (Switch.VAD_AIUI){//如果走AIUI语音识别渠道 此时需要唤醒AIUI
+                        AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
+                        mAIUIAgent.sendMessage(wakeupMsg);
+                        chatStateUi();
+                    }else {//如果走自研语音唤醒 建联成功后再建联VAD websocket
+                        WebsocketVADOperator.getInstance().connectWebSocket();
+                    }
+                }
             }
 
             @Override
@@ -698,6 +788,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
+                        if (isLogin) {//token为空或失效 跳转登录
+                            jumpToLogin();
+                        }
+
+                        if (chatType == 1) return;
+
                         //ws超时后 隐藏水波纹
                         if (mIvVoiceball.getVisibility() != View.VISIBLE) {
                             mWaveLineView.stopAnim();
@@ -705,18 +802,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             mIvVoiceball.setVisibility(View.VISIBLE);
                         }
 
-                        if (Switch.VAD_AIUI){
+                        if (Switch.VAD_AIUI) {
                             //AIUI休眠
                             AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_RESET_WAKEUP, 0, 0, "", null);
                             mAIUIAgent.sendMessage(wakeupMsg);
-                        }else {
+                        } else {
                             //断联vad
                             WebsocketVADOperator.getInstance().close();
                         }
-                        LogUtil.iTag(TAG,"jumpToLogin: " + isLogin);
-                        if (isLogin){//token为空或失效 跳转登录
-                            jumpToLogin();
-                        }
+                        iconInput.setVisibility(View.VISIBLE);
+                        wakeupTip.setVisibility(View.VISIBLE);
                     }
                 });
 
@@ -1159,6 +1254,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //先后建联两个websocket 如果是自研语音识别 只建联一个
                 WebsocketOperator.getInstance().connectWebSocket();
                 break;
+            case R.id.input_icon:
+                changeChatType(1);
+                etInput.requestFocus();
+                showInputMethod(this,etInput);
+                break;
+            case R.id.send:
+                inputSendMessage();
+                break;
             case R.id.tv_1:
             case R.id.tv_2:
             case R.id.tv_3:
@@ -1180,5 +1283,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    private void changeChatType(int type) {
+        chatType = type;//输入模式
+        if (type == 0) {//语音
+            wakeupTip.setVisibility(View.VISIBLE);
+            mAudioRecordOperator.startRecord();
+            inputLayout.setVisibility(View.GONE);
+            speechLayout.setVisibility(View.VISIBLE);
+        } else {//输入
+            wakeupTip.setVisibility(View.GONE);
+            mAudioRecordOperator.stopRecord();
+            inputLayout.setVisibility(View.VISIBLE);
+            speechLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 显示软键盘（输入法）
+     *
+     * @param activity
+     * @param editText
+     */
+    public static void showInputMethod(final Activity activity, final EditText editText) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    /**
+     * 隐藏软键盘（输入法）
+     *
+     * @param activity
+     * @param editText
+     */
+    public static void hideInputMethod(final Activity activity, final EditText editText) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 }

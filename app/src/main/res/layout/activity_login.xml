@@ -104,6 +104,16 @@
             android:textColor="@color/white"
             android:background="@drawable/login_btn_bg"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:layout_marginTop="30dp"
+            android:text="试用账号: demo_user \n密码: 123456wp"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textColor="#F44336"/>
+
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
