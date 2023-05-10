@@ -3,6 +3,8 @@ package com.inspur.mspeech.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.VoiceNameAdapter;
@@ -37,6 +39,7 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
     private RecyclerView mRvVoiceName;
     private List<VoiceBean> mVoiceBeanList = new ArrayList<>();
     private VoiceNameAdapter mVoiceNameAdapter;
+    private ProgressBar progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,11 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
     }
 
     private void getData() {
+        progress.setVisibility(View.VISIBLE);
         SpeechNet.getVoiceName(new BaseObserver<BaseResponse<List<VoiceBean>>>() {
             @Override
             public void onNext(@NonNull BaseResponse<List<VoiceBean>> response) {
+                progress.setVisibility(View.GONE);
                 if (response != null) {
                     if (response.isSuccess()) {
                         List<VoiceBean> voiceBeanList= response.getData();
@@ -70,6 +75,7 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
 
             @Override
             public void onError(@NonNull Throwable e) {
+                progress.setVisibility(View.GONE);
                 NetException netException = ExceptionEngine.handleException(e);
                 if (TextUtils.equals(netException.getErrorCode(),"401")){//未登录或登录已过期
                     jumpToLogin();
@@ -115,6 +121,8 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
         back.setOnClickListener(view -> {
             finish();
         });
+
+        progress = findViewById(R.id.progress);
     }
 
 }

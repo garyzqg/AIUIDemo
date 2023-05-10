@@ -37,32 +37,42 @@
             android:src="@drawable/back"/>
     </RelativeLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_qa"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/ll_no_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="100dp"
-        android:orientation="vertical"
-        android:visibility="gone">
-        <androidx.appcompat.widget.AppCompatImageView
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_qa"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <ProgressBar
+            android:id="@+id/progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:src="@drawable/no_data_icon"/>
-        <TextView
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_no_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textColor="@color/color_gray"
-            android:layout_marginTop="20dp"
-            android:text="暂无数据"/>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:src="@drawable/no_data_icon"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/color_gray"
+                android:layout_marginTop="20dp"
+                android:text="暂无数据"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </RelativeLayout>
+
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

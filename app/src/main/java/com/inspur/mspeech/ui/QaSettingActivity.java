@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.QaAdapter;
@@ -44,6 +45,7 @@ public class QaSettingActivity extends AppCompatActivity {
     private final int SIZE = 50;
     private int currentPage = 1;
     private int totalSize;
+    private ProgressBar progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,7 @@ public class QaSettingActivity extends AppCompatActivity {
         });
 
         mLlNoData = findViewById(R.id.ll_no_data);
+        progress = findViewById(R.id.progress);
 
         mRvQa.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -124,9 +127,11 @@ public class QaSettingActivity extends AppCompatActivity {
     }
 
     private void getData() {
+        progress.setVisibility(View.VISIBLE);
         SpeechNet.getQa(currentPage,SIZE,new BaseObserver<BaseResponse<List<QaBean>>>() {
             @Override
             public void onNext(@NonNull BaseResponse<List<QaBean>> response) {
+                progress.setVisibility(View.GONE);
                 if (response.isSuccess()){
 
                     List<QaBean> data = response.getData();
@@ -152,6 +157,7 @@ public class QaSettingActivity extends AppCompatActivity {
 
             @Override
             public void onError(@NonNull Throwable e) {
+                progress.setVisibility(View.GONE);
                 NetException netException = ExceptionEngine.handleException(e);
                 if (TextUtils.equals(netException.getErrorCode(),"401")){//未登录或登录已过期
                     jumpToLogin();

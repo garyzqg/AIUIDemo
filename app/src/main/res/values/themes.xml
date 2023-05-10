@@ -10,7 +10,7 @@
         <item name="colorPrimaryDark">@color/deep_blue</item>
         <item name="android:textColorSecondary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/color_gray</item>
+        <item name="colorSecondary">@color/blue</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
