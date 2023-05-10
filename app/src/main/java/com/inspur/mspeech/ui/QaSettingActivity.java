@@ -23,6 +23,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.annotations.NonNull;
+import payfun.lib.basis.utils.LogUtil;
 import payfun.lib.dialog.DialogUtil;
 import payfun.lib.dialog.listener.OnDialogButtonClickListener;
 import payfun.lib.net.exception.ExceptionEngine;
@@ -35,10 +36,14 @@ import payfun.lib.net.rx.BaseObserver;
  * desc    : 问答设置页面
  */
 public class QaSettingActivity extends AppCompatActivity {
+    private static final String TAG = "QaSettingActivity";
     private RecyclerView mRvQa;
     private List<QaBean> mQaBeanList = new ArrayList<>();
     private QaAdapter mQaAdapter;
     private LinearLayoutCompat mLlNoData;
+    private final int SIZE = 50;
+    private int currentPage = 1;
+    private int totalSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,7 @@ public class QaSettingActivity extends AppCompatActivity {
 
         initView();
 
-        initData();
+        getData();
 
     }
 
@@ -81,10 +86,28 @@ public class QaSettingActivity extends AppCompatActivity {
 
         mLlNoData = findViewById(R.id.ll_no_data);
 
+        mRvQa.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@androidx.annotation.NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //滑动到底部且滑动停止时，canScrollVertically(1) 方法会返回 false，表示已经滑动到底部
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    // 滑动到底部，触发加载更多
+                    LogUtil.iTag(TAG,"加载更多 page= " + currentPage);
+                    if (currentPage * SIZE < totalSize){
+                        currentPage++;
+                        getData();
+                    }
+
+                }
+            }
+        });
+
     }
 
     public ActivityResultLauncher<Intent> intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result -> {
-        initData();
+        currentPage = 1;
+        getData();
     });
 
     private void jumpToLogin() {
@@ -100,21 +123,24 @@ public class QaSettingActivity extends AppCompatActivity {
 
     }
 
-    private void initData() {
-        SpeechNet.getQa(new BaseObserver<BaseResponse<List<QaBean>>>() {
+    private void getData() {
+        SpeechNet.getQa(currentPage,SIZE,new BaseObserver<BaseResponse<List<QaBean>>>() {
             @Override
             public void onNext(@NonNull BaseResponse<List<QaBean>> response) {
                 if (response.isSuccess()){
-                    if (mQaBeanList.size()>0){
+
+                    List<QaBean> data = response.getData();
+                    totalSize = response.getTotal();
+
+                    if (currentPage == 1 && mQaBeanList.size()>0){
                         mQaBeanList.clear();
                     }
-                    List<QaBean> data = response.getData();
                     if(data.size()>0){
                         mRvQa.setVisibility(View.VISIBLE);
                         mLlNoData.setVisibility(View.GONE);
                         mQaBeanList.addAll(data);
                         mQaAdapter.notifyDataSetChanged();
-                    }else {
+                    }else if (currentPage == 1){
                         mRvQa.setVisibility(View.GONE);
                         mLlNoData.setVisibility(View.VISIBLE);
                     }

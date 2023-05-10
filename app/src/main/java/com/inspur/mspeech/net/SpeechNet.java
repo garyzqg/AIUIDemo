@@ -89,12 +89,11 @@ public class SpeechNet {
      * 获取问答集
      * @param observer
      */
-    public static void getQa(BaseObserver<BaseResponse<List<QaBean>>> observer){
+    public static void getQa(int page, int size, BaseObserver<BaseResponse<List<QaBean>>> observer){
         Map<String, Object> para = new HashMap<>();
-        // TODO: 2023/2/27 参数待实现
-        para.put("page", 1);
+        para.put("page", page);
         para.put("sceneId", PrefersTool.getSceneId());
-        para.put("size", 50);
+        para.put("size", size);
         NetManager.getInstance().getApi(SpeechServer.class)
                 .getQa(para)
                 .compose(RxScheduler.obsIo2Main())

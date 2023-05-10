@@ -162,7 +162,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="大模型闲聊"
+            android:text="大模型"
             android:textColor="#2D2D2D"
             android:textSize="20sp" />
 
