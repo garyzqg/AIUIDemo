@@ -8,6 +8,7 @@ import android.content.res.AssetManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.allenliu.versionchecklib.v2.AllenVersionChecker;
 import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
@@ -325,12 +327,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void inputSendMessage(String message) {
         inputMessage = message;
         if (TextUtils.isEmpty(inputMessage)){
-            ToastUtil.showLong("请输入文字后点击发送");
+            showCenterToast("请输入文字后点击发送");
             return;
         }
         if (AudioTrackOperator.getInstance().getPlayState() == AudioTrack.PLAYSTATE_PLAYING || AudioTrackOperator.getInstance().isPlaying ){
             //如果当前正在播放 不允许再次发送
-            ToastUtil.showLong("我正在思考中哦,请等待本次回复完成后再发送");
+            showCenterToast("我正在思考中哦,请等待本次回复完成后再发送");
             return;
         }
 
@@ -345,6 +347,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         msgList.add(new Msg(inputMessage, Msg.TYPE_SEND));
         mAdapter.notifyItemInserted(msgList.size() - 1);
         mRvChat.scrollToPosition(msgList.size());
+    }
+
+    private void showCenterToast(String msg) {
+        Toast toast = Toast.makeText(MainActivity.this,msg,Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
     }
 
 
