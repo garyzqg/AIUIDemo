@@ -87,7 +87,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:paddingVertical="20dp"
-        android:paddingHorizontal="20dp">
+        android:paddingLeft="20dp"
+        android:paddingRight="15dp">
 
         <TextView
             android:id="@+id/tv_speed_adjust"
@@ -109,11 +110,20 @@
             android:maxHeight="8dp"
             android:minHeight="8dp"
             android:layout_toRightOf="@+id/tv_speed_adjust"
+            android:layout_toLeftOf="@+id/tv_speed_num"
             android:progressDrawable="@drawable/adjust_seek_bar"
             android:splitTrack="false"
             android:thumb="@drawable/seekbar_circle"
             android:thumbOffset="20dp" />
-
+        <TextView
+            android:id="@+id/tv_speed_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="20"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/color_gray"
+            android:textSize="15sp" />
     </RelativeLayout>
     <View style="@style/PmSettingLineStyle" />
 
@@ -122,7 +132,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:paddingVertical="20dp"
-        android:paddingHorizontal="20dp">
+        android:paddingLeft="20dp"
+        android:paddingRight="15dp">
 
         <TextView
             android:id="@+id/tv_tone_adjust"
@@ -144,10 +155,21 @@
             android:maxHeight="8dp"
             android:minHeight="8dp"
             android:layout_toRightOf="@+id/tv_tone_adjust"
+            android:layout_toLeftOf="@+id/tv_tone_num"
             android:progressDrawable="@drawable/adjust_seek_bar"
             android:splitTrack="false"
             android:thumb="@drawable/seekbar_circle"
-            android:thumbOffset="20dp" />
+            android:thumbOffset="20dp"/>
+
+        <TextView
+            android:id="@+id/tv_tone_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="0"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/color_gray"
+            android:textSize="15sp" />
 
     </RelativeLayout>
     <View style="@style/PmSettingLineStyle" />

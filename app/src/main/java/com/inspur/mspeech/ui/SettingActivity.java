@@ -7,6 +7,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -21,6 +22,10 @@ import payfun.lib.basis.utils.SysSettingUtil;
 import retrofit2.Call;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+
+    private TextView speedNum;
+    private TextView toneNum;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,11 +36,17 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         //语速设置
         SeekBar speedAjust = findViewById(R.id.speed_adjust);
         speedAjust.setOnSeekBarChangeListener(this);
-        speedAjust.setProgress(PrefersTool.getSpeed());
+        int speed = PrefersTool.getSpeed();
+        speedAjust.setProgress(speed);
+        speedNum = findViewById(R.id.tv_speed_num);
+        speedNum.setText(speed+"");
         //音调设置
         SeekBar toneAjust = findViewById(R.id.tone_adjust);
         toneAjust.setOnSeekBarChangeListener(this);
-        toneAjust.setProgress(PrefersTool.getTone());
+        int tone = PrefersTool.getTone();
+        toneAjust.setProgress(tone);
+        toneNum = findViewById(R.id.tv_tone_num);
+        toneNum.setText(tone+"");
 
         Switch modelSwitch = findViewById(R.id.model_switch);
         if (!PrefersTool.getModelSwitch()){
@@ -97,8 +108,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         int progress = seekBar.getProgress();
         if (seekBar.getId() == R.id.speed_adjust){//语速设置
             PrefersTool.setSpeed(progress);
+            speedNum.setText(progress+"");
         }else if (seekBar.getId() == R.id.tone_adjust){//音调设置
             PrefersTool.setTone(progress);
+            toneNum.setText(progress+"");
         }
     }
 }
