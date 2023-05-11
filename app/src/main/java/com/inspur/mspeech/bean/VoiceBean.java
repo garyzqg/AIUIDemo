@@ -1,5 +1,7 @@
 package com.inspur.mspeech.bean;
 
+import java.util.List;
+
 /**
  * @author : zhangqinggong
  * date    : 2023/2/25 16:53
@@ -9,6 +11,17 @@ public class VoiceBean {
     private String voiceId;
     private String voiceName;//XiaohanNeural
     private String voiceAlias;//晓寒
+
+    public List<VoiceStyleBean> getVoiceStyleList() {
+        return voiceStyleList;
+    }
+
+    public void setVoiceStyleList(List<VoiceStyleBean> voiceStyleList) {
+        this.voiceStyleList = voiceStyleList;
+    }
+
+    private List<VoiceStyleBean> voiceStyleList;
+
 
     public VoiceBean(String voiceId, String voiceName, String voiceAlias) {
         this.voiceId = voiceId;

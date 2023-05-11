@@ -9,6 +9,7 @@ import payfun.lib.basis.utils.SpUtil;
  */
 public class PrefersTool {
     private static final String VOICE_NAME = "voice_name";//音色
+    private static final String VOICE_STYLE = "voice_style";//语气 说话风格
     private static final String AVAILABLE_COUNT = "available_count";//可使用次数
     private static final String USED_COUNT = "used_count";//已使用次数
     private static final String ACCESS_TOKEN = "accesstoken";
@@ -52,7 +53,6 @@ public class PrefersTool {
         return SpUtil.getInstance().getString(VOICE_NAME, "XiaoshuangNeural");
     }
 
-
     public static void setAvailableCount(int count) {
         SpUtil.getInstance().put(AVAILABLE_COUNT, count);
     }
@@ -87,6 +87,13 @@ public class PrefersTool {
     }
     public static int getTone() {
         return SpUtil.getInstance().getInt(TONE, 0);
+    }
+
+    public static void setVoiceStyle(String voiceStyle) {
+        SpUtil.getInstance().put(VOICE_STYLE, voiceStyle);
+    }
+    public static String getVoiceStyle() {
+        return SpUtil.getInstance().getString(VOICE_STYLE, "general");
     }
 
 }

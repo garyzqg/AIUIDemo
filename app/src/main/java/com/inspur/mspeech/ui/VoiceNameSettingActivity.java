@@ -8,9 +8,11 @@ import android.widget.ProgressBar;
 
 import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.VoiceNameAdapter;
+import com.inspur.mspeech.adapter.VoiceStyleAdapter;
 import com.inspur.mspeech.audio.AudioTrackOperator;
 import com.inspur.mspeech.bean.BaseResponse;
 import com.inspur.mspeech.bean.VoiceBean;
+import com.inspur.mspeech.bean.VoiceStyleBean;
 import com.inspur.mspeech.net.SpeechNet;
 import com.inspur.mspeech.utils.PrefersTool;
 
@@ -37,8 +39,11 @@ import payfun.lib.net.rx.BaseObserver;
 public class VoiceNameSettingActivity extends AppCompatActivity {
 
     private RecyclerView mRvVoiceName;
+    private RecyclerView mRvVoiceStyle;
     private List<VoiceBean> mVoiceBeanList = new ArrayList<>();
+    private List<VoiceStyleBean> mVoiceStyleList = new ArrayList<>();
     private VoiceNameAdapter mVoiceNameAdapter;
+    private VoiceStyleAdapter mVoiceStyleAdapter;
     private ProgressBar progress;
 
     @Override
@@ -62,9 +67,18 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
 //                        mVoiceBeanList.addAll(voiceBeanList);
                         // TODO: 2023/2/27 当前暂时只取前5个
                         for (int i = 0; i < (voiceBeanList.size()>5?5:voiceBeanList.size()); i++) {
-                            mVoiceBeanList.add(voiceBeanList.get(i));
+                            VoiceBean voiceBean = voiceBeanList.get(i);
+                            mVoiceBeanList.add(voiceBean);
+
+                            //取当前选择发言人的所有说话风格
+                            if (voiceBean.getVoiceName().equals(PrefersTool.getVoiceName())){
+                                mVoiceStyleList.addAll(voiceBean.getVoiceStyleList());
+                                mVoiceStyleAdapter.notifyDataSetChanged();
+                            }
                         }
                         mVoiceNameAdapter.notifyDataSetChanged();
+
+
                     }else {
                         DialogUtil.showErrorDialog(VoiceNameSettingActivity.this,"获取可用音色失败 code = " + response.getCode(),response.getMessage());
                     }
@@ -103,6 +117,7 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
         getData();
     });
     private void initView() {
+        //发言人
         mRvVoiceName = findViewById(R.id.rv_voice_name);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRvVoiceName.setLayoutManager(layoutManager);
@@ -113,9 +128,29 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
                 mVoiceNameAdapter.notifyDataSetChanged();
                 AudioTrackOperator.getInstance().writeSource(VoiceNameSettingActivity.this, "audio/" + PrefersTool.getVoiceName() + "_box_wakeUpReply.pcm",false);
 
+                //选择发言人后更新说话风格列表
+                List<VoiceStyleBean> voiceStyleList = mVoiceBeanList.get(position).getVoiceStyleList();
+                PrefersTool.setVoiceStyle("general");
+                mVoiceStyleList.clear();
+                mVoiceStyleList.addAll(voiceStyleList);
+                mVoiceStyleAdapter.notifyDataSetChanged();
             }
         });
         mRvVoiceName.setAdapter(mVoiceNameAdapter);
+
+        //说话风格
+        mRvVoiceStyle = findViewById(R.id.rv_voice_style);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
+        mRvVoiceStyle.setLayoutManager(layoutManager2);
+        mVoiceStyleAdapter = new VoiceStyleAdapter(mVoiceStyleList);
+        mVoiceStyleAdapter.setOnItemClickListener(new VoiceStyleAdapter.ItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                mVoiceStyleAdapter.notifyDataSetChanged();
+            }
+        });
+        mRvVoiceStyle.setAdapter(mVoiceStyleAdapter);
+
 
         AppCompatImageView back = findViewById(R.id.back);
         back.setOnClickListener(view -> {

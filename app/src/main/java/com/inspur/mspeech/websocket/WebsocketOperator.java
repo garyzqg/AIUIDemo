@@ -62,7 +62,7 @@ public class WebsocketOperator {
          boolean modelSwitch = PrefersTool.getModelSwitch();
 
          URI uri = URI.create(NetConstants.BASE_WS_URL_PROD+"/expressing/ws"+(modelSwitch?"/stream":"")+"?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName
-                 +"&speed="+PrefersTool.getSpeed()+"&pitch="+PrefersTool.getTone()+"&ttsType=azure&sessionId="+sessionId);
+                 +"&speed="+PrefersTool.getSpeed()+"&pitch="+PrefersTool.getTone()+"&style="+PrefersTool.getVoiceStyle()+"&ttsType=azure&sessionId="+sessionId);
 
 //         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法
