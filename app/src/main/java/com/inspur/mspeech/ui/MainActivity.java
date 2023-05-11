@@ -8,6 +8,7 @@ import android.content.res.AssetManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -60,6 +61,7 @@ import com.inspur.mspeech.utils.SoftKeyBoardListener;
 import com.inspur.mspeech.utils.UIHelper;
 import com.inspur.mspeech.websocket.WebsocketOperator;
 import com.inspur.mspeech.websocket.WebsocketVADOperator;
+import com.inspur.mspeech.wekws.Spot;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,6 +69,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static final String WORK_DIR = "/sdcard/ivw";
     private String keywordPath = WORK_DIR + "/keyword.txt";
+    private static final List<String> resource = Arrays.asList("kws.ort");
     //能力
     private final String ABILITY_IVW = "e867a88f2";
     private AiHandle aiHandle;
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String inputMessage;
     private AppCompatImageView send;
     private TextView wakeupTip;
+    private boolean startWakeup;//wekws只一次唤醒
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,12 +155,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         PermissionUtil.getPermission(this, () -> {
             //资源文件拷贝  语音唤醒
             copyAssetFolder(MainActivity.this, "ivw", String.format("%s/ivw", "/sdcard"));
+            if (Switch.WAKE_UP_WEKWS){
+                try {
+                    assetsInit(this);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                Spot.init(getFilesDir().getPath());
+            }
             //初始化SDK
             initSDK();
             //版本升級
             getVersionInfo();
         });
 
+    }
+
+    public void assetsInit(Context context) throws IOException {
+        AssetManager assetMgr = context.getAssets();
+        // Unzip all files in resource from assets to context.
+        // Note: Uninstall the APP will remove the resource files in the context.
+        for (String file : assetMgr.list("")) {
+            if (resource.contains(file)) {
+                File dst = new File(context.getFilesDir(), file);
+                if (!dst.exists() || dst.length() == 0) {
+                    Log.i(TAG, "Unzipping " + file + " to " + dst.getAbsolutePath());
+                    InputStream is = assetMgr.open(file);
+                    OutputStream os = new FileOutputStream(dst);
+                    byte[] buffer = new byte[4 * 1024];
+                    int read;
+                    while ((read = is.read(buffer)) != -1) {
+                        os.write(buffer, 0, read);
+                    }
+                    os.flush();
+                }
+            }
+        }
     }
 
     private void getVersionInfo() {
@@ -405,7 +441,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //初始化AudioRecord
         initAudioRecord();
         //初始化AIKit唤醒库
-        initIVW();
+        if (!Switch.WAKE_UP_WEKWS){
+            initIVW();
+        }else {
+            //wekws唤醒模型
+            //开启AudioTrack录音
+            if (mAudioRecordOperator != null){
+                mAudioRecordOperator.startRecord();
+            }
+
+            Spot.reset();
+            Spot.startSpot();
+        }
+
         if (Switch.VAD_AIUI){
             // 初始化AIUI
             initAIUI();
@@ -644,10 +692,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAudioRecordOperator.createAudioRecord(new AudioRecordOperator.RecordListener() {
             @Override
             public void data(byte[] data) {
-                //录音数据回调 流式写入IVW
-                AiInput.Builder dataBuilder = AiInput.builder();
-                dataBuilder.audio("wav", data);
-                AiHelper.getInst().write(dataBuilder.build(), aiHandle);
+                if (Switch.WAKE_UP_WEKWS){
+                    // 1. add data to C++ interface
+                    Spot.acceptWaveform(byteArray2ShortArray(data));
+
+                    String result = Spot.getResult();
+                    if (!TextUtils.isEmpty(result)){
+                        double probability = Double.parseDouble(result);
+                        if (probability > 0.5){
+                            //唤醒后此方法多次调用
+                            if (startWakeup){
+                                LogUtil.iTag(TAG,"WEKWS wakeup " + probability);
+                                WebsocketOperator.getInstance().connectWebSocket();
+                                startWakeup = false;
+                            }
+                        }else {
+                            if (!startWakeup){
+                                startWakeup = true;
+                            }
+                        }
+                    }
+                }else {
+                    //录音数据回调 流式写入IVW
+                    AiInput.Builder dataBuilder = AiInput.builder();
+                    dataBuilder.audio("wav", data);
+                    AiHelper.getInst().write(dataBuilder.build(), aiHandle);
+                }
 
                 if (Switch.VAD_AIUI){
                     if(mAIUIState == AIUIConstant.STATE_WORKING && AudioTrackOperator.getInstance().getPlayState() != AudioTrack.PLAYSTATE_PLAYING && !AudioTrackOperator.getInstance().isPlaying){
@@ -666,6 +736,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    public static short[] byteArray2ShortArray(byte[] data) {
+        short[] retVal = new short[data.length/2];
+        for (int i = 0; i < retVal.length; i++)
+            retVal[i] = (short) ((data[i * 2] & 0xff) | (data[i * 2 + 1] & 0xff) << 8);
+
+        return retVal;
+    }
     private void initAudioTrack() {
         AudioTrackOperator.getInstance().createStreamModeAudioTrack();
         AudioTrackOperator.getInstance().setStopListener(new AudioTrackOperator.IAudioTrackListener() {
