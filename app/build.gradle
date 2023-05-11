@@ -10,8 +10,8 @@ android {
         applicationId "com.inspur.mspeech"
         minSdk rootProject.ext.android["minSdkVersion"]
         targetSdk rootProject.ext.android["targetSdkVersion"]
-        versionCode 4
-        versionName "2.0.2"
+        versionCode 5
+        versionName "2.0.3"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
