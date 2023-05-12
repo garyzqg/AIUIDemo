@@ -1102,6 +1102,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }.start();
             } else {
                 LogUtil.iTag(TAG,"IVW 初始化失败 " + code);
+                if (code == 18708){//授权量不足
+
+                }
             }
         }
     };
@@ -1302,6 +1305,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         mWaveLineView.onResume();
+
+        if (mAudioRecordOperator != null){
+            mAudioRecordOperator.startRecord();
+        }
     }
 
     @Override
@@ -1315,6 +1322,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //audiotrack停止播放
         AudioTrackOperator.getInstance().stop();
 
+        if (mAudioRecordOperator !=null){
+            mAudioRecordOperator.stopRecord();
+        }
     }
 
 
