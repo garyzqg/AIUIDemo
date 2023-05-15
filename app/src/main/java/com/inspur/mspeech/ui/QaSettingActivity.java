@@ -151,7 +151,7 @@ public class QaSettingActivity extends AppCompatActivity {
                     }
 
                 }else {
-                    DialogUtil.showErrorDialog(QaSettingActivity.this,"获取问答集失败 code = " + response.getCode(),response.getMessage());
+                    DialogUtil.showErrorDialog(QaSettingActivity.this,"获取问答集失败",response.getMessage()+" code:" + response.getCode());
                 }
             }
 

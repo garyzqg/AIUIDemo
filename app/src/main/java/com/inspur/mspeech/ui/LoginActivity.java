@@ -142,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                 }else {
-                    DialogUtil.showErrorDialog(LoginActivity.this,"获取情景失败 code = " + response.getCode(),response.getMessage());
+                    DialogUtil.showErrorDialog(LoginActivity.this,"获取情景失败",response.getMessage()+" code:" + response.getCode());
                 }
             }
 

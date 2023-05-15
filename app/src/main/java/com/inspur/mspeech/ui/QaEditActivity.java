@@ -103,7 +103,7 @@ public class QaEditActivity extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             }else {
-                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除失败 code = " + response.getCode(),response.getMessage());
+                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除失败",response.getMessage()+" code:" + response.getCode());
                             }
                         }
 
@@ -133,7 +133,7 @@ public class QaEditActivity extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             }else {
-                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除失败 code = " + response.getCode(),response.getMessage());
+                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除失败",response.getMessage()+" code:" + response.getCode());
                             }
                         }
 
@@ -162,7 +162,7 @@ public class QaEditActivity extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             } else {
-                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除问答集失败 code = " + response.getCode(),response.getMessage());
+                                DialogUtil.showErrorDialog(QaEditActivity.this,"删除问答集失败",response.getMessage()+" code:" + response.getCode());
                             }
                         }
 
@@ -194,7 +194,7 @@ public class QaEditActivity extends AppCompatActivity {
                             if (response.isSuccess()){
                                 saveAnswer();
                             }else {
-                                DialogUtil.showErrorDialog(QaEditActivity.this,"新增问题失败 code = " + response.getCode(),response.getMessage());
+                                DialogUtil.showErrorDialog(QaEditActivity.this,"新增问题失败",response.getMessage()+" code:" + response.getCode());
                             }
                         }
 
@@ -258,7 +258,7 @@ public class QaEditActivity extends AppCompatActivity {
                         setResult(RESULT_OK);
                         finish();
                     }else {
-                        DialogUtil.showErrorDialog(QaEditActivity.this,"新增答案失败 code = " + response.getCode(),response.getMessage());
+                        DialogUtil.showErrorDialog(QaEditActivity.this,"新增答案失败",response.getMessage()+" code:" + response.getCode());
                     }
                 }
 

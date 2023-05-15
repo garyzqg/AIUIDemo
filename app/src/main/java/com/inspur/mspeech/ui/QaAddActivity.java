@@ -63,7 +63,7 @@ public class QaAddActivity extends AppCompatActivity {
                             setResult(RESULT_OK);
                             finish();
                         }else {
-                            DialogUtil.showErrorDialog(QaAddActivity.this,"创建问答集失败 code = " + response.getCode(),response.getMessage());
+                            DialogUtil.showErrorDialog(QaAddActivity.this,"创建问答集失败",response.getMessage()+" code:" + response.getCode());
                         }
                     }
 

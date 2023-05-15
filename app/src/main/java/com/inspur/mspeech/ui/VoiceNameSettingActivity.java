@@ -80,7 +80,7 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
 
 
                     }else {
-                        DialogUtil.showErrorDialog(VoiceNameSettingActivity.this,"获取可用音色失败 code = " + response.getCode(),response.getMessage());
+                        DialogUtil.showErrorDialog(VoiceNameSettingActivity.this,"获取可用音色失败",response.getMessage()+" code:" + response.getCode());
                     }
                 }
 
