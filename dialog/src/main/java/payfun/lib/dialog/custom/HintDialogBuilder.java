@@ -53,21 +53,26 @@ public class HintDialogBuilder extends UiWithBtnDialogBuilder<HintDialogBuilder>
         useMsg(tvTipTitle, titleMsg);
         useMsg(tvTipContent, contentMsg);
 
-        tvTipDetail.setVisibility(View.GONE);
-        tvTipDetail.setText(detailMsg);
+        if (TextUtils.isEmpty(detailMsg)){
+            tvTipDetail.setVisibility(View.GONE);
+        }else {
+            tvTipDetail.setText(detailMsg);
+            tvTipDetail.setVisibility(View.VISIBLE);
+        }
 
-        tvTipContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (tvTipDetail.getVisibility() == View.VISIBLE) {
-                    tvTipDetail.setVisibility(View.GONE);
-                } else {
-                    if (!TextUtils.isEmpty(detailMsg)) {
-                        tvTipDetail.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        });
+
+//        tvTipContent.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (tvTipDetail.getVisibility() == View.VISIBLE) {
+//                    tvTipDetail.setVisibility(View.GONE);
+//                } else {
+//                    if (!TextUtils.isEmpty(detailMsg)) {
+//                        tvTipDetail.setVisibility(View.VISIBLE);
+//                    }
+//                }
+//            }
+//        });
     }
 
 

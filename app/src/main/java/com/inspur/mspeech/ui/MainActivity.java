@@ -440,18 +440,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initWebsocket(false);
         //初始化AudioRecord
         initAudioRecord();
-        //初始化AIKit唤醒库
-        if (!Switch.WAKE_UP_WEKWS){
-            initIVW();
-        }else {
+
+        if (Switch.WAKE_UP_WEKWS){
             //wekws唤醒模型
             //开启AudioTrack录音
             if (mAudioRecordOperator != null){
                 mAudioRecordOperator.startRecord();
             }
-
             Spot.reset();
             Spot.startSpot();
+
+            wakeupTip.setText("请说\"Hi 小问\"或点击球形按钮唤醒我...");
+        }else {
+            //初始化AIKit唤醒库
+            initIVW();
         }
 
         if (Switch.VAD_AIUI){
@@ -1402,7 +1404,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 显示软键盘（输入法）
+     * 显示软键盘（输入法）-
      *
      * @param activity
      * @param editText
