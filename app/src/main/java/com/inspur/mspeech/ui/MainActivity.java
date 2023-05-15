@@ -1348,7 +1348,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.input_icon:
                 changeChatType(1);
                 etInput.requestFocus();
-                showInputMethod(this,etInput);
+                DeviceUtil.showInputMethod(this,etInput);
                 break;
             case R.id.send:
                 inputSendMessage(etInput.getText().toString().trim());
@@ -1372,7 +1372,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (AudioTrackOperator.getInstance().getPlayState() != AudioTrack.PLAYSTATE_PLAYING && !AudioTrackOperator.getInstance().isPlaying){
                     changeChatType(1);
                     etInput.requestFocus();
-                    showInputMethod(this,etInput);
+                    DeviceUtil.showInputMethod(this,etInput);
                 }
                 String text = ((TextView) v).getText().toString();
                 inputSendMessage(text);
@@ -1403,25 +1403,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 显示软键盘（输入法）-
-     *
-     * @param activity
-     * @param editText
-     */
-    public static void showInputMethod(final Activity activity, final EditText editText) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-    }
 
-    /**
-     * 隐藏软键盘（输入法）
-     *
-     * @param activity
-     * @param editText
-     */
-    public static void hideInputMethod(final Activity activity, final EditText editText) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-    }
 }

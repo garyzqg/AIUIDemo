@@ -20,6 +20,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import io.reactivex.rxjava3.annotations.NonNull;
+import payfun.lib.basis.utils.DeviceUtil;
 import payfun.lib.basis.utils.ToastUtil;
 import payfun.lib.dialog.DialogUtil;
 import payfun.lib.net.exception.ExceptionEngine;
@@ -50,6 +51,8 @@ public class LoginActivity extends AppCompatActivity {
             mEtPwd = findViewById(R.id.et_pwd);
             login = findViewById(R.id.login);
             login.setOnClickListener( view -> {
+                //点击登录隐藏软键盘
+                DeviceUtil.hideInputMethod(LoginActivity.this,mEtPwd);
                 String userName = mEtUsername.getText().toString().trim();
                 String pwd = mEtPwd.getText().toString().trim();
                 if (TextUtils.isEmpty(userName)){
