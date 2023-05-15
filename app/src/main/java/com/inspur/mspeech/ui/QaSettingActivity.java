@@ -114,8 +114,8 @@ public class QaSettingActivity extends AppCompatActivity {
     });
 
     private void jumpToLogin() {
+        PrefersTool.setAccesstoken("");
         DialogUtil.showTwoBtnDialog(QaSettingActivity.this, "请先登录", (OnDialogButtonClickListener) (baseDialog, v) -> {
-            PrefersTool.setAccesstoken("");
             Intent intent = new Intent(QaSettingActivity.this, LoginActivity.class);
             intentActivityResultLauncher.launch(intent);
             return false;

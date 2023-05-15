@@ -102,8 +102,8 @@ public class VoiceNameSettingActivity extends AppCompatActivity {
     }
 
     private void jumpToLogin() {
+        PrefersTool.setAccesstoken("");
         DialogUtil.showTwoBtnDialog(VoiceNameSettingActivity.this, "请先登录", (OnDialogButtonClickListener) (baseDialog, v) -> {
-            PrefersTool.setAccesstoken("");
             Intent intent = new Intent(VoiceNameSettingActivity.this, LoginActivity.class);
             intentActivityResultLauncher.launch(intent);
             return false;

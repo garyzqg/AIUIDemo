@@ -1238,10 +1238,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void jumpToLogin() {
+        PrefersTool.setAccesstoken("");
         DialogUtil.showTwoBtnDialog(MainActivity.this, "请先登录", new OnDialogButtonClickListener() {
             @Override
             public boolean onClick(DialogFragment baseDialog, View v) {
-                PrefersTool.setAccesstoken("");
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 intentActivityResultLauncher.launch(intent);
                 return false;
