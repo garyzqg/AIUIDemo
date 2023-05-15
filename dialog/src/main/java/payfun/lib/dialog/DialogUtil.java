@@ -36,6 +36,7 @@ public class DialogUtil {
             hintDialogBuilder.setOnRightBtnClickListener(onBtnRightClickListener);
         }
         hintDialogBuilder.setCanceledOnTouchOutside(false);
+        hintDialogBuilder.setCancelable(false);
         FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
         DialogImpl dialog = new DialogImpl(hintDialogBuilder);
         dialog.showNow(supportFragmentManager, "twobtn");
