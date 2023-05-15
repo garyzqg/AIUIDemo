@@ -871,6 +871,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onError() {
+                if (AudioTrackOperator.getInstance().isPlaying){
+                    return;
+                }
                 AudioTrackOperator.getInstance().writeSource(MainActivity.this, "audio/xiaozhong_box_disconnect.pcm",true);
             }
 
