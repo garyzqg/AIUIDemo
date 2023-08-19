@@ -10,7 +10,7 @@ public class Switch {
     public static final boolean VAD_AIUI = true;//vad渠道 true:AIUI  false:自研
     public static final int VAD_AIUI_MODEL = 2;//自研VAD模型 1旧  2新模型 只在VAD_AIUI=false下生效
 
-    public static final boolean WAKE_UP_WEKWS = true;//是否wekws唤醒模型唤醒
+    public static final boolean WAKE_UP_WEKWS = false;//是否wekws唤醒模型唤醒
 
 
 }

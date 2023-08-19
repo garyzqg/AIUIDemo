@@ -45,6 +45,7 @@ dependencies {
 
     //网络请求
     api rootProject.ext.dependencies["okhttp3"]
+    api 'com.squareup.okhttp3:okhttp-sse:4.9.1'
 
     api rootProject.ext.dependencies["retrofit2"]
     api (rootProject.ext.dependencies["retrofit2-gson"]){

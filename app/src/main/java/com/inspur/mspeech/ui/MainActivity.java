@@ -1347,6 +1347,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 LogUtil.iTag(TAG, "click wakeup");
                 //先后建联两个websocket 如果是自研语音识别 只建联一个
                 WebsocketOperator.getInstance().connectWebSocket();
+
+//                SseOperator.getInstance().connect("你好");
                 break;
             case R.id.input_icon:
                 changeChatType(1);
