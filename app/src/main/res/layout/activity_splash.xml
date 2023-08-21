@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="15dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/splash_top_bg"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="大山"
+                    android:textColor="@color/white"
+                    android:textSize="25sp"
+                    android:layout_centerVertical="true">
+
+                </TextView>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/splash_avatar"
+                    android:layout_alignParentRight="true">
+
+                </ImageView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/splash_item_bg"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/splash_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/splash_icon">
+
+                </ImageView>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="不知道的事情可以尝试问我"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="17sp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/splash_icon"
+                    android:layout_marginLeft="15dp">
+
+                </TextView>
+
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/item_bg_1"
+                android:onClick="clickItem"
+                android:tag="税务">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="税务"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="国家税务总局召开党委会议非常成功"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingHorizontal="10dp"
+                    android:background="@color/text_bg_color">
+
+                </TextView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/item_bg_11"
+                android:onClick="clickItem"
+                android:tag="浪潮规章制度">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="浪潮规章制度"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="国家税务总局召开党委会议非常成功"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingHorizontal="10dp"
+                    android:background="@color/text_bg_color">
+
+                </TextView>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/item_bg_3"
+                android:onClick="clickItem"
+                android:tag="政务">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="政务"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="国家税务总局召开党委会议非常成功"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingHorizontal="10dp"
+                    android:background="@color/text_bg_color">
+
+                </TextView>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/item_bg_4"
+                android:onClick="clickItem"
+                android:tag="医疗">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="医疗"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="国家税务总局召开党委会议非常成功"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingHorizontal="10dp"
+                    android:background="@color/text_bg_color">
+
+                </TextView>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/item_bg_10"
+                android:onClick="clickItem"
+                android:tag="心理咨询">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="心理咨询"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="国家税务总局召开党委会议非常成功"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingHorizontal="10dp"
+                    android:background="@color/text_bg_color">
+
+                </TextView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/item_bg_6"
+                android:onClick="clickItem"
+                android:tag="软件开发">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="软件开发"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="国家税务总局召开党委会议非常成功"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingHorizontal="10dp"
+                    android:background="@color/text_bg_color">
+
+                </TextView>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/item_bg_7"
+                android:onClick="clickItem"
+                android:tag="翻译">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="翻译"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="国家税务总局召开党委会议非常成功"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingHorizontal="10dp"
+                    android:background="@color/text_bg_color">
+
+                </TextView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/item_bg_8"
+                android:onClick="clickItem"
+                android:tag="销售">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="销售"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="国家税务总局召开党委会议非常成功"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingHorizontal="10dp"
+                    android:background="@color/text_bg_color">
+
+                </TextView>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

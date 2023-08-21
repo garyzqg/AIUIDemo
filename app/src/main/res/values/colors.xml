@@ -16,4 +16,7 @@
     <color name="blue">#03A9F4</color>
     <color name="deep_blue">#2196F3</color>
 
+    <color name="text_black_color">#0E1A28</color>
+    <color name="text_bg_color">#4D0E1A28</color>
+
 </resources>

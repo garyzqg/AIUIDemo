@@ -37,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SpeechNet {
     public static void init(){
         NetManager.getInstance().initApi(SpeechServer.class, () -> new RxClient.Builder()
-                .baseUrl(NetConstants.BASE_URL_PROD)
+                .baseUrl(NetConstants.BASE_URL_TEST)
                 .connectTimeout(10)
                 .readTimeout(15)
                 .writeTimeout(15)
