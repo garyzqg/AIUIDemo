@@ -289,6 +289,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRvChat.setLayoutManager(layoutManager);
         mRvChat.setAdapter(mAdapter);
 
+        AppCompatImageView back = findViewById(R.id.back);
+        back.setOnClickListener(view -> {
+            startToSplash();
+        });
+
         mRvChat.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -358,6 +363,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         send = findViewById(R.id.send);
         send.setOnClickListener(this);
         wakeupTip = findViewById(R.id.wakeup_tip);
+    }
+
+    private void startToSplash() {
+        msgList.clear();
+        mAdapter.notifyDataSetChanged();
+        Intent intent = new Intent(this,SplashActivity.class);
+        intentActivityResultLauncher.launch(intent);
     }
 
     private void inputSendMessage(String message) {
@@ -1408,5 +1420,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
 
+        startToSplash();
+    }
 }

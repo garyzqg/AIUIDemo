@@ -43,7 +43,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/splash_item_bg"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:onClick="clickItem"
+                android:tag="default">
 
                 <ImageView
                     android:id="@+id/splash_icon"
@@ -71,11 +73,21 @@
             </RelativeLayout>
         </LinearLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:text="业务大模型"
+            android:textStyle="bold">
+
+        </TextView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:orientation="horizontal"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="15dp">
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -84,13 +96,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/item_bg_1"
                 android:onClick="clickItem"
-                android:tag="税务">
+                android:tag="taxation">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="税务"
-                    android:textColor="@color/text_black_color"
-                    android:textSize="20sp"
+                    android:text="税务知识问答"
+                    android:gravity="center_horizontal"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp">
@@ -100,15 +113,15 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="国家税务总局召开党委会议非常成功"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:text="可以问我税务相关知识"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="14sp"
                     android:gravity="center_horizontal"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentBottom="true"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/text_bg_color">
+                    android:paddingHorizontal="8dp"
+                    >
 
                 </TextView>
             </RelativeLayout>
@@ -119,13 +132,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/item_bg_11"
                 android:onClick="clickItem"
-                android:tag="浪潮规章制度">
+                android:tag="regulations">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="浪潮规章制度"
-                    android:textColor="@color/text_black_color"
-                    android:textSize="20sp"
+                    android:text="企业规章制度\n问答"
+                    android:gravity="center_horizontal"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp">
@@ -135,15 +149,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="国家税务总局召开党委会议非常成功"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:text="当前可以问我浪潮智能终端报销相关问题"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="14sp"
                     android:gravity="center_horizontal"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentBottom="true"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/text_bg_color">
+                    android:paddingHorizontal="8dp">
 
                 </TextView>
             </RelativeLayout>
@@ -163,14 +176,15 @@
                 android:layout_weight="1"
                 android:background="@drawable/item_bg_3"
                 android:onClick="clickItem"
-                android:tag="政务">
+                android:tag="government">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="政务"
-                    android:textColor="@color/text_black_color"
-                    android:textSize="20sp"
+                    android:text="政府文件知识\n问答"
+                    android:gravity="center_horizontal"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp">
@@ -180,15 +194,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="国家税务总局召开党委会议非常成功"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:text="当前可以问我恢复和扩大消费二十条的问题"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="14sp"
                     android:gravity="center_horizontal"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentBottom="true"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/text_bg_color">
+                    android:paddingHorizontal="8dp">
 
                 </TextView>
 
@@ -200,13 +213,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/item_bg_4"
                 android:onClick="clickItem"
-                android:tag="医疗">
+                android:tag="healthcare">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="医疗"
-                    android:textColor="@color/text_black_color"
-                    android:textSize="20sp"
+                    android:text="医疗知识问答"
+                    android:gravity="center_horizontal"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp">
@@ -216,20 +230,30 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="国家税务总局召开党委会议非常成功"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:text="可以问我医疗相关的问题"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="14sp"
                     android:gravity="center_horizontal"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentBottom="true"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/text_bg_color">
+                    android:paddingHorizontal="8dp">
 
                 </TextView>
             </RelativeLayout>
 
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:text="通用大模型"
+            android:textStyle="bold">
+
+        </TextView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -244,13 +268,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/item_bg_10"
                 android:onClick="clickItem"
-                android:tag="心理咨询">
+                android:tag="summary">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="心理咨询"
-                    android:textColor="@color/text_black_color"
-                    android:textSize="20sp"
+                    android:text="概括总结"
+                    android:gravity="center_horizontal"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp">
@@ -260,15 +285,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="国家税务总局召开党委会议非常成功"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:text="根据您的内容，为您进行文本概括提炼"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="14sp"
                     android:gravity="center_horizontal"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentBottom="true"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/text_bg_color">
+                    android:paddingHorizontal="8dp">
 
                 </TextView>
             </RelativeLayout>
@@ -279,13 +303,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/item_bg_6"
                 android:onClick="clickItem"
-                android:tag="软件开发">
+                android:tag="speech">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="软件开发"
-                    android:textColor="@color/text_black_color"
-                    android:textSize="20sp"
+                    android:text="演讲稿"
+                    android:gravity="center_horizontal"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp">
@@ -295,15 +320,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="国家税务总局召开党委会议非常成功"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:text="输入演讲稿中心思想，为您编撰精彩演讲稿"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="14sp"
                     android:gravity="center_horizontal"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentBottom="true"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/text_bg_color">
+                    android:paddingHorizontal="8dp">
 
                 </TextView>
             </RelativeLayout>
@@ -323,13 +347,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/item_bg_7"
                 android:onClick="clickItem"
-                android:tag="翻译">
+                android:tag="copywriting">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="翻译"
-                    android:textColor="@color/text_black_color"
-                    android:textSize="20sp"
+                    android:text="朋友圈文案"
+                    android:gravity="center_horizontal"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp">
@@ -339,15 +364,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="国家税务总局召开党委会议非常成功"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:text="输入您想表达的内容，为您构思精美文案"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="14sp"
                     android:gravity="center_horizontal"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentBottom="true"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/text_bg_color">
+                    android:paddingHorizontal="8dp">
 
                 </TextView>
             </RelativeLayout>
@@ -358,13 +382,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/item_bg_8"
                 android:onClick="clickItem"
-                android:tag="销售">
+                android:tag="writer">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="销售"
-                    android:textColor="@color/text_black_color"
-                    android:textSize="20sp"
+                    android:text="AI作家"
+                    android:gravity="center_horizontal"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="30dp">
@@ -374,15 +399,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="国家税务总局召开党委会议非常成功"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:text="我会文案/检讨书/演讲稿说出你的要求吧"
+                    android:textColor="@color/text_black_color"
+                    android:textSize="14sp"
                     android:gravity="center_horizontal"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentBottom="true"
-                    android:paddingHorizontal="10dp"
-                    android:background="@color/text_bg_color">
+                    android:paddingHorizontal="8dp">
 
                 </TextView>
             </RelativeLayout>

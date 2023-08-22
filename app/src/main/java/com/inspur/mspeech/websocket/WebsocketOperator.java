@@ -57,12 +57,13 @@ public class WebsocketOperator {
    public void initWebSocket(boolean reInit,IWebsocketListener iWebsocketListener) {
       if (reInit || mClient == null){
          mIWebsocketListener = iWebsocketListener;
-         //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
+         //ws://101.43.161.46:58091/ws？token=fengweisen&scene=xi`aoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud
          voiceName = PrefersTool.getVoiceName();
          boolean modelSwitch = PrefersTool.getModelSwitch();
+         String llmType = PrefersTool.getLlmType();
 
-         URI uri = URI.create(NetConstants.BASE_WS_URL_PROD+"/expressing/ws"+(modelSwitch?"/stream":"")+"?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName
-                 +"&speed="+PrefersTool.getSpeed()+"&pitch="+PrefersTool.getTone()+"&style="+PrefersTool.getVoiceStyle()+"&ttsType=azure&sessionId="+sessionId);
+         URI uri = URI.create(NetConstants.BASE_WS_URL_TEST+"/expressing/ws"+(modelSwitch?"/stream":"")+"?sceneId="+PrefersTool.getSceneId()+"&voiceName="+voiceName
+                 +"&speed="+PrefersTool.getSpeed()+"&pitch="+PrefersTool.getTone()+"&style="+PrefersTool.getVoiceStyle()+"&llmType="+llmType+"&ttsType=azure&styledegree=2&sessionId="+sessionId);
 
 //         URI uri = URI.create("ws://101.43.161.46:58091/ws？token=fengweisen&scene=xiaoguo_box&voiceName=xiaozhong&speed=50&ttsType=crcloud");
          //为了方便对接收到的消息进行处理，可以在这重写onMessage()方法

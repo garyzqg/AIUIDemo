@@ -19,6 +19,7 @@ public class PrefersTool {
     private static final String MODEL_SWITCH = "model_switch";
     private static final String SPEED = "speed";
     private static final String TONE = "tone";
+    private static final String LLM_TYPE = "llmType";
 
     public static void setSceneId(String sceneId) {
         SpUtil.getInstance().put(SCENE_ID, sceneId);
@@ -95,5 +96,10 @@ public class PrefersTool {
     public static String getVoiceStyle() {
         return SpUtil.getInstance().getString(VOICE_STYLE, "general");
     }
-
+    public static void setLlmType(String llmType) {
+        SpUtil.getInstance().put(LLM_TYPE, llmType);
+    }
+    public static String getLlmType() {
+        return SpUtil.getInstance().getString(LLM_TYPE, "");
+    }
 }
