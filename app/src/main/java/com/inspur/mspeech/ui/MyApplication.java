@@ -8,6 +8,9 @@ import android.util.Log;
 import androidx.annotation.MainThread;
 import androidx.multidex.MultiDex;
 
+import com.baidu.mapapi.CoordType;
+import com.baidu.mapapi.SDKInitializer;
+import com.inspur.mspeech.bdmap.BDmapUtils;
 import com.inspur.mspeech.net.SpeechNet;
 
 import payfun.lib.basis.BasisApp;
@@ -42,6 +45,8 @@ public class MyApplication extends BasisApp {
         //网络初始化
         SpeechNet.init();
 
+        //百度地图初始化
+        BDmapUtils.init(this);
     }
 
     @MainThread

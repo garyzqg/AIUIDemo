@@ -100,6 +100,6 @@ public class PrefersTool {
         SpUtil.getInstance().put(LLM_TYPE, llmType);
     }
     public static String getLlmType() {
-        return SpUtil.getInstance().getString(LLM_TYPE, "");
+        return SpUtil.getInstance().getString(LLM_TYPE, "default");
     }
 }

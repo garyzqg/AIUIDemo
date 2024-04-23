@@ -29,6 +29,9 @@ allprojects {
         maven { url 'https://jitpack.io' }
 //        jcenter()
 //        google()
+
+        //百度地图
+        mavenCentral()
     }
 }
 

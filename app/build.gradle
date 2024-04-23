@@ -124,4 +124,9 @@ dependencies {
     implementation 'com.github.AlexLiuSheng:CheckVersionLib:2.4.1_androidx'
 
 
+//    百度地图
+
+//    implementation 'com.baidu.lbsyun:BaiduMapSDK_Map:7.5.4'//地图组件
+    implementation 'com.baidu.lbsyun:BaiduMapSDK_Search:7.5.4'//检索组件
+    //implementation 'com.baidu.lbsyun:BaiduMapSDK_Util:7.5.4'//工具
 }

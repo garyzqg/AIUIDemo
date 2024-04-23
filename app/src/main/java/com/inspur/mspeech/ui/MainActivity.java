@@ -28,11 +28,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.allenliu.versionchecklib.v2.AllenVersionChecker;
+
+import com.bumptech.glide.Glide;import com.allenliu.versionchecklib.v2.AllenVersionChecker;
 import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
 import com.allenliu.versionchecklib.v2.builder.UIData;
 import com.allenliu.versionchecklib.v2.callback.ForceUpdateListener;
-import com.bumptech.glide.Glide;
+import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
+import com.baidu.mapapi.search.poi.PoiCitySearchOption;
+import com.baidu.mapapi.search.poi.PoiDetailResult;
+import com.baidu.mapapi.search.poi.PoiDetailSearchResult;
+import com.baidu.mapapi.search.poi.PoiIndoorResult;
+import com.baidu.mapapi.search.poi.PoiResult;
+import com.baidu.mapapi.search.poi.PoiSearch;
 import com.iflytek.aikit.core.AiHandle;
 import com.iflytek.aikit.core.AiHelper;
 import com.iflytek.aikit.core.AiInput;
@@ -52,6 +60,7 @@ import com.inspur.mspeech.R;
 import com.inspur.mspeech.adapter.MsgAdapter;
 import com.inspur.mspeech.audio.AudioRecordOperator;
 import com.inspur.mspeech.audio.AudioTrackOperator;
+import com.inspur.mspeech.bdmap.BDmapUtils;
 import com.inspur.mspeech.bean.Msg;
 import com.inspur.mspeech.net.SpeechNet;
 import com.inspur.mspeech.utils.Base64Utils;
@@ -168,9 +177,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             initSDK();
             //版本升級
             getVersionInfo();
-        });
 
+//            百度地图
+            BDmapUtils.getAddress("焦作", "趵突泉", new BDmapUtils.IAddressListener() {
+                @Override
+                public void success(String address) {
+                    ToastUtil.showLong(address);
+                }
+
+                @Override
+                public void fail(int code,String msg) {
+
+                }
+            });
+
+        });
     }
+
 
     public void assetsInit(Context context) throws IOException {
         AssetManager assetMgr = context.getAssets();
